@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-class main {
+class Main {
 
 };
 
