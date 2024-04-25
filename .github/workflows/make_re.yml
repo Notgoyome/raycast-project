@@ -15,10 +15,13 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libconfig++-dev
         sudo apt-get install -y libsfml-dev
+        sudo apt-get install -y libsfml-dev
 
     - name: Run make re
       run: |
-        make re
+        mkdir build
+        cd build
+        cmake .. && cmake --build .
         if [ $? -eq 0 ]; then
           echo "make re succeeded."
         else
