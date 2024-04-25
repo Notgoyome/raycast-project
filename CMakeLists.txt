@@ -7,7 +7,7 @@ include_directories(include)
 
 add_executable(B_OOP_400_MPL_4_1_raytracer_robin_glaude
         include/Main.hpp
-        src/Main.cpp
+        src/main/main.cpp
         include/Ray.hpp
         src/math/Point3D.cpp
         src/math/Vector3D.cpp)
