@@ -10,11 +10,14 @@
 #define ISHAPE_HPP_
 
 #include "INode.hpp"
+#include "Ray.hpp"
 
 namespace ray {
 
     class IShape : public INode {
         public:
+            virtual bool hit(const Raytracer::Ray &ray) = 0;
+
             IShape();
             ~IShape();
     };

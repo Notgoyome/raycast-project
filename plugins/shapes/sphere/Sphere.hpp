@@ -5,10 +5,10 @@
 #ifndef B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_SPHERE_HPP
 #define B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_SPHERE_HPP
 
-#include "../APrimitive.hpp"
-#include "../../../include/Ray.hpp"
+#include "../../../src/shapes/AShape.hpp"
+#include "Ray.hpp"
 
-class Sphere : public APrimitive {
+class Sphere : public ray::AShape {
 public:
     bool hit(const Raytracer::Ray &ray) override;
 private:
