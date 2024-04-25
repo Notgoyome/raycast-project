@@ -1,6 +1,12 @@
 name: Make Re
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -13,6 +19,7 @@ jobs:
     - name: Update and install dependencies
       run: |
         sudo apt-get update
+        sudo apt-get cmake
         sudo apt-get install -y libconfig++-dev
         sudo apt-get install -y libsfml-dev
         sudo apt-get install -y libsfml-dev
