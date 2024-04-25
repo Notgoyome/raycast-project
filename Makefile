@@ -1,13 +1,23 @@
+##
+## EPITECH PROJECT, 2024
+## B-OOP-400-MPL-4-1-raytracer-robin.glaude
+## File description:
+## Makefile
+##
+
 CC=g++
 CFLAGS=-I./include -I./src -std=c++17 -fPIC -g3
 LDFLAGS=-shared
+
 MAIN_SRCS=$(shell find src/main -name "*.cpp")
+
 CAMERAS=$(patsubst src/cameras/%/,%, $(wildcard src/cameras/*/))
 LIGHTS=$(patsubst src/lights/%/,%, $(wildcard src/lights/*/))
 MATERIALS=$(patsubst src/materials/%/,%, $(wildcard src/materials/*/))
 SCENES=$(patsubst src/scenes/%/,%, $(wildcard src/scenes/*/))
 SHAPES=$(patsubst src/shapes/%/,%, $(wildcard src/shapes/*/))
 TRANSFORMATIONS=$(patsubst src/transformations/%/,%, $(wildcard src/transformations/*/))
+
 PLUGINS_TARGETS=$(foreach plugin,$(CAMERAS),plugins/cameras_$(plugin).so) \
 				$(foreach plugin,$(LIGHTS),plugins/lights_$(plugin).so) \
 				$(foreach plugin,$(MATERIALS),plugins/materials_$(plugin).so) \
