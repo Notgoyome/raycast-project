@@ -24,14 +24,6 @@ jobs:
         sudo apt-get install -y libsfml-dev
         sudo apt-get install -y libsfml-dev
 
-    - name: Install CMake
-      run: |
-        sudo wget https://github.com/Kitware/CMake/releases/download/v3.27.9/cmake-3.27.9-linux-x86_64.sh
-        sudo mkdir /opt/cmake
-        sudo sh cmake-3.27.9-linux-x86_64.sh --prefix=/opt/cmake --skip-license
-        sudo ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake
-        cmake --version
-
     - name: Run make re
       run: |
         mkdir build
