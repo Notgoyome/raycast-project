@@ -5,7 +5,7 @@
 #ifndef B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_SPHERE_HPP
 #define B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_SPHERE_HPP
 
-#include "../../src/shapes/AShape.hpp"
+#include "../../../src/shapes/AShape.hpp"
 #include "Ray.hpp"
 
 class Sphere : public ray::AShape {
