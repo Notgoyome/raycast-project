@@ -1,10 +1,9 @@
-name: Make Re
+name: CMake
 
 on:
   push:
     branches:
       - main
-      - github-action-tests
   pull_request:
     branches:
       - main
@@ -24,7 +23,7 @@ jobs:
           sudo apt-get install -y libsfml-dev
           sudo apt-get install -y libsfml-dev
 
-      - name: Run make re
+      - name: Run cmake
         run: |
           mkdir build
           cd build
