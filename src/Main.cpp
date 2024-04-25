@@ -5,7 +5,7 @@
 ** main.cpp
 */
 
-#include "../include/Main.hpp"
+#include "Main.hpp"
 
 int main(int ac, char **av)
 {
