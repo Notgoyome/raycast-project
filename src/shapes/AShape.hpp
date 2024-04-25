@@ -8,13 +8,15 @@
 #ifndef ASHAPE_HPP_
 #define ASHAPE_HPP_
 
+#include "Ray.hpp"
+
 namespace ray {
 
     class AShape {
         public:
             AShape();
             ~AShape();
-
+            virtual bool hit(const Raytracer::Ray &ray) = 0;
         private:
     };
 }
