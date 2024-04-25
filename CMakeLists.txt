@@ -8,7 +8,7 @@ include_directories(include)
 
 add_custom_target(
         BuildPrimitives ALL
-        COMMAND make -C ${CMAKE_SOURCE_DIR}/lib/primitives
+        COMMAND make -C ${CMAKE_SOURCE_DIR}/plugins
         COMMENT "Building primitives libraries"
 )
 
