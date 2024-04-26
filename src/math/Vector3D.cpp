@@ -5,13 +5,13 @@
 ** Vector3D.cpp
 */
 
-#include "../../include/Vector3D.hpp"
+#include "math/Vector3D.hpp"
 #include <cmath>
 
 namespace Math {
     Vector3D Vector3D::operator+(const Vector3D &other) const
     {
-        return Vector3D(X + other.X, Y + other.Y, Z + other.Z);
+        return Vector3D{X + other.X, Y + other.Y, Z + other.Z};
     }
 
     Vector3D & Vector3D::operator+=(const Vector3D &other)
@@ -24,7 +24,7 @@ namespace Math {
 
     Vector3D Vector3D::operator-(const Vector3D &other) const
     {
-        return Vector3D(X - other.X, Y - other.Y, Z - other.Z);
+        return Vector3D{X - other.X, Y - other.Y, Z - other.Z};
     }
 
     Vector3D & Vector3D::operator-=(const Vector3D &other)
@@ -37,7 +37,12 @@ namespace Math {
 
     Vector3D Vector3D::operator*(const Vector3D &other) const
     {
-        return Vector3D(X * other.X, Y * other.Y, Z * other.Z);
+        return Vector3D{X * other.X, Y * other.Y, Z * other.Z};
+    }
+
+    Vector3D Vector3D::operator*(double val) const
+    {
+        return Vector3D{X * val, Y * val, Z * val};
     }
 
     Vector3D & Vector3D::operator*=(const Vector3D &other)
@@ -48,9 +53,22 @@ namespace Math {
         return *this;
     }
 
+    Vector3D & Vector3D::operator*=(double val)
+    {
+        X *= val;
+        Y *= val;
+        Z *= val;
+        return *this;
+    }
+
     Vector3D Vector3D::operator/(const Vector3D &other) const
     {
-        return Vector3D(X / other.X, Y / other.Y, Z / other.Z);
+        return Vector3D{X / other.X, Y / other.Y, Z / other.Z};
+    }
+
+    Vector3D Vector3D::operator/(double val) const
+    {
+        return Vector3D{X / val, Y / val, Z / val};
     }
 
     Vector3D & Vector3D::operator/=(const Vector3D &other)
@@ -58,6 +76,14 @@ namespace Math {
         X /= other.X;
         Y /= other.Y;
         Z /= other.Z;
+        return *this;
+    }
+
+    Vector3D & Vector3D::operator/=(double val)
+    {
+        X /= val;
+        Y /= val;
+        Z /= val;
         return *this;
     }
 

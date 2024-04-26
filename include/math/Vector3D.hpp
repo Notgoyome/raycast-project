@@ -34,11 +34,15 @@ namespace Math {
         Vector3D operator-(const Vector3D& other) const;
         Vector3D& operator-=(const Vector3D& other);
         Vector3D operator*(const Vector3D& other) const;
+        Vector3D operator*(double val) const;
         Vector3D& operator*=(const Vector3D& other);
+        Vector3D& operator*=(double val);
         Vector3D operator/(const Vector3D& other) const;
+        Vector3D operator/(double val) const;
         Vector3D& operator/=(const Vector3D& other);
+        Vector3D& operator/=(double val);
 
-        double dot(const Vector3D& other) const;
+        [[nodiscard]] double dot(const Vector3D& other) const;
 
         // GETTERS
         [[nodiscard]] double length() const;

@@ -28,6 +28,8 @@ namespace Math {
 
         Point3D operator+(const Vector3D& vect) const;
         Point3D operator-(const Vector3D& vect) const;
+
+        bool operator==(const Point3D& other) const;
     };
 
 } // Math
