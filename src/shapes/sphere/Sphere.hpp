@@ -6,15 +6,30 @@
 #define B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_SPHERE_HPP
 
 #include "../../../src/shapes/AShape.hpp"
+#include "../../materials/AMaterial.hpp"
+#include "../../../include/Maybe.hpp"
 #include "Ray.hpp"
+// include sqrt
+#include <cmath>
+#include <memory>
 
-class Sphere : public ray::AShape {
-public:
-    bool hit(const Raytracer::Ray &ray) override;
-private:
-    float radius;
-    Math::Vector3D center;
-};
+namespace RayTracer {
+    class Sphere : public ray::AShape {
+    public:
+        float radius;
+        Math::Point3D center;
+        std::shared_ptr<ray::AMaterial> material;
 
+        Sphere(float radius, Math::Point3D center);
+
+        ~Sphere() = default;
+
+        Maybe<Math::Point3D> hit(const Raytracer::Ray &ray) override;
+
+        Math::Vector3D getNormale(const Math::Point3D point);
+
+    private:
+    };
+}
 
 #endif //B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_SPHERE_HPP

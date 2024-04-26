@@ -9,6 +9,7 @@
 #define ASHAPE_HPP_
 
 #include "Ray.hpp"
+#include "../../include/Maybe.hpp"
 
 namespace ray {
 
@@ -16,8 +17,9 @@ namespace ray {
         public:
             AShape();
             ~AShape();
-            virtual bool hit(const Raytracer::Ray &ray) = 0;
-        private:
+            virtual Maybe<Math::Point3D> hit(const Raytracer::Ray &ray) = 0;
+            virtual Math::Vector3D getNormal(const Math::Vector3D &point) = 0;
+    private:
     };
 }
 

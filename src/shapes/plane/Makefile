@@ -5,19 +5,18 @@
 ## Makefile
 ##
 
-TARGET = sphere
+TARGET = plane
 
-SRC = Sphere.cpp \
+SRC = Plane.cpp \
 	../../../src/shapes/AShape.cpp \
 	../../../src/math/Vector3D.cpp \
-	../../../src/math/Point3D.cpp \
-	../../../src/materials/AMaterial.cpp \
+	../../../src/math/Point3D.cpp
 
 CC = g++
 
 CFLAGS= -std=c++20
 
-LIBNAME = ../../../plugins/$(TARGET).so
+LIBNAME = ../../../lib/$(TARGET).so
 
 INCLUDE = ../../../include
 
