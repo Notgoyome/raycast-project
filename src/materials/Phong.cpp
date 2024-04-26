@@ -5,9 +5,9 @@
 ** PhongModel.cpp
 */
 
-#include "PhongModel.hpp"
+#include "Phong.hpp"
 
-Math::Vector3D getLightDirection(Light light, Math::Point3D position)
+Math::Vector3D getLightDirection(Phong::Light light, Math::Point3D position)
 {
     Math::Point3D lightPos = light.getPosition();
     Math::Vector3D res = {lightPos.X - position.X, lightPos.Y - position.Y, lightPos.Z - position.Z};
@@ -22,7 +22,7 @@ Math::Vector3D getLightReflection(Math::Vector3D lightDir, Math::Vector3D normal
     return res / res.length();
 }
 
-unsigned int PhongModel::getPhongForValues(int idx) const
+unsigned int Phong::Model::getPhongForValues(int idx) const
 {
     double sum = 0;
 
@@ -38,7 +38,7 @@ unsigned int PhongModel::getPhongForValues(int idx) const
     return static_cast<unsigned int>(std::min(static_cast<float>(_ka(0, idx) * _ia + sum) * 255.F, 255.F));
 }
 
-RGB PhongModel::calculateColor()
+RGB Phong::Model::calculateColor()
 {
     unsigned int RRes = getPhongForValues(0);
     unsigned int GRes = getPhongForValues(1);
