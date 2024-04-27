@@ -48,5 +48,5 @@ Maybe<Math::Point3D> RayTracer::Sphere::hit(const Raytracer::Ray &ray)
 Math::Vector3D RayTracer::Sphere::getNormale(const Math::Point3D point)
 {
     Math::Vector3D normale = {point.X - center.X, point.Y - center.Y, point.Z - center.Z};
-    return normale;
+    return normale / normale.length();
 }
