@@ -10,10 +10,11 @@
 
 #include "Ray.hpp"
 #include "../../include/Maybe.hpp"
+#include "../utils/ANode.hpp"
 
 namespace ray {
 
-    class AShape {
+class AShape : public ray::ANode {
         public:
             AShape();
             ~AShape();
