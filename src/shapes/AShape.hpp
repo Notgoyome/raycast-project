@@ -11,6 +11,7 @@
 #include "Ray.hpp"
 #include "../../include/Maybe.hpp"
 #include "../utils/ANode.hpp"
+#include "../../include/math/MatrixN.hpp"
 
 namespace ray {
 
@@ -20,7 +21,12 @@ class AShape : public ray::ANode {
             ~AShape();
             virtual Maybe<Math::Point3D> hit(const Raytracer::Ray &ray) = 0;
             virtual Math::Vector3D getNormal(const Math::Vector3D &point) = 0;
+            Math::Point3D getPosition() const;
+            Math::Vector3D getScale() const;
+            void applyMatrix();
+            std::vector<Math::Vector3D> getTransformations() const;
     private:
+        Math::Matrix<4, 4> _transformMatrix;
     };
 }
 

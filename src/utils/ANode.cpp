@@ -20,7 +20,7 @@ std::shared_ptr<ray::INode> ray::ANode::getChild(int index) {
     return children[index];
 }
 
-std::shared_ptr<ray::INode> ray::ANode::getParent() {
+const std::shared_ptr<ray::INode> ray::ANode::getParent() const {
     return _parent;
 }
 

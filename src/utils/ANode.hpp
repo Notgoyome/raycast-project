@@ -14,10 +14,10 @@ namespace ray {
     public:
         void addChild(std::shared_ptr<INode> child);
         void removeChild(std::shared_ptr<INode> child);
-        std::shared_ptr<ray::INode>getChild(int index);
-        std::shared_ptr<ray::INode>getParent() override;
+        std::shared_ptr<ray::INode>getChild(int index) override;
+        const std::shared_ptr<ray::INode>getParent() const override;
         void setParent(INode *parent) override;
-        ray::type getType();
+        ray::type getType() override;
         void setType(ray::type type);
 
     private:
