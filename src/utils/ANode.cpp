@@ -4,34 +4,41 @@
 
 #include "ANode.hpp"
 
-void ray::ANode::addChild(std::shared_ptr<INode> child) {
+void ray::ANode::addChild(std::shared_ptr<INode> child)
+{
     children.push_back(child);
 }
 
-void ray::ANode::removeChild(std::shared_ptr<INode> child) {
+void ray::ANode::removeChild(std::shared_ptr<INode> child)
+{
     if (child == nullptr)
         return;
     children.erase(std::remove(children.begin(), children.end(), child), children.end());
 }
 
-std::shared_ptr<ray::INode> ray::ANode::getChild(int index) {
-    if (index < 0 || index >= children.size())
+void ray::ANode::setParent(std::shared_ptr<INode> parent)
+{
+    _parent = std::shared_ptr(std::dynamic_pointer_cast<ANode>(parent));
+}
+
+void ray::ANode::setType(ray::type type)
+{
+    ANode::type = type;
+}
+
+std::shared_ptr<ray::INode> ray::ANode::getChild(int index) const
+{
+    if (index < 0 || index >= static_cast<int>(children.size()))
         return nullptr;
     return children[index];
 }
 
-const std::shared_ptr<ray::INode> ray::ANode::getParent() const {
+std::shared_ptr<ray::INode> ray::ANode::getParent() const
+{
     return _parent;
 }
 
-void ray::ANode::setParent(INode *parent) {
-    _parent = std::shared_ptr<ANode>(dynamic_cast<ANode *>(parent));
-}
-
-ray::type ray::ANode::getType() {
+ray::type ray::ANode::getType() const
+{
     return type;
-}
-
-void ray::ANode::setType(ray::type type) {
-    ANode::type = type;
 }

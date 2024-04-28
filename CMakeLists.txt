@@ -13,7 +13,6 @@ add_custom_target(
 )
 
 add_executable(raytracer
-        include/Main.hpp
         src/main/main.cpp
         include/Ray.hpp
         src/math/Point3D.cpp

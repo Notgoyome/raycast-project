@@ -1,22 +1,30 @@
 /*
 ** EPITECH PROJECT, 2024
-** B-OOP-400-MPL-4-1-raytracer-robin.glaude
+** raytracer_bootstrap
 ** File description:
-** ALight
+** ALight.hpp
 */
 
-#ifndef ALIGHT_HPP_
-#define ALIGHT_HPP_
+#ifndef ALIGHT_HPP
+#define ALIGHT_HPP
+
+#include "ILight.hpp"
+#include "../utils/ANode.hpp"
 
 namespace ray {
 
-    class ALight {
-        public:
-            ALight();
-            ~ALight();
+    class ALight : public ILight, public ANode {
+    protected:
+        RGB _color;
 
-        private:
+        explicit ALight(RGB color) : ANode(type::LIGHT), _color(color) {}
+
+        public:
+        void setColor(RGB color) override;
+
+        [[nodiscard]] RGB getColor() const override;
     };
+
 }
 
-#endif /* !ALIGHT_HPP_ */
+#endif //ALIGHT_HPP
