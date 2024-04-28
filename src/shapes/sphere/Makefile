@@ -12,6 +12,7 @@ SRC = Sphere.cpp \
 	../../../src/math/Vector3D.cpp \
 	../../../src/math/Point3D.cpp \
 	../../../src/materials/AMaterial.cpp \
+	../../utils/ANode.cpp
 
 CC = g++
 

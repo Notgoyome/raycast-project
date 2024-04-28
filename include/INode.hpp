@@ -8,6 +8,8 @@
 #ifndef INODE_HPP_
 #define INODE_HPP_
 
+#include <memory>
+
 namespace ray {
 
     enum type {
@@ -26,10 +28,11 @@ namespace ray {
 
             virtual void addChild(INode *node) = 0;
             virtual void removeChild(INode *node) = 0;
-            virtual INode *getChild(int index) = 0;
+            virtual std::shared_ptr<INode> getChild(int index) = 0;
 
             virtual void setParent(INode *node) = 0;
-            virtual INode *getParent() = 0;
+            virtual const std::shared_ptr<INode>getParent() const = 0;
+            virtual type getType() = 0;
     };
 }
 

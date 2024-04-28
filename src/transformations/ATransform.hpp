@@ -10,12 +10,15 @@
 
 namespace ray {
 
-    class ATransform {
+    class ATransform : public ANode {
         public:
             ATransform();
             ~ATransform();
 
         protected:
+            Math::Point3D _position;
+            Math::Vector3D _rotation;
+            Math::Vector3D _scale;
         private:
     };
 }

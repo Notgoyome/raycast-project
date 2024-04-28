@@ -9,7 +9,6 @@
 #include "../../materials/AMaterial.hpp"
 #include "../../../include/Maybe.hpp"
 #include "Ray.hpp"
-// include sqrt
 #include <cmath>
 #include <memory>
 
