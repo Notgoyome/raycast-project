@@ -28,7 +28,7 @@ void ray::ANode::setType(ray::type type)
 
 std::shared_ptr<ray::INode> ray::ANode::getChild(int index) const
 {
-    if (index < 0 || index >= children.size())
+    if (index < 0 || index >= static_cast<int>(children.size()))
         return nullptr;
     return children[index];
 }

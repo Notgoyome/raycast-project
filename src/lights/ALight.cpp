@@ -1,16 +1,18 @@
 /*
 ** EPITECH PROJECT, 2024
-** B-OOP-400-MPL-4-1-raytracer-robin.glaude
+** raytracer_bootstrap
 ** File description:
-** ALight
+** ALight.cpp
 */
 
 #include "ALight.hpp"
 
-ray::ALight::ALight()
+void ray::ALight::setColor(RGB color)
 {
+    _color = color;
 }
 
-ray::ALight::~ALight()
+RGB ray::ALight::getColor() const
 {
+    return _color;
 }

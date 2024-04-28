@@ -1,23 +1,30 @@
 /*
 ** EPITECH PROJECT, 2024
-** B-OOP-400-MPL-4-1-raytracer-robin.glaude
+** raytracer_bootstrap
 ** File description:
-** ILight
+** ILight.hpp
 */
 
-
-#ifndef ILIGHT_HPP_
-#define ILIGHT_HPP_
+#ifndef ILIGHT_HPP
+#define ILIGHT_HPP
 
 #include "INode.hpp"
+#include "math/Vector3D.hpp"
+#include "RGB.hpp"
+#include "math/Point3D.hpp"
 
 namespace ray {
 
-    class ILight : public INode {
-        public:
-            ILight();
-            ~ILight();
+    class ILight : virtual public INode {
+    public:
+        virtual ~ILight() = default;
+
+        virtual void setColor(RGB color) = 0;
+
+        [[nodiscard]] virtual RGB getColor() const = 0;
+        [[nodiscard]] virtual Math::Vector3D getIncidentVector(Math::Point3D pos) const = 0;
     };
+
 }
 
-#endif /* !ILIGHT_HPP_ */
+#endif
