@@ -7,7 +7,7 @@
 
 #include "AShape.hpp"
 
-ray::AShape::AShape()
+ray::AShape::AShape() : ANode(ray::type::SHAPE)
 {
 }
 
