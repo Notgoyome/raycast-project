@@ -23,16 +23,19 @@ namespace ray {
     };
 
     class INode {
-        public:
-            virtual ~INode() = default;
+    public:
+        virtual ~INode() = default;
 
-            virtual void addChild(INode *node) = 0;
-            virtual void removeChild(INode *node) = 0;
-            virtual std::shared_ptr<INode> getChild(int index) = 0;
+        // SETTERS
+        virtual void addChild(std::shared_ptr<INode> node) = 0;
+        virtual void removeChild(std::shared_ptr<INode> node) = 0;
+        virtual void setParent(std::shared_ptr<INode> node) = 0;
+        virtual void setType(ray::type type) = 0;
 
-            virtual void setParent(INode *node) = 0;
-            virtual const std::shared_ptr<INode>getParent() const = 0;
-            virtual type getType() = 0;
+        // GETTERS
+        [[nodiscard]] virtual std::shared_ptr<INode> getChild(int index) const = 0;
+        [[nodiscard]] virtual std::shared_ptr<INode> getParent() const = 0;
+        [[nodiscard]] virtual type getType() const = 0;
     };
 }
 
