@@ -27,17 +27,16 @@ Maybe<Math::Point3D> closestPoint(const Raytracer::Ray &ray, float discriminant,
 
 Maybe<Math::Point3D> RayTracer::Sphere::hit(const Raytracer::Ray &ray)
 {
+    Math::Point3D center = getPosition();
     Math::Point3D oc = ray.origin - center;
+
     float a = (ray.direction.X * ray.direction.X +
-                ray.direction.Y * ray.direction.Y +
-                ray.direction.Z * ray.direction.Z);
+            ray.direction.Y * ray.direction.Y +
+            ray.direction.Z * ray.direction.Z);
     float b = 2.0 * (oc.X * ray.direction.X +
-                     oc.Y * ray.direction.Y +
-                     oc.Z * ray.direction.Z);
-    float c = oc.X * oc.X +
-                oc.Y * oc.Y +
-                oc.Z * oc.Z -
-                radius * radius;
+                    oc.Y * ray.direction.Y +
+                    oc.Z * ray.direction.Z);
+    float c = oc.X * oc.X + oc.Y * oc.Y + oc.Z * oc.Z - radius * radius;
     float discriminant = b * b - 4 * a * c;
 
     if (discriminant < 0)
@@ -47,6 +46,8 @@ Maybe<Math::Point3D> RayTracer::Sphere::hit(const Raytracer::Ray &ray)
 
 Math::Vector3D RayTracer::Sphere::getNormale(const Math::Point3D point)
 {
-    Math::Vector3D normale = {point.X - center.X, point.Y - center.Y, point.Z - center.Z};
+    Math::Vector3D normale = {point.X - center.X,
+                              point.Y - center.Y,
+                              point.Z - center.Z};
     return normale / normale.length();
 }
