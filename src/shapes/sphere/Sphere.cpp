@@ -29,15 +29,16 @@ Maybe<Math::Point3D> RayTracer::Sphere::hit(const Raytracer::Ray &ray)
 {
     Math::Point3D center = getPosition();
     Math::Point3D oc = ray.origin - center;
-
+    Math::Vector3D scale = getScale();
+    float scaledRadius = std::max(scale.X, std::max(scale.Y, scale.Z)) * radius;
     float a = (ray.direction.X * ray.direction.X +
             ray.direction.Y * ray.direction.Y +
             ray.direction.Z * ray.direction.Z);
     float b = 2.0 * (oc.X * ray.direction.X +
                     oc.Y * ray.direction.Y +
                     oc.Z * ray.direction.Z);
-    float c = oc.X * oc.X + oc.Y * oc.Y + oc.Z * oc.Z - radius * radius;
-    float discriminant = b * b - 4 * a * c;
+    float c = oc.X * oc.X + oc.Y * oc.Y + oc.Z * oc.Z - std::pow(scaledRadius, 2);
+    float discriminant = std::pow(b, 2) - 4 * a * c;
 
     if (discriminant < 0)
         return Maybe<Math::Point3D>();

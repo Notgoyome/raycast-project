@@ -110,3 +110,11 @@ Math::Vector3D ray::AShape::getScale() const
                  _transformMatrix(2, 2) };
     return scale;
 }
+
+Math::Matrix<3,3> ray::AShape::getRotation() const
+{
+    Math::Matrix<3,3> rotation;
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            rotation(i, j) = _transformMatrix(i, j);
+};

@@ -7,16 +7,18 @@
 
 #include "../AShape.hpp"
 #include "Ray.hpp"
+#include "../../../include/Maybe.hpp"
+#include "Ray.hpp"
+#include <cmath>
+#include <memory>
 
-class Plane : public ray:AShape {
+class Plane : public ray::AShape {
 public:
-    Plane(Vector3D &);
-    ~Plane = default;
-    bool hit(const Raytracer::Ray &ray) override;
+    Plane();
+    ~Plane() = default;
+    Maybe<Math::Point3D> hit(const Raytracer::Ray &ray) override;
+    Math::Vector3D getNormal(const Math::Point3D point);
 private:
-    float x;
-    float y;
-    float z;
 };
 
 

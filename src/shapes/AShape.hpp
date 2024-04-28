@@ -23,6 +23,7 @@ class AShape : public ray::ANode {
             virtual Math::Vector3D getNormal(const Math::Vector3D &point) = 0;
             Math::Point3D getPosition() const;
             Math::Vector3D getScale() const;
+            Math::Matrix<3,3> getRotation() const;
             void applyMatrix();
             std::vector<Math::Vector3D> getTransformations() const;
     private:
