@@ -7,6 +7,7 @@
 
 #include "INode.hpp"
 #include <iostream>
+#include <vector>
 
 namespace ray {
     class ANode : virtual public INode {

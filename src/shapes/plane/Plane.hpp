@@ -7,12 +7,13 @@
 
 #include "../AShape.hpp"
 #include "Ray.hpp"
+#include "math/Vector3D.hpp"
 
-class Plane : public ray:AShape {
+class Plane : public ray::AShape {
 public:
-    Plane(Vector3D &);
-    ~Plane = default;
-    bool hit(const Raytracer::Ray &ray) override;
+    Plane(Math::Vector3D vec);
+    ~Plane() = default;
+    Maybe<Math::Point3D> hit(const Raytracer::Ray &ray) override;
 private:
     float x;
     float y;

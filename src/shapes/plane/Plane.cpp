@@ -4,7 +4,11 @@
 
 #include "Plane.hpp"
 
-Plane::Plane(float x, float y, float z)
+Plane::Plane(Math::Vector3D vec)
 {
+    (void)vec;
+}
 
+Maybe<Math::Point3D> Plane::hit(const Raytracer::Ray &ray)
+{
 }
