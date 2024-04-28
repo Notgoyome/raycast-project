@@ -12,7 +12,7 @@
 
 namespace ray {
 
-    enum type {
+    enum class type {
         UNDEFINED = 0,
         SCENE = 1,
         SHAPE = 2,
