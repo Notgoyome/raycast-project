@@ -16,8 +16,8 @@ class Plane : public ray::AShape {
 public:
     Plane();
     ~Plane() = default;
-    Maybe<Math::Point3D> hit(const Raytracer::Ray &ray) override;
-    Math::Vector3D getNormal(const Math::Point3D point);
+    Maybe<Math::Point3D> hit(const Raytracer::Ray ray) override;
+    Math::Vector3D getNormale(const Math::Point3D point);
 private:
 };
 

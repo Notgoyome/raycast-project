@@ -5,7 +5,8 @@
 ## Makefile
 ##
 
-SUBDIRS = sphere
+SUBDIRS = sphere \
+	plane
 
 .PHONY: all $(SUBDIRS)
 

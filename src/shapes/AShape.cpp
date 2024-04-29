@@ -86,9 +86,13 @@ void ray::AShape::applyMatrix()
     std::shared_ptr<INode> parent = getParent();
     while (parent != nullptr) {
         if (parent->getType() == ray::type::TRANSFORM) {
-            newMatrix = applyRotation(newMatrix, rotation);
-            newMatrix = applyScale(newMatrix, scale);
-            newMatrix = applyTranslation(newMatrix, position);
+            std::shared_ptr<ray::Transform> transform = std::dynamic_pointer_cast<ray::Transform>(parent);
+            Math::Vector3D transform_rotation = transform->getRotation();
+            Math::Vector3D transform_scale = transform->getScale();
+            Math::Point3D transform_position = transform->getPosition();
+            newMatrix = applyRotation(newMatrix, transform_rotation);
+            newMatrix = applyScale(newMatrix, transform_scale);
+            newMatrix = applyTranslation(newMatrix, transform_position);
         }
         parent = parent->getParent();
     }
