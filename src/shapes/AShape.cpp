@@ -74,9 +74,7 @@ Math::Matrix<4,4> applyTranslation(Math::Matrix<4,4> matrix, Math::Point3D posit
     translationMatrix(0,3) = position.X;
     translationMatrix(1,3) = position.Y;
     translationMatrix(2,3) = position.Z;
-    std::cout << "position: " << position.X << " " << position.Y << " " << position.Z << std::endl;
     resultMatrix = matrix * translationMatrix;
-    std::cout << resultMatrix << std::endl;
     return resultMatrix;
 }
 
@@ -112,7 +110,6 @@ void ray::AShape::applyMatrix()
         }
         parent = parent->getParent();
     }
-    std::cout << "position_end: " << position.X << " " << position.Y << " " << position.Z << std::endl;
     _transformMatrix = newMatrix;
 }
 

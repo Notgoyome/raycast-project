@@ -38,13 +38,12 @@ Test(sphere, test_sphere)
     sphere->applyMatrix();
     Maybe<Math::Point3D> point = sphere->hit(*ray);
     if (point.has_value()) {
-        //std::cout << point.value().X << " " << point.value().Y << " " << point.value().Z << std::endl;
         if (point.value().X > -0.20 || point.value().X < -0.26)
             test = false;
         if (point.value().Y < -0.80 || point.value().Y > -0.75)
             test = false;
-//        if (point.value().Z < 0.55 || point.value().Z > 0.60)
-//            test = false;
+        if (point.value().Z < 0.55 || point.value().Z > 0.60)
+            test = false;
     }
     cr_assert_eq(test, true, "ray must hit the sphere");
 }
