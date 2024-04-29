@@ -15,6 +15,7 @@ namespace ray {
         std::shared_ptr<ray::INode> _parent;
         ray::type type;
         std::vector<std::shared_ptr<ray::INode>> children;
+        std::string _name;
 
         // CONSTR
         explicit ANode(ray::type type) : type(type) {}

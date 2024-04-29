@@ -6,6 +6,11 @@
 */
 
 #include "DLClass.hpp"
+#include "INode.hpp"
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <string>
 
 #ifndef PLUGINMANAGER_HPP_
 #define PLUGINMANAGER_HPP_
