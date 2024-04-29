@@ -6,30 +6,33 @@
 */
 
 #include <iostream>
-#include "Configuration.hpp"
-#include "Image.hpp"
-#include "INode.hpp"
-#include "../lights/point_light/PointLight.hpp"
-#include "../../include/Configuration.hpp"
-#include "../transformations/Transform.hpp"
+#include "NodeBuilder.hpp"
+#include "parsing.hpp"
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     if (argc != 2) {
         std::cerr << "USAGE: ./raytracer <SCENE_FILE>" << std::endl;
+        throw ray::CoreException("Invalid number of arguments.");
         return 84;
     }
-    if (argc == 2 && std::string(argv[1]) == "--help") {
-        std::cout << "USAGE: ./raytracer <SCENE_FILE>" << std::endl;
-        std::cout << "\tSCENE_FILE: scene configuration" << std::endl;
-        return 0;
-    }
-    if (argc == 2) {
-        ray::Configuration config(argv[1]);
-        if (config.getNodes().empty()) {
-            std::cerr << "Error: No nodes found in the configuration file" << std::endl;
+
+    try {
+        ray::NodeBuilder builder(argv[1]);
+        auto nodes = builder.getRootNodes();
+        if (nodes.empty()) {
+            throw ray::CoreException("No root nodes found in the scene file.");
             return 84;
         }
+
+        // à implémenter
+        //
+        //
+
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return 84;
     }
+
     return 0;
 }

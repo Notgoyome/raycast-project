@@ -17,4 +17,16 @@
 #include <memory>
 #include <libconfig.h++>
 
+namespace ray {
+    class CoreException : public std::exception {
+        public:
+            CoreException(const std::string &message) : _message(message) {}
+
+            const char *what() const noexcept override { return _message.c_str(); }
+
+        private:
+            std::string _message;
+    };
+}
+
 #endif /* !PARSING_HPP_ */

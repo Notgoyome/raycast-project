@@ -19,12 +19,12 @@
 #endif
 
 namespace ray {
-    class PluginManagerException : public std::exception {
-        public:
-            PluginManagerException(const std::string &message) : _message(message) {}
-            const char *what() const noexcept override { return _message.c_str(); }
-        private:
-            std::string _message;
+    class NodeFactoryException : public std::exception {
+    public:
+        NodeFactoryException(const std::string& message) : _message(message) {}
+        const char* what() const noexcept override { return _message.c_str(); }
+    private:
+        std::string _message;
     };
 
     class DynamicPlugin {
@@ -41,12 +41,12 @@ namespace ray {
 #ifdef _WIN32
                 handle = LoadLibraryA(path.c_str());
                 if (!handle) {
-                    throw ray::PluginManagerException("Failed to load plugin: " + std::to_string(GetLastError()));
+                    throw ray::NodeFactoryException("Failed to load plugin: " + std::to_string(GetLastError()));
                 }
 #else
                 handle = dlopen(path.c_str(), RTLD_LAZY);
                 if (!handle) {
-                    throw ray::PluginManagerException("Failed to load plugin: " + std::string(dlerror()));
+                    throw ray::NodeFactoryException("Failed to load plugin: " + std::string(dlerror()));
                 }
 #endif
             }
@@ -68,14 +68,14 @@ namespace ray {
 #ifdef _WIN32
                 T result = reinterpret_cast<T>(GetProcAddress((HMODULE)handle, name.c_str()));
                 if (!result) {
-                    throw ray::PluginManagerException("Failed to retrieve symbol: " + std::to_string(GetLastError()));
+                    throw ray::NodeFactoryException("Failed to retrieve symbol: " + std::to_string(GetLastError()));
                 }
 #else
                 dlerror();
                 T result = reinterpret_cast<T>(dlsym(handle, name.c_str()));
                 const char *dlsym_error = dlerror();
                 if (dlsym_error) {
-                    throw ray::PluginManagerException("Failed to retrieve symbol: " + std::string(dlsym_error));
+                    throw ray::NodeFactoryException("Failed to retrieve symbol: " + std::string(dlsym_error));
                 }
 #endif
                 return result;
