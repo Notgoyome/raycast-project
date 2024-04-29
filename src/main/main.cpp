@@ -6,7 +6,7 @@
 */
 
 #include <iostream>
-#include "../../include/Configuration.hpp"
+#include "Configuration.hpp"
 
 int main(int argc, char **argv)
 {
