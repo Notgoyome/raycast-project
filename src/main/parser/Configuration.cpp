@@ -15,3 +15,8 @@ ray::Configuration::Configuration(std::string filename)
 ray::Configuration::~Configuration()
 {
 }
+
+std::vector<std::shared_ptr<ray::INode *>> ray::Configuration::getNodes() const
+{
+    return _nodes;
+}

@@ -21,6 +21,10 @@ int main(int argc, char **argv)
     }
     if (argc == 2) {
         ray::Configuration config(argv[1]);
+        if (config.getNodes().empty()) {
+            std::cerr << "Error: No nodes found in the configuration file" << std::endl;
+            return 84;
+        }
     }
     return 0;
 }

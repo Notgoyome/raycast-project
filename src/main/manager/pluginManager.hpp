@@ -5,8 +5,11 @@
 ** pluginManager
 */
 
+#include "DLClass.hpp"
+
 #ifndef PLUGINMANAGER_HPP_
 #define PLUGINMANAGER_HPP_
+
 
 
 #endif /* !PLUGINMANAGER_HPP_ */
