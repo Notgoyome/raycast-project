@@ -37,6 +37,12 @@ void ray::ANode::setName(const std::string &name)
     _name = name;
 }
 
+
+std::shared_ptr<ray::INode> ray::ANode::getShared()
+{
+    return shared_from_this();
+}
+
 std::shared_ptr<ray::INode> ray::ANode::getChild(int index) const
 {
     if (index < 0 || index >= children.size())

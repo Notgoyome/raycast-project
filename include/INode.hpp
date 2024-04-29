@@ -22,7 +22,7 @@ namespace ray {
         TRANSFORM = 6,
     };
 
-    class INode {
+    class INode : public std::enable_shared_from_this<INode> {
     public:
         virtual ~INode() = default;
 
@@ -32,10 +32,13 @@ namespace ray {
         virtual void setParent(std::shared_ptr<INode> node) = 0;
         virtual void setType(ray::type type) = 0;
 
+        [[nodiscard]] virtual std::shared_ptr<INode> getShared() = 0;
+
         // GETTERS
         [[nodiscard]] virtual std::shared_ptr<INode> getChild(int index) const = 0;
         [[nodiscard]] virtual std::shared_ptr<INode> getParent() const = 0;
         [[nodiscard]] virtual type getType() const = 0;
+
     };
 }
 

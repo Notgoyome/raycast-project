@@ -14,30 +14,32 @@
 
 namespace ray {
     class ANode : virtual public INode {
-        private:
-            std::shared_ptr<ray::INode> _parent;
-            ray::type type;
-            std::vector<std::shared_ptr<ray::INode>> children;
-            std::string _name;
+    private:
+        std::shared_ptr<ray::INode> _parent;
+        ray::type type;
+        std::vector<std::shared_ptr<ray::INode>> children;
+        std::string _name;
 
-        protected:
-            explicit ANode(ray::type type) : type(type) {}
+    protected:
+        explicit ANode(ray::type type) : type(type) {}
 
-        public:
-            virtual ~ANode() = default;
+    public:
+        virtual ~ANode() = default;
 
-            // SETTERS
-            void addChild(std::shared_ptr<INode> child) override;
-            void removeChild(std::shared_ptr<INode> child) override;
-            void setParent(std::shared_ptr<INode> parent) override;
-            void setType(ray::type type) override;
-            void setName(const std::string &name);
+        // SETTERS
+        void addChild(std::shared_ptr<INode> child) override;
+        void removeChild(std::shared_ptr<INode> child) override;
+        void setParent(std::shared_ptr<INode> parent) override;
+        void setType(ray::type type) override;
+        void setName(const std::string &name);
 
-            // GETTERS
-            [[nodiscard]] std::shared_ptr<ray::INode> getChild(int index) const override;
-            [[nodiscard]] std::shared_ptr<ray::INode> getParent() const override;
-            [[nodiscard]] ray::type getType() const override;
-            [[nodiscard]] std::string getName() const;
+        [[nodiscard]] std::shared_ptr<INode> getShared() override;
+
+        // GETTERS
+        [[nodiscard]] std::shared_ptr<ray::INode> getChild(int index) const override;
+        [[nodiscard]] std::shared_ptr<ray::INode> getParent() const override;
+        [[nodiscard]] ray::type getType() const override;
+        [[nodiscard]] std::string getName() const;
     };
 }
 
