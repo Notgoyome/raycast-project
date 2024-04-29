@@ -16,6 +16,7 @@ public:
     unsigned int G = 0;
     unsigned int B = 0;
 
+    RGB() = default;
     RGB(unsigned int R, unsigned int G, unsigned int B) : R(R), G(G), B(B) {}
     RGB(const RGB& other) = default;
     RGB(RGB&& other) = default;
