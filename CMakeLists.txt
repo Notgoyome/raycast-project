@@ -17,9 +17,7 @@ add_executable(raytracer
         include/Ray.hpp
         src/math/Point3D.cpp
         src/math/Vector3D.cpp
-        src/main/main.cpp
-        src/main/parser/Configuration.cpp
-        src/main/manager/pluginManager.hpp)
+        src/main/main.cpp)
 
 target_link_libraries(raytracer sfml-graphics sfml-window sfml-system)
 add_dependencies(raytracer BuildPrimitives)
