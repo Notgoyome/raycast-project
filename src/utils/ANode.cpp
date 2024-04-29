@@ -1,11 +1,17 @@
-//
-// Created by Guillaume Tran on 27/04/2024.
-//
+/*
+** EPITECH PROJECT, 2024
+** B-OOP-400-MPL-4-1-raytracer-robin.glaude
+** File description:
+** ANode
+*/
 
 #include "ANode.hpp"
 
 void ray::ANode::addChild(std::shared_ptr<INode> child)
 {
+    if (child == nullptr)
+        return;
+    child->setParent(shared_from_this());
     children.push_back(child);
 }
 
@@ -18,7 +24,7 @@ void ray::ANode::removeChild(std::shared_ptr<INode> child)
 
 void ray::ANode::setParent(std::shared_ptr<INode> parent)
 {
-    _parent = std::shared_ptr(std::dynamic_pointer_cast<ANode>(parent));
+    _parent = parent;
 }
 
 void ray::ANode::setType(ray::type type)
@@ -26,9 +32,14 @@ void ray::ANode::setType(ray::type type)
     ANode::type = type;
 }
 
+void ray::ANode::setName(const std::string &name)
+{
+    _name = name;
+}
+
 std::shared_ptr<ray::INode> ray::ANode::getChild(int index) const
 {
-    if (index < 0 || index >= static_cast<int>(children.size()))
+    if (index < 0 || index >= children.size())
         return nullptr;
     return children[index];
 }
@@ -41,4 +52,9 @@ std::shared_ptr<ray::INode> ray::ANode::getParent() const
 ray::type ray::ANode::getType() const
 {
     return type;
+}
+
+std::string ray::ANode::getName() const
+{
+    return _name;
 }

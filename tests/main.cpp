@@ -4,7 +4,7 @@
 
 #include "main.hpp"
 //include dl open
-#include <dlfcn.h>
+#include "DLClass.hpp"
 
 int main(void)
 {

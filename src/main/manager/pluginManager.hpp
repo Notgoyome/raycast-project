@@ -5,8 +5,16 @@
 ** pluginManager
 */
 
+#include "DLClass.hpp"
+#include "INode.hpp"
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <string>
+
 #ifndef PLUGINMANAGER_HPP_
 #define PLUGINMANAGER_HPP_
+
 
 
 #endif /* !PLUGINMANAGER_HPP_ */
