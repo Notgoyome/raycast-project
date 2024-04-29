@@ -8,8 +8,15 @@
 #ifndef RENDERER_HPP_
 #define RENDERER_HPP_
 
+#include "Image.hpp"
+#include "RGB.hpp"
+#include "math/Vector2D.hpp"
+
 #include <iostream>
 #include <exception>
+#include <string>
+#include <fstream>
+#include <algorithm>
 
 namespace ray {
     class RendererException : public std::exception {
@@ -24,8 +31,12 @@ namespace ray {
         public:
             Renderer();
             ~Renderer();
+            void getSize(const std::map<Math::Vector2D, RGB>& image);
+            void renderPpmImage(Image image, std::string filename);
 
         private:
+            int _width;
+            int _height;
     };
 }
 
