@@ -9,6 +9,9 @@
 
 void ray::ANode::addChild(std::shared_ptr<INode> child)
 {
+    if (child == nullptr)
+        return;
+    child->setParent(shared_from_this());
     children.push_back(child);
 }
 
