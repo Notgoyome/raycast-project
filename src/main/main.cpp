@@ -6,7 +6,7 @@
 */
 
 #include <iostream>
-#include "NodeBuilder.hpp"
+#include "parser/NodeBuilder.hpp"
 #include "parsing.hpp"
 
 int main(int argc, char** argv)
