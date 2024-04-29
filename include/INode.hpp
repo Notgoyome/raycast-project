@@ -38,7 +38,6 @@ namespace ray {
         [[nodiscard]] virtual std::shared_ptr<INode> getChild(int index) const = 0;
         [[nodiscard]] virtual std::shared_ptr<INode> getParent() const = 0;
         [[nodiscard]] virtual type getType() const = 0;
-
     };
 }
 
