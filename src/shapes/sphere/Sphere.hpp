@@ -23,12 +23,14 @@ namespace RayTracer {
 
         ~Sphere() = default;
 
-        Maybe<Math::Point3D> hit(const Raytracer::Ray &ray) override;
+        Maybe<Math::Point3D> hit(const Raytracer::Ray ray) override;
 
-        Math::Vector3D getNormale(const Math::Point3D point);
+        Math::Vector3D getNormale(const Math::Point3D point) override;
 
     private:
     };
 }
 
+extern "C" RayTracer::Sphere *create();
+extern "C" ray::type getType();
 #endif //B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_SPHERE_HPP

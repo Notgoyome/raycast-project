@@ -108,6 +108,24 @@ namespace Math {
         return matRes;
     }
 
+    template<uint8_t ROW, uint8_t COL, uint8_t INNER>
+    Matrix<ROW, COL> operator*(const Matrix<ROW, INNER>& left, const Matrix<INNER, COL>& right)
+    {
+        Matrix<ROW, COL> matRes;
+
+        for (int leftRow = 0; leftRow < ROW; leftRow++) {
+            for (int rightCol = 0; rightCol < COL; rightCol++) {
+                double res = 0;
+
+                for (int i = 0; i < INNER; i++) {
+                    res += left(leftRow, i) * right(i, rightCol);
+                }
+                matRes(leftRow, rightCol) = res;
+            }
+        }
+        return matRes;
+    }
+
     template<uint8_t ROW, uint8_t COL>
     double& Matrix<ROW, COL>::operator()(int row, int col)
     {
