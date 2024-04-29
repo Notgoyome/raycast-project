@@ -8,15 +8,18 @@
 #ifndef POINTLIGHT_HPP
 #define POINTLIGHT_HPP
 
+#include <Maybe.hpp>
+
 #include "../ALight.hpp"
 
 namespace ray {
 
     class PointLight : public ray::ALight {
-        Math::Point3D _pos;
-
+    private:
+        Maybe<Math::Point3D> getPos() const;
     public:
-        PointLight(RGB color, Math::Point3D pos);
+        explicit PointLight(RGB color);
+        ~PointLight() override = default;
 
         [[nodiscard]] Math::Vector3D getIncidentVector(Math::Point3D pos) const override;
     };
