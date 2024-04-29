@@ -42,3 +42,13 @@ ray::type ray::ANode::getType() const
 {
     return type;
 }
+
+std::string ray::ANode::getName() const
+{
+    return _name;
+}
+
+void ray::ANode::setName(const std::string &name)
+{
+    _name = name;
+}

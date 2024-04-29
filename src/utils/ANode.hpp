@@ -28,11 +28,13 @@ namespace ray {
         void removeChild(std::shared_ptr<INode> child) override;
         void setParent(std::shared_ptr<INode> parent) override;
         void setType(ray::type type) override;
+        void setName(const std::string &name);
 
         // GETTERS
         [[nodiscard]] std::shared_ptr<ray::INode> getChild(int index) const override;
         [[nodiscard]] std::shared_ptr<ray::INode> getParent() const override;
         [[nodiscard]] ray::type getType() const override;
+        [[nodiscard]] std::string getName() const;
     };
 }
 
