@@ -8,7 +8,7 @@
 #ifndef ASHAPE_HPP_
 #define ASHAPE_HPP_
 
-#include "Ray.hpp"
+#include "../../include/Ray.hpp"
 #include "../../include/Maybe.hpp"
 #include "../utils/ANode.hpp"
 #include "../../include/math/MatrixN.hpp"

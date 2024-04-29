@@ -6,11 +6,3 @@
 */
 
 #include "ATransform.hpp"
-
-ray::ATransform::ATransform()
-{
-}
-
-ray::ATransform::~ATransform()
-{
-}

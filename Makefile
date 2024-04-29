@@ -10,6 +10,9 @@ CFLAGS=-I./include -I./src -std=c++17 -fPIC -g3
 LDFLAGS=-shared
 
 MAIN_SRCS=$(shell find src/main -name "*.cpp")
+TESTS_SRCS=$(shell find src/ -name "*.cpp" ! -name "main.cpp")
+TESTS_SRCS += tests/main.cpp
+
 
 CAMERAS=$(patsubst src/cameras/%/,%, $(wildcard src/cameras/*/))
 LIGHTS=$(patsubst src/lights/%/,%, $(wildcard src/lights/*/))
@@ -53,3 +56,10 @@ fclean: clean
 	rm -f raytracer
 
 re: fclean all
+
+tests_run : $(TEST_SRCS)
+	find . -name "*.gcda" -delete
+	find . -name "*.gcno" -delete
+	$(CC) $(CFLAGS) -o unit_tests $(TESTS_SRCS) --coverage -lcriterion
+	./unit_tests
+	#gcovr --exclude tests/

@@ -12,7 +12,7 @@
 #include <cmath>
 #include <memory>
 
-namespace RayTracer {
+namespace Raytracer {
     class Sphere : public ray::AShape {
     public:
         float radius;
@@ -31,6 +31,7 @@ namespace RayTracer {
     };
 }
 
-extern "C" RayTracer::Sphere *create();
+
+extern "C" Raytracer::Sphere *create();
 extern "C" ray::type getType();
 #endif //B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_SPHERE_HPP

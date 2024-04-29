@@ -8,12 +8,12 @@
 #include "../utils/ANode.hpp"
 #include "../../include/math/Vector3D.hpp"
 #include "../../include/math/Point3D.hpp"
+#include "../../include/math/MatrixN.hpp"
 
 namespace ray {
     class Transform : public ray::ANode {
     public:
-        Transform();
-
+        Transform(Math::Point3D position, Math::Vector3D rotation, Math::Vector3D scale);
         ~Transform() = default;
 
         Math::Point3D getPosition() { return _position; }
@@ -26,6 +26,7 @@ namespace ray {
         Math::Point3D _position;
         Math::Vector3D _rotation;
         Math::Vector3D _scale;
+        Math::Matrix<4, 4> _matrix;
 
     };
 }

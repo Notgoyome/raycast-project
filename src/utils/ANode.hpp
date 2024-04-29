@@ -8,7 +8,7 @@
 #ifndef B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_ANODE_HPP
 #define B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_ANODE_HPP
 
-#include "INode.hpp"
+#include "../../include/INode.hpp"
 #include <iostream>
 #include <vector>
 

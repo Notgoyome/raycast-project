@@ -70,10 +70,23 @@ Math::Matrix<4,4> applyScale(Math::Matrix<4,4> matrix, Math::Vector3D scale)
 Math::Matrix<4,4> applyTranslation(Math::Matrix<4,4> matrix, Math::Point3D position)
 {
     Math::Matrix<4,4> translationMatrix;
+    Math::Matrix<4,4> resultMatrix;
     translationMatrix(0,3) = position.X;
     translationMatrix(1,3) = position.Y;
     translationMatrix(2,3) = position.Z;
-    return matrix * translationMatrix;
+    std::cout << "position: " << position.X << " " << position.Y << " " << position.Z << std::endl;
+    resultMatrix = matrix * translationMatrix;
+    std::cout << resultMatrix << std::endl;
+    return resultMatrix;
+}
+
+Math::Matrix<4,4> setTranslation(Math::Matrix<4,4> matrix, Math::Point3D position)
+{
+    Math::Matrix<4,4> translationMatrix;
+    translationMatrix(0,3) = position.X;
+    translationMatrix(1,3) = position.Y;
+    translationMatrix(2,3) = position.Z;
+    return translationMatrix;
 }
 
 void ray::AShape::applyMatrix()
@@ -83,6 +96,9 @@ void ray::AShape::applyMatrix()
     Math::Vector3D scale = {1, 1, 1};
     Math::Point3D position = {0, 0, 0};
 
+    for (int i = 0; i < 3; i++) {
+            newMatrix(i, i) = 1;
+    }
     std::shared_ptr<INode> parent = getParent();
     while (parent != nullptr) {
         if (parent->getType() == ray::type::TRANSFORM) {
@@ -96,6 +112,7 @@ void ray::AShape::applyMatrix()
         }
         parent = parent->getParent();
     }
+    std::cout << "position_end: " << position.X << " " << position.Y << " " << position.Z << std::endl;
     _transformMatrix = newMatrix;
 }
 
