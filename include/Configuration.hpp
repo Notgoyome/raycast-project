@@ -16,6 +16,7 @@
 #include <string>
 
 #include "INode.hpp"
+#include "RGB.hpp"
 
 namespace ray {
     class ConfigurationException : public std::exception {
@@ -34,6 +35,7 @@ namespace ray {
             std::vector<std::shared_ptr<ray::INode *>>getNodes() const;
         private:
             std::vector<std::shared_ptr<ray::INode *>> _nodes;
+            RGB _background;
     };
 }
 
