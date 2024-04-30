@@ -16,7 +16,7 @@ namespace ray {
 
     class PointLight : public ray::ALight {
     private:
-        Maybe<Math::Point3D> getPos() const;
+        Math::Point3D getPos() const;
     public:
         explicit PointLight(RGB color);
         ~PointLight() override = default;

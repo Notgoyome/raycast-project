@@ -1,23 +1,25 @@
 /*
 ** EPITECH PROJECT, 2024
-** B-OOP-400-MPL-4-1-raytracer-robin.glaude
+** raytracer
 ** File description:
-** ITransform
+** ITransform.hpp
 */
 
+#ifndef ITRANSFORM_HPP
+#define ITRANSFORM_HPP
 
-#ifndef ITRANSFORM_HPP_
-#define ITRANSFORM_HPP_
-
+#include "math/MatrixN.hpp"
 #include "INode.hpp"
 
 namespace ray {
 
-    class ITransform : public INode {
-        public:
-            ITransform();
-            ~ITransform();
+    class ITransform : virtual public ray::INode {
+    public:
+        virtual ~ITransform() = default;
+
+        [[nodiscard]] virtual Math::Matrix<4, 4> getMatrix() const = 0;
     };
+
 }
 
-#endif /* !ITRANSFORM_HPP_ */
+#endif

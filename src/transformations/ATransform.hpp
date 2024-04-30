@@ -1,29 +1,32 @@
 /*
 ** EPITECH PROJECT, 2024
-** B-OOP-400-MPL-4-1-raytracer-robin.glaude
+** raytracer
 ** File description:
-** ATransform
+** ATransform.hpp
 */
 
-#include "include/math/MatrixN.hpp"
-#include "../utils/ANode.hpp"
-#include "include/math/Point3D.hpp"
-#include "include/math/Vector3D.hpp"
+#ifndef ATRANSFORM_HPP
+#define ATRANSFORM_HPP
 
-#ifndef ATRANSFORM_HPP_
-#define ATRANSFORM_HPP_
+#include "ITransform.hpp"
+#include "../utils/ANode.hpp"
 
 namespace ray {
 
-    class ATransform : public ANode {
-        public:
+    class ATransform : public ITransform, public ANode {
+    protected:
+        Math::Matrix<4, 4> _matrix;
 
-        protected:
-            Math::Point3D _position;
-            Math::Vector3D _rotation;
-            Math::Vector3D _scale;
-        private:
+        [[nodiscard]] static Math::Matrix<4, 4> getIdentityMatrix();
+
+        ATransform();
+
+    public:
+        virtual ~ATransform() = default;
+
+        [[nodiscard]] Math::Matrix<4, 4> getMatrix() const override { return _matrix; }
     };
-}
 
-#endif /* !ATRANSFORM_HPP_ */
+} // ray
+
+#endif //ATRANSFORM_HPP
