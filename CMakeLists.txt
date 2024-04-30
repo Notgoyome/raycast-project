@@ -19,5 +19,5 @@ add_executable(raytracer
         src/math/Vector3D.cpp
         src/main/main.cpp)
 
-target_link_libraries(raytracer sfml-graphics sfml-window sfml-system)
+target_link_libraries(raytracer sfml-graphics sfml-window sfml-system config++)
 add_dependencies(raytracer BuildPrimitives)
