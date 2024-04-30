@@ -6,7 +6,7 @@
 ##
 
 CC=g++
-CFLAGS=-I./include -I./src -std=c++17 -fPIC -g3
+CFLAGS=-I./include -I./src -std=c++17 -fPIC -g3 -lconfig++
 LDFLAGS=-shared
 
 MAIN_SRCS=$(shell find src/main -name "*.cpp")
