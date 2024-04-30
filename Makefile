@@ -6,13 +6,12 @@
 ##
 
 CC=g++
-CFLAGS=-I./include -I./src -std=c++17 -fPIC -g3 -lconfig++
+CFLAGS=-I./include -I./src -std=c++17 -fPIC -g3
 LDFLAGS=-shared
 
 MAIN_SRCS=$(shell find src/main -name "*.cpp")
 TESTS_SRCS=$(shell find src/ -name "*.cpp" ! -name "main.cpp")
 TESTS_SRCS += tests/main.cpp
-
 
 CAMERAS=$(patsubst src/cameras/%/,%, $(wildcard src/cameras/*/))
 LIGHTS=$(patsubst src/lights/%/,%, $(wildcard src/lights/*/))
@@ -33,7 +32,7 @@ PLUGINS_TARGETS=$(foreach plugin,$(CAMERAS),plugins/cameras_$(plugin).so) \
 all: main plugins
 
 main: $(MAIN_SRCS)
-	$(CC) $(CFLAGS) -o raytracer $(MAIN_SRCS)
+	$(CC) $(CFLAGS) -o raytracer $(MAIN_SRCS) -lconfig++
 
 define build_plugin
 plugins/$(1)_$(2).so:
