@@ -17,6 +17,7 @@
 #include <memory>
 #include <libconfig.h++>
 #include "INode.hpp"
-#include "NodeFactory.hpp"
+#include "../src/main/parser/NodeFactory.hpp"
+#include "../src/main/parser/NodeBuilder.hpp"
 
 #endif /* !PARSING_HPP_ */
