@@ -5,10 +5,11 @@
 ** NodeBuilder
 */
 
+#include "NodeFactory.hpp"
+
 #ifndef NODEBUILDER_HPP_
 #define NODEBUILDER_HPP_
 
-#include "NodeFactory.hpp"
 #include <libconfig.h++>
 #include <map>
 #include <vector>
