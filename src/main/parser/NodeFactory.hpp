@@ -10,6 +10,7 @@
 
 #include "DLClass.hpp"
 #include "INode.hpp"
+#include <map>
 
 namespace ray {
     class NodeFactoryException : public std::exception {
