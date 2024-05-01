@@ -39,3 +39,13 @@ namespace ray {
         _matrix = res;
     }
 } // ray
+
+ray::ITransform *create(const std::map<std::string, std::string> &attributes)
+{
+    if (attributes.find("rotation") == attributes.end())
+        throw ray::NodeError("ITransform: missing translation attribute", "Rotation.cpp");
+    Maybe<Math::Vector3D> scale = Math::Vector3D::fromStr(attributes.at("rotation"));
+    if (!scale.has_value())
+        throw ray::NodeError("ITransform: invalid translation attribute", "Rotation.cpp");
+    return new ray::Rotation(scale.value());
+}

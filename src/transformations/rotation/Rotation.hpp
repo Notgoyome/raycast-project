@@ -12,6 +12,7 @@
 #include "math/Vector3D.hpp"
 //include cos cols etc etc from math
 #include <cmath>
+#include <map>
 
 namespace ray {
 
@@ -21,5 +22,7 @@ namespace ray {
     };
 
 } // ray
+
+extern "C" ray::ITransform *create(const std::map<std::string, std::string> &attributes);
 
 #endif //ROTATION_HPP

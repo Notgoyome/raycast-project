@@ -11,7 +11,7 @@
 #include "../ATransform.hpp"
 #include "math/Vector3D.hpp"
 #include <cmath>
-
+#include <map>
 
 namespace ray {
 
@@ -21,5 +21,7 @@ namespace ray {
     };
 
 }
+
+extern "C" ray::ITransform* create(const std::map<std::string, std::string>& attributes);
 
 #endif //TRANSLATION_HPP

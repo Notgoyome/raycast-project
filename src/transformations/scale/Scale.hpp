@@ -8,6 +8,8 @@
 #ifndef SCALE_HPP
 #define SCALE_HPP
 
+#include <map>
+
 #include "../ATransform.hpp"
 #include "math/Vector3D.hpp"
 
@@ -19,5 +21,7 @@ namespace ray {
     };
 
 } // ray
+
+extern "C" ray::ITransform *create(const std::map<std::string, std::string> &attributes);
 
 #endif //SCALE_HPP
