@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 #include <exception>
+#include <algorithm>
 
 namespace ray {
 
