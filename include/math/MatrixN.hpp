@@ -32,15 +32,17 @@ namespace Math {
         Matrix operator+(const Matrix& other);
         Matrix& operator+=(const Matrix& other);
         Matrix<ROW, ROW> operator*(const Matrix<COL, ROW>& other);
+        Matrix& operator*=(const Matrix<COL, ROW>& other);
 
         double& operator()(int row, int col);
         double operator()(int row, int col) const;
         Matrix& operator=(const Matrix& other);
-        static Matrix<ROW,COL> identity();
 
         [[nodiscard]] int cols() const { return COL; }
         [[nodiscard]] int rows() const { return ROW; }
         [[nodiscard]] Matrix<COL, ROW> T() const;
+
+        [[nodiscard]] static Matrix<ROW, COL> identity();
     };
 
     template<uint8_t ROW, uint8_t COL>
@@ -112,6 +114,23 @@ namespace Math {
         return matRes;
     }
 
+    template<uint8_t ROW, uint8_t COL>
+    Matrix<ROW, COL> & Matrix<ROW, COL>::operator*=(
+        const Matrix<COL, ROW> &other)
+    {
+        for (int leftRow = 0; leftRow < ROW; leftRow++) {
+            for (int rightCol = 0; rightCol < ROW; rightCol++) {
+                double res = 0;
+
+                for (int i = 0; i < COL; i++) {
+                    res += (*this)(leftRow, i) * other(i, rightCol);
+                }
+                (*this)(leftRow, rightCol) = res;
+            }
+        }
+        return *this;
+    }
+
     template<uint8_t ROW, uint8_t COL, uint8_t INNER>
     Matrix<ROW, COL> operator*(const Matrix<ROW, INNER>& left, const Matrix<INNER, COL>& right)
     {
@@ -173,21 +192,20 @@ namespace Math {
     }
 
     template<uint8_t ROW, uint8_t COL>
-    Matrix<ROW,COL> Matrix<ROW,COL>::identity()
+    Matrix<ROW, COL> Matrix<ROW, COL>::identity()
     {
-        if (ROW != COL) {
-            throw std::exception(); // to do later throw a custom exception
-        }
-        Matrix<ROW, COL> mat;
+        Matrix matRes;
+
         for (int i = 0; i < ROW; i++) {
             for (int j = 0; j < COL; j++) {
-                if (i == j)
-                    mat(i, j) = 1;
-                else
-                    mat(i, j) = 0;
+                if (i == j) {
+                    matRes(i, j) = 1;
+                } else {
+                    matRes(i, j) = 0;
+                }
             }
         }
-        return mat;
+        return matRes;
     }
 
     template<uint8_t ROW, uint8_t COL>
