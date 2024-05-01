@@ -12,6 +12,9 @@
 #include <utility>
 #include <iostream>
 #include <vector>
+#include <exception>
+#include <cmath>
+#include <cstdint>
 
 namespace Math {
 
@@ -33,6 +36,7 @@ namespace Math {
         double& operator()(int row, int col);
         double operator()(int row, int col) const;
         Matrix& operator=(const Matrix& other);
+        static Matrix<ROW,COL> identity();
 
         [[nodiscard]] int cols() const { return COL; }
         [[nodiscard]] int rows() const { return ROW; }
@@ -166,6 +170,24 @@ namespace Math {
             }
         }
         return matRes;
+    }
+
+    template<uint8_t ROW, uint8_t COL>
+    Matrix<ROW,COL> Matrix<ROW,COL>::identity()
+    {
+        if (ROW != COL) {
+            throw std::exception(); // to do later throw a custom exception
+        }
+        Matrix<ROW, COL> mat;
+        for (int i = 0; i < ROW; i++) {
+            for (int j = 0; j < COL; j++) {
+                if (i == j)
+                    mat(i, j) = 1;
+                else
+                    mat(i, j) = 0;
+            }
+        }
+        return mat;
     }
 
     template<uint8_t ROW, uint8_t COL>

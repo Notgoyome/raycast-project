@@ -6,6 +6,8 @@
 */
 
 #include "Scale.hpp"
+#include <cmath>
+
 
 namespace ray {
 

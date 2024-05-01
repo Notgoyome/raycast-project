@@ -10,6 +10,8 @@
 
 #include "../ATransform.hpp"
 #include "math/Vector3D.hpp"
+#include <cmath>
+
 
 namespace ray {
 
