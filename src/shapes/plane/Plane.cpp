@@ -9,18 +9,20 @@ Plane::Plane()
 
 }
 
-Maybe<Math::Point3D> Plane::hit(const Raytracer::Ray ray) {
-    Math::Point3D center = getPosition();
-    Math::Vector3D normal = getNormale(center);
+Maybe<Math::Point3D> Plane::hit(const ray::Ray& ray) {
+    (void)ray;
+    // Math::Point3D center = getPosition();
+    // Math::Vector3D normal = getNormale(center);
 //    Math::Vector3D d = ray.origin - center;
 //    double product = d * normal;
 //
 //    if (fabs(product) < 0.0001)
 //        return Maybe<Math::Point3D>();
 //    double t = -product / (ray.direction * normal);
+    return Maybe<Math::Point3D>{};
 }
 
-Math::Vector3D Plane::getNormale(const Math::Point3D point)
+Math::Vector3D Plane::getNormale(__attribute__((unused))const Math::Point3D& point)
 {
     Math::Matrix<3,1> normale;
     normale(0,0) = 0;

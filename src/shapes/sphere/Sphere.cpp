@@ -4,48 +4,61 @@
 
 #include "Sphere.hpp"
 
-Raytracer::Sphere::Sphere(float radius, Math::Point3D center) : radius(radius), center(center)
+ray::Sphere::Sphere(float radius, Math::Point3D center) : radius(radius), center(center)
 {
 
 }
 
-Maybe<Math::Point3D> closestPoint(const Raytracer::Ray ray, float discriminant, float a, float b)
+double calcA(Math::Vector3D D)
 {
-    float t = (-b - sqrt(discriminant)) / (2 * a);
-    float t2 = (-b + sqrt(discriminant)) / (2 * a);
-
-    if (t < 0 && t2 < 0)
-        return Maybe<Math::Point3D>();
-    if (t < 0)
-        return Maybe{Math::Point3D(ray.origin + ray.direction * t2)};
-    if (t2 < 0)
-        return Maybe{Math::Point3D(ray.origin + ray.direction * t)};
-    if (t < t2)
-        return Maybe{Math::Point3D(ray.origin + ray.direction * t)};
-    return Maybe{Math::Point3D(ray.origin + ray.direction * t2)};
+    return pow(D.X, 2) + pow(D.Y, 2) + pow(D.Z, 2);
 }
 
-Maybe<Math::Point3D> Raytracer::Sphere::hit(const Raytracer::Ray ray)
+double calcB(Math::Point3D O, Math::Vector3D D, Math::Point3D origin)
 {
-    Math::Point3D center = getPosition();
-    Math::Point3D oc = ray.origin - center;
-    Math::Vector3D scale = Math::Vector3D{1, 1, 1};
-    float scaledRadius = std::max(scale.X, std::max(scale.Y, scale.Z)) * radius;
-    float a = (ray.direction.X * ray.direction.X +
-            ray.direction.Y * ray.direction.Y +
-            ray.direction.Z * ray.direction.Z);
-    float b = 2.0 * (oc.X * ray.direction.X +
-                    oc.Y * ray.direction.Y +
-                    oc.Z * ray.direction.Z);
-    float c = oc.X * oc.X + oc.Y * oc.Y + oc.Z * oc.Z - std::pow(scaledRadius, 2);
-    float discriminant = std::pow(b, 2) - 4 * a * c;
-
-    if (discriminant < 0)
-        return Maybe<Math::Point3D>();
-    return closestPoint(ray, discriminant, a, b);
+    return 2 * (D.X * (-origin.X + O.X) + D.Y * (-origin.Y + O.Y) + D.Z * (-origin.Z + O.Z));
 }
 
-Math::Vector3D Raytracer::Sphere::getNormale(const Math::Point3D point)
+double calcC(Math::Point3D O, Math::Point3D origin, double R)
+{
+    return pow(-origin.X + O.X, 2) + pow(-origin.Y + O.Y, 2) + pow(-origin.Z + O.Z, 2) - pow(R, 2);
+}
+
+double calcDet(double a, double b, double c)
+{
+    return pow(b, 2) - 4 * a * c;
+}
+
+Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
+{
+    double root1 = (-b + sqrt(det)) / (2 * a);
+    double root2 = (-b - sqrt(det)) / (2 * a);
+
+    Math::Point3D pos1 = {(ray.origin.X + ray.direction.X * root1), (ray.origin.Y + ray.direction.Y * root1), (ray.origin.Z + ray.direction.Z * root1)};
+    Math::Point3D pos2 = {(ray.origin.X + ray.direction.X * root2), (ray.origin.Y + ray.direction.Y * root2), (ray.origin.Z + ray.direction.Z * root2)};
+
+    Math::Vector3D vect1 = {pos1.X - ray.origin.X, pos1.Y - ray.origin.Y, pos1.Z - ray.origin.Z};
+    Math::Vector3D vect2 = {pos2.X - ray.origin.X, pos2.Y - ray.origin.Y, pos2.Z - ray.origin.Z};
+
+    if (vect1.length() < vect2.length())
+        return pos1;
+    return pos2;
+}
+
+Maybe<Math::Point3D> ray::Sphere::hit(const ray::Ray &ray)
+{
+    double a = calcA(ray.direction);
+    double b = calcB(ray.origin, ray.direction, center);
+    double c = calcC(ray.origin, center, radius);
+    double det = calcDet(a, b, c);
+
+    if (det < 0) {
+        return {};
+    }
+    return Maybe{getClosestRoot(a, b, det, ray)};
+}
+
+Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point)
 {
     Math::Vector3D normale = {point.X - center.X,
                               point.Y - center.Y,
@@ -54,9 +67,9 @@ Math::Vector3D Raytracer::Sphere::getNormale(const Math::Point3D point)
 }
 
 
-extern "C" Raytracer::Sphere *create()
+extern "C" ray::Sphere *create()
 {
-    return new Raytracer::Sphere(1, Math::Point3D(0, 0, 0));
+    return new ray::Sphere(1, Math::Point3D(0, 0, 0));
 }
 
 extern "C" ray::type getType()

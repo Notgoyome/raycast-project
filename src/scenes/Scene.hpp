@@ -11,6 +11,7 @@
 #include "IScene.hpp"
 #include "../utils/ANode.hpp"
 #include "../transformations/ITransform.hpp"
+#include "Maybe.hpp"
 
 namespace ray {
 
@@ -21,7 +22,7 @@ namespace ray {
         ~Scene() override = default;
 
         // RUNTIME
-        Maybe<PosShapePair> hit(const Raytracer::Ray &ray) override;
+        Maybe<PosShapePair> hit(const ray::Ray &ray) override;
 
         // GETTERS
         template<typename T>

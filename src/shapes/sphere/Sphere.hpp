@@ -12,7 +12,7 @@
 #include <cmath>
 #include <memory>
 
-namespace Raytracer {
+namespace ray {
     class Sphere : public ray::AShape {
     public:
         float radius;
@@ -21,17 +21,16 @@ namespace Raytracer {
 
         Sphere(float radius, Math::Point3D center);
 
-        ~Sphere() = default;
+        ~Sphere() override = default;
 
-        Maybe<Math::Point3D> hit(const Raytracer::Ray ray) override;
+        Maybe<Math::Point3D> hit(const ray::Ray& ray) override;
 
-        Math::Vector3D getNormale(const Math::Point3D point) override;
-
-    private:
+        Math::Vector3D getNormale(const Math::Point3D& point) override;
     };
 }
 
 
-extern "C" Raytracer::Sphere *create();
+extern "C" ray::Sphere *create();
 extern "C" ray::type getType();
+
 #endif //B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_SPHERE_HPP

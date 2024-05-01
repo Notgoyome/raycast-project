@@ -14,9 +14,8 @@
 namespace ray {
 
     class IMaterial : public INode {
-        public:
-            IMaterial();
-            ~IMaterial();
+    public:
+        virtual ~IMaterial() = default;
     };
 }
 

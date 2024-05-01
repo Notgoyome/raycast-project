@@ -28,7 +28,7 @@ namespace ray {
         virtual ~IScene() = default;
 
         // RUNTIME
-        [[nodiscard]] virtual Maybe<PosShapePair> hit(const Raytracer::Ray& ray) = 0;
+        [[nodiscard]] virtual Maybe<PosShapePair> hit(const ray::Ray& ray) = 0;
 
         // GETTERS
         [[nodiscard]] virtual std::vector<std::shared_ptr<ray::ILight>> getLights() const = 0;
