@@ -14,6 +14,7 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include "RGB.hpp"
 
 namespace ray {
     class NodeBuilderException : public std::exception {
@@ -30,6 +31,9 @@ namespace ray {
         private:
             std::map<int, std::shared_ptr<INode>> nodeMap;
             std::vector<std::shared_ptr<INode>> rootNodes;
+            int background_r;
+            int background_g;
+            int background_b;
 
         public:
             NodeBuilder(const std::string& filename)
@@ -86,6 +90,26 @@ namespace ray {
                             rootNodes.push_back(parentNode);
                         }
                     }
+                }
+
+                // background color
+                try {
+                    const libconfig::Setting& settings = cfg.lookup("settings");
+                    for (int i = 0; i < settings.getLength(); ++i) {
+                        const libconfig::Setting& setting = settings[i];
+                        if (setting.exists("background_color")) {
+                            const libconfig::Setting& color = setting["background_color"];
+                            int r, g, b;
+                            color.lookupValue("r", r);
+                            color.lookupValue("g", g);
+                            color.lookupValue("b", b);
+                            background_r = r;
+                            background_g = g;
+                            background_b = b;
+                        }
+                    }
+                } catch (const libconfig::SettingNotFoundException &nfex) {
+                    throw NodeBuilderException("Missing 'settings' in configuration file.");
                 }
             }
 

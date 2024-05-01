@@ -28,9 +28,9 @@ namespace ray {
             ray::DynamicPlugin plugin;
             try {
                 plugin.open(type);
-                auto create_fun = plugin.getSymbol<T*(*)(const std::map<std::string, std::string>&)>("create");
-                T* instance = create_fun(properties);
-                return std::shared_ptr<T>(instance, [&plugin](T* p) { delete p; plugin.close(); });
+                auto create_fun = plugin.getSymbol<std::shared_ptr<T>(*)(const std::map<std::string, std::string>&)>("create");
+                std::shared_ptr<T> instance = create_fun(properties);
+                return std::shared_ptr<T>(instance.get(), [&plugin](T* p) { plugin.close(); });
             } catch (const ray::NodeFactoryException& e) {
                 std::cerr << "Factory error: " << e.what() << std::endl;
                 return nullptr;
