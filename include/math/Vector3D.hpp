@@ -7,8 +7,9 @@
 
 #ifndef VECTOR3D_HPP
 #define VECTOR3D_HPP
-#include <Maybe.hpp>
 #include <string>
+
+#include "Maybe.hpp"
 
 namespace Math {
 
@@ -30,6 +31,9 @@ namespace Math {
         // OPERATORS
         Vector3D& operator=(const Vector3D& other) = default;
         Vector3D& operator=(Vector3D&& other) = default;
+
+        bool operator==(const Vector3D& other) const;
+        bool operator!=(const Vector3D& other) const;
 
         Vector3D operator+(const Vector3D& other) const;
         Vector3D& operator+=(const Vector3D& other);

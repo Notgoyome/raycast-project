@@ -7,8 +7,20 @@
 
 #include "math/Vector3D.hpp"
 #include <cmath>
+#include <algorithm>
+#include <stdexcept>
 
 namespace Math {
+    bool Vector3D::operator==(const Vector3D &other) const
+    {
+        return X == other.X && Y == other.Y && Z == other.Z;
+    }
+
+    bool Vector3D::operator!=(const Vector3D &other) const
+    {
+        return X != other.X || Y != other.Y || Z != other.Z;
+    }
+
     Vector3D Vector3D::operator+(const Vector3D &other) const
     {
         return Vector3D{X + other.X, Y + other.Y, Z + other.Z};
