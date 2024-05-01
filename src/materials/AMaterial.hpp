@@ -1,22 +1,24 @@
 /*
 ** EPITECH PROJECT, 2024
-** B-OOP-400-MPL-4-1-raytracer-robin.glaude
+** raytracer
 ** File description:
-** AMaterial
+** AMaterial.hpp
 */
 
-#ifndef AMATERIAL_HPP_
-#define AMATERIAL_HPP_
+#ifndef AMATERIAL_HPP
+#define AMATERIAL_HPP
+
+#include "IMaterial.hpp"
+#include "../utils/ANode.hpp"
 
 namespace ray {
-
-    class AMaterial {
-        public:
-            AMaterial();
-            ~AMaterial();
-
-        private:
+    class AMaterial : public ray::IMaterial, public ray::ANode {
+    protected:
+        AMaterial();
+    public:
+        virtual ~AMaterial() = default;
     };
 }
 
-#endif /* !AMATERIAL_HPP_ */
+
+#endif //AMATERIAL_HPP

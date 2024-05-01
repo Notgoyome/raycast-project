@@ -10,13 +10,21 @@
 #define IMATERIAL_HPP_
 
 #include "INode.hpp"
+#include "RGB.hpp"
+#include "math/Point3D.hpp"
+#include "../scenes/IScene.hpp"
 
 namespace ray {
 
-    class IMaterial : public INode {
+    class IMaterial : virtual public INode {
     public:
         virtual ~IMaterial() = default;
+
+        [[nodiscard]] virtual RGB getColor(int recursion, Math::Point3D collisionPoint,
+            Math::Vector3D normale, Math::Point3D camPos,
+            const std::shared_ptr<IScene>& scene) = 0;
     };
+
 }
 
 #endif /* !IMATERIAL_HPP_ */

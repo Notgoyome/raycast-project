@@ -1,16 +1,16 @@
 /*
 ** EPITECH PROJECT, 2024
-** B-OOP-400-MPL-4-1-raytracer-robin.glaude
+** raytracer
 ** File description:
-** AMaterial
+** AMaterial.cpp
 */
 
 #include "AMaterial.hpp"
 
-ray::AMaterial::AMaterial()
-{
-}
+namespace ray {
 
-ray::AMaterial::~AMaterial()
-{
+    ray::AMaterial::AMaterial() : ANode(ray::type::MATERIAL)
+    {
+    }
+
 }

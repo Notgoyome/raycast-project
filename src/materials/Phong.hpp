@@ -13,31 +13,16 @@
 #include "RGB.hpp"
 #include "math/MatrixN.hpp"
 #include "math/Point3D.hpp"
+#include "../lights/ILight.hpp"
+#include "../shapes/IShape.hpp"
+
+using ListLight = std::vector<std::shared_ptr<ray::ILight>>;
 
 namespace Phong {
 
-    class Light {
-        Math::Matrix<1, 3> _specularIntensity;
-        Math::Matrix<1, 3> _diffuseIntensity;
-        Math::Point3D _position;
-
-    public:
-        Light(Math::Matrix<1, 3> specularIntensity, Math::Matrix<1, 3> diffuseIntensity, Math::Point3D position)
-            : _specularIntensity(specularIntensity), _diffuseIntensity(diffuseIntensity), _position(position) {}
-        ~Light() = default;
-
-        void setSpecularIntensity(Math::Matrix<1, 3> specularIntensity) { _specularIntensity = specularIntensity; }
-        void setDiffuseIntensity(Math::Matrix<1, 3> diffuseIntensity) { _diffuseIntensity = diffuseIntensity; }
-        void setPosition(Math::Point3D position) { _position = position; }
-
-        [[nodiscard]] Math::Matrix<1, 3> getSpecularIntensity() const { return _specularIntensity; }
-        [[nodiscard]] Math::Matrix<1, 3> getDiffuseIntensity() const { return _diffuseIntensity; }
-        [[nodiscard]] Math::Point3D getPosition() const { return _position; }
-    };
-
     class Model {
     private:
-        std::vector<Light> _lights;
+        ListLight _lights;
         double _ia;
         double _alpha;
         Math::Matrix<1, 3> _ka;
@@ -47,12 +32,12 @@ namespace Phong {
         Math::Vector3D _normale;
         Math::Vector3D _view;
 
-        [[nodiscard]] unsigned int getPhongForValues(int idx) const;
+        [[nodiscard]] unsigned int getPhongForValues(int idx, std::vector<std::shared_ptr<ray::IShape>> objects) const;
 
     public:
         // CONSTR DESTRUCT
         Model(
-            std::vector<Light> lights,
+            ListLight lights,
             double ia,
             double alpha,
             Math::Matrix<1, 3> ka,
@@ -67,10 +52,10 @@ namespace Phong {
         ~Model() = default;
 
         // RUNTIME
-        [[nodiscard]] RGB calculateColor();
+        [[nodiscard]] RGB calculateColor(std::vector<std::shared_ptr<ray::IShape>> objects);
 
         // SETTERS
-        void setLights(std::vector<Light> lights) { _lights = lights; }
+        void setLights(ListLight lights) { _lights = lights; }
         void setIa(double ia) { _ia = ia; }
         void setAlpha(double alpha) { _alpha = alpha; }
         void setKa(Math::Matrix<1, 3> ka) { _ka = ka; }
@@ -81,7 +66,7 @@ namespace Phong {
         void setView(Math::Vector3D view) { _view = view; }
 
         // GETTERS
-        [[nodiscard]] std::vector<Light> getLights() const { return _lights; }
+        [[nodiscard]] ListLight getLights() const { return _lights; }
         [[nodiscard]] double getIa() const { return _ia; }
         [[nodiscard]] double getAlpha() const { return _alpha; }
         [[nodiscard]] Math::Matrix<1, 3> getKa() const { return _ka; }
