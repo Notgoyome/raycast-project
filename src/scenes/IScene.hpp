@@ -16,7 +16,6 @@
 #include "INode.hpp"
 #include "../lights/ILight.hpp"
 #include "../shapes/IShape.hpp"
-#include "../materials/IMaterial.hpp"
 
 using PosShapePair = std::pair<Math::Point3D, std::shared_ptr<ray::IShape>>;
 

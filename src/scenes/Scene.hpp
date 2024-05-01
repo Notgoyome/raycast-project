@@ -12,6 +12,7 @@
 #include "../utils/ANode.hpp"
 #include "../transformations/ITransform.hpp"
 #include "Maybe.hpp"
+#include "../materials/IMaterial.hpp"
 
 namespace ray {
 
@@ -31,8 +32,12 @@ namespace ray {
         [[nodiscard]] std::vector<std::shared_ptr<ray::IShape>> getShapes() const override;
 
         // STATIC
-        [[nodiscard]] static std::shared_ptr<ray::IMaterial> getMaterial(std::shared_ptr<ray::IShape> shape);
+        [[nodiscard]] static std::shared_ptr<ray::IMaterial> getMaterial(const std::shared_ptr<ray::IShape>& shape);
+        [[nodiscard]] static std::shared_ptr<ray::IMaterial> getMaterial(const ray::IShape& shape);
         [[nodiscard]] static Math::Matrix<4, 4> getTransformationMatrix(const std::shared_ptr<ray::INode>& node);
+        [[nodiscard]] static Math::Matrix<4, 4> getTransformationMatrix(const ray::INode& node);
+        [[nodiscard]] static Math::Point3D getPosition(const std::shared_ptr<ray::INode>& node);
+        [[nodiscard]] static Math::Point3D getPosition(const ray::INode& node);
     };
 
 } // ray

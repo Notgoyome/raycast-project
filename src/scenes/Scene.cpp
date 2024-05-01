@@ -6,21 +6,9 @@
 */
 
 #include "Scene.hpp"
-
-#include <__chrono/month.h>
+#include "utils/getClosest.h"
 
 namespace ray {
-
-    Math::Point3D getClosest(std::vector<Math::Point3D> points, Math::Point3D origin)
-    {
-        Math::Point3D closest = points[0];
-
-        for (Math::Point3D point : points) {
-            if (Math::Vector3D{point.X - origin.X, point.Y - origin.Y, point.Z - origin.Z}.length() < Math::Vector3D{closest.X - origin.X, closest.Y - origin.Y, closest.Z - origin.Z}.length())
-                closest = point;
-        }
-        return closest;
-    }
 
     template<typename T>
     std::vector<std::shared_ptr<T>> recursiveGetType(const std::shared_ptr<ray::INode> node, ray::type type)
@@ -102,9 +90,21 @@ namespace ray {
     }
 
     std::shared_ptr<ray::IMaterial> Scene::getMaterial(
-        std::shared_ptr<ray::IShape> shape)
+        const std::shared_ptr<ray::IShape>& shape)
     {
         std::shared_ptr<ray::INode> parent = shape->getParent();
+
+        while (parent) {
+            if (parent->getType() == ray::type::MATERIAL)
+                return std::dynamic_pointer_cast<ray::IMaterial>(parent);
+            parent = parent->getParent();
+        }
+        return nullptr;
+    }
+
+    std::shared_ptr<ray::IMaterial> Scene::getMaterial(const ray::IShape &shape)
+    {
+        std::shared_ptr<ray::INode> parent = shape.getParent();
 
         while (parent) {
             if (parent->getType() == ray::type::MATERIAL)
@@ -132,5 +132,43 @@ namespace ray {
             finalMatrix = transformations[i] * finalMatrix;
         }
         return finalMatrix;
+    }
+
+    Math::Matrix<4, 4> Scene::getTransformationMatrix(const ray::INode &node)
+    {
+
+        std::shared_ptr<ray::INode> parent = node.getParent();
+        std::vector<Math::Matrix<4, 4>> transformations;
+        Math::Matrix<4, 4> finalMatrix = Math::Matrix<4, 4>::identity();
+
+        while (parent) {
+            if (parent->getType() == ray::type::TRANSFORM) {
+                std::shared_ptr<ray::ITransform> transform = std::dynamic_pointer_cast<ray::ITransform>(parent);
+                transformations.push_back(transform->getMatrix());
+            }
+            parent = parent->getParent();
+        }
+        for (int i = static_cast<int>(transformations.size()) - 1; i >= 0; i--) {
+            finalMatrix = transformations[i] * finalMatrix;
+        }
+        return finalMatrix;
+    }
+
+    Math::Point3D Scene::getPosition(const std::shared_ptr<ray::INode> &node)
+    {
+        Math::Matrix<4, 4> matrix = getTransformationMatrix(node);
+        Math::Matrix<4, 1> pos = Math::Matrix<4, 1>{{{0}, {0}, {0}, {1}}};
+
+        pos = matrix * pos;
+        return {pos(0, 0), pos(1, 0), pos(2, 0)};
+    }
+
+    Math::Point3D Scene::getPosition(const ray::INode &node)
+    {
+        Math::Matrix<4, 4> matrix = getTransformationMatrix(node);
+        Math::Matrix<4, 1> pos = Math::Matrix<4, 1>{{{0}, {0}, {0}, {1}}};
+
+        pos = matrix * pos;
+        return {pos(0, 0), pos(1, 0), pos(2, 0)};
     }
 } // ray
