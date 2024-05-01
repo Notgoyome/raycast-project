@@ -1,8 +1,18 @@
 /*
 ** EPITECH PROJECT, 2024
-** B-OOP-400-MPL-4-1-raytracer-robin.glaude
+** raytracer
 ** File description:
-** ATransform
+** ATransform.cpp
 */
 
 #include "ATransform.hpp"
+
+Math::Matrix<4, 4> ray::ATransform::getIdentityMatrix()
+{
+    return Math::Matrix<4, 4>{{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}};
+}
+
+ray::ATransform::ATransform() : ANode(ray::type::TRANSFORM)
+{
+    _matrix = getIdentityMatrix();
+}

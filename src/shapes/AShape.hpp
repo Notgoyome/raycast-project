@@ -12,7 +12,6 @@
 #include "../../include/Maybe.hpp"
 #include "../utils/ANode.hpp"
 #include "../../include/math/MatrixN.hpp"
-#include "../transformations/Transform.hpp"
 
 namespace ray {
 
