@@ -7,6 +7,8 @@
 
 #ifndef VECTOR3D_HPP
 #define VECTOR3D_HPP
+#include <Maybe.hpp>
+#include <string>
 
 namespace Math {
 
@@ -46,6 +48,7 @@ namespace Math {
 
         // GETTERS
         [[nodiscard]] double length() const;
+        [[nodiscard]] static Maybe<Vector3D> fromStr(std::string str);
     };
 
 } // Math
