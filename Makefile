@@ -32,7 +32,7 @@ PLUGINS_TARGETS=$(foreach plugin,$(LIGHTS),plugins/lights_$(plugin).so) \
 all: main plugins
 
 main: $(MAIN_SRCS)
-	$(CC) $(CFLAGS) -o raytracer $(MAIN_SRCS) -lconfig++
+	$(CC) $(CFLAGS) -o raytracer $(MAIN_SRCS) -lconfig++ -lsfml-graphics -lsfml-window -lsfml-system
 
 define build_plugin
 plugins/$(1)_$(2).so:
