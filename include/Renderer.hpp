@@ -17,6 +17,7 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
+#include <SFML/Graphics.hpp>
 
 namespace ray {
     class RendererException : public std::exception {
@@ -33,10 +34,13 @@ namespace ray {
             ~Renderer();
             void getSize(const std::map<Math::Vector2D, RGB>& image);
             void renderPpmImage(Image image, std::string filename);
-
+            void renderSfmlImage(Image& image);
+            void drawPixels(Image& image);
         private:
             int _width;
             int _height;
+            sf::Event _event;
+            sf::RenderWindow _window;
     };
 }
 

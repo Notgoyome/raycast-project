@@ -50,3 +50,33 @@ void ray::Renderer::renderPpmImage(Image image, std::string filename)
         throw std::runtime_error("Failed to write to file: " + filename);
     file.close();
 }
+
+void ray::Renderer::renderSfmlImage(Image& image)
+{
+    this->getSize(image.getMap());
+    _window.create(sf::VideoMode(_width, _height), "Raytracer", sf::Style::Close);
+    if (!_window.isOpen())
+        throw std::runtime_error("Failed to create window");
+    while (_window.isOpen()) {
+        while (_window.pollEvent(_event)) {
+            if (_event.type == sf::Event::Closed)
+                _window.close();
+        }
+        _window.clear();
+        this->drawPixels(image);
+        _window.display();
+    }
+}
+
+void ray::Renderer::drawPixels(Image& image)
+{
+    for (int i = 0; i < _height; i++) {
+        for (int j = 0; j < _width; j++) {
+            auto color = image.getPixel(Math::Vector2D(j, i));
+            sf::RectangleShape pixel(sf::Vector2f(1, 1));
+            pixel.setFillColor(sf::Color(color.R, color.G, color.B));
+            pixel.setPosition(j, i);
+            _window.draw(pixel);
+        }
+    }
+}
