@@ -4,9 +4,18 @@
 
 #include "Sphere.hpp"
 
-ray::Sphere::Sphere(float radius, Math::Point3D center) : radius(radius), center(center)
-{
+#include "../../scenes/base/Scene.hpp"
 
+void ray::Sphere::setRadius()
+{
+    Math::Vector3D scale = getScale();
+
+    radius = scale.X;
+}
+
+void ray::Sphere::setPosition()
+{
+    center = Scene::getPosition(*this);
 }
 
 double calcA(Math::Vector3D D)
@@ -47,6 +56,11 @@ Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
 
 Maybe<Math::Point3D> ray::Sphere::hit(const ray::Ray &ray)
 {
+    if (radius == -1) {
+        applyMatrix();
+        setPosition();
+        setRadius();
+    }
     double a = calcA(ray.direction);
     double b = calcB(ray.origin, ray.direction, center);
     double c = calcC(ray.origin, center, radius);
@@ -67,12 +81,7 @@ Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point)
 }
 
 
-extern "C" ray::Sphere *create()
+extern "C" ray::INode *create(__attribute__((unused))const std::map<std::string, std::string> &attributes)
 {
-    return new ray::Sphere(1, Math::Point3D(0, 0, 0));
-}
-
-extern "C" ray::type getType()
-{
-    return ray::type::SHAPE;
+    return new ray::Sphere();
 }

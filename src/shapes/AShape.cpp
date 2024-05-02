@@ -10,7 +10,7 @@
 
 void ray::AShape::applyMatrix()
 {
-   _transformMatrix = Scene::getTransformationMatrix(getParent());
+   _transformMatrix = Scene::getTransformationMatrix(*this);
 }
 
 Math::Point3D ray::AShape::getPosition() const
