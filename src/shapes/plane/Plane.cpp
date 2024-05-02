@@ -44,7 +44,7 @@ Math::Vector3D ray::Plane::getNormale(__attribute__((unused))const Math::Point3D
     return vectorNormale;
 }
 
-extern "C" ray::Plane *create(std::map<std::string, std::string>& properties)
+extern "C" ray::Plane *create(__attribute__((unused))std::map<std::string, std::string>& properties)
 {
     return new ray::Plane();
 }
