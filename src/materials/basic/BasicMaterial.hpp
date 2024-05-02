@@ -14,7 +14,7 @@
 #include "../AMaterial.hpp"
 #include "../Phong.hpp"
 #include "../../lights/ILight.hpp"
-#include "../../scenes/Scene.hpp"
+#include "../../scenes/base/Scene.hpp"
 
 namespace ray {
 

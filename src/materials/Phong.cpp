@@ -6,7 +6,7 @@
 */
 
 #include "Phong.hpp"
-#include "../scenes/Scene.hpp"
+#include "../scenes/base/Scene.hpp"
 #include "utils/getClosest.h"
 
 Math::Point3D roundPoint(Math::Point3D point)

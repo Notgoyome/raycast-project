@@ -8,11 +8,11 @@
 #ifndef SCENE_HPP
 #define SCENE_HPP
 
-#include "IScene.hpp"
-#include "../utils/ANode.hpp"
-#include "../transformations/ITransform.hpp"
+#include "../IScene.hpp"
+#include "../../utils/ANode.hpp"
+#include "../../transformations/ITransform.hpp"
 #include "Maybe.hpp"
-#include "../materials/IMaterial.hpp"
+#include "../../materials/IMaterial.hpp"
 
 namespace ray {
 

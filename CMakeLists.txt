@@ -15,15 +15,15 @@ add_executable(raytracer
         src/math/Vector3D.cpp
         src/main/main.cpp
         src/scenes/IScene.hpp
-        src/scenes/Scene.hpp
+        src/scenes/base/Scene.hpp
         src/math/Vector2D.cpp
         src/math/Rectangle3D.cpp
-        src/scenes/Scene.cpp
+        src/scenes/base/Scene.cpp
         src/utils/getClosest.cpp
         src/utils/ANode.cpp
         src/utils/ANode.hpp
-        src/cameras/Camera.cpp
-        src/cameras/Camera.hpp)
+        src/cameras/base/Camera.cpp
+        src/cameras/base/Camera.hpp)
 
 target_link_libraries(raytracer sfml-graphics sfml-window sfml-system config++)
 
@@ -38,8 +38,7 @@ set(MATH_SOURCES
 )
 
 set(SCENE_SOURCES
-        src/scenes/Scene.cpp
-        src/scenes/IScene.hpp
+        src/scenes/base/Scene.cpp
 )
 
 set(NODE_SOURCES
@@ -63,6 +62,10 @@ set(SHAPES_SOURCES
         src/shapes/AShape.cpp
 )
 
+set(CAMERA_SOURCES
+        src/cameras/base/Camera.cpp
+)
+
 add_library(lights_point SHARED ${LIGHT_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/lights/point/PointLight.cpp)
 add_library(materials_basic SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/basic/BasicMaterial.cpp)
 add_library(transformations_rotation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/rotation/Rotation.cpp)
@@ -70,6 +73,8 @@ add_library(transformations_scale SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCE
 add_library(transformations_translation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/translation/Translation.cpp)
 add_library(shapes_sphere SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/sphere/Sphere.cpp)
 add_library(shapes_plane SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/plane/Plane.cpp)
+add_library(cameras_base SHARED ${CAMERA_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/cameras/base/Camera.cpp)
+add_library(scenes_base SHARED ${SCENE_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/scenes/base/Scene.cpp)
 
 set_target_properties(lights_point PROPERTIES
         PREFIX ""
@@ -99,6 +104,14 @@ set_target_properties(shapes_plane PROPERTIES
         PREFIX ""
         OUTPUT_NAME "shapes_plane"
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(cameras_base PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "cameras_base"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(scenes_base PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "scenes_base"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
 
 add_dependencies(raytracer
         lights_point
@@ -108,4 +121,6 @@ add_dependencies(raytracer
         transformations_translation
         shapes_sphere
         shapes_plane
+        cameras_base
+        scenes_base
 )

@@ -6,7 +6,7 @@
 */
 
 #include "AShape.hpp"
-#include "../scenes/Scene.hpp"
+#include "../scenes/base/Scene.hpp"
 
 void ray::AShape::applyMatrix()
 {

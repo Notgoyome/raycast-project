@@ -10,8 +10,8 @@
 #include "Image.hpp"
 #include "parsing.hpp"
 #include "Ray.hpp"
-#include "../cameras/Camera.hpp"
-#include "../scenes/Scene.hpp"
+#include "../cameras/base/Camera.hpp"
+#include "../scenes/base/Scene.hpp"
 
 std::shared_ptr<ray::INode> getScene(std::vector<std::shared_ptr<ray::INode>> nodes)
 {

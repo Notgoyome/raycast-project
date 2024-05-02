@@ -6,7 +6,7 @@
 */
 
 #include "PointLight.hpp"
-#include "../../scenes/Scene.hpp"
+#include "../../scenes/base/Scene.hpp"
 
 ray::PointLight::PointLight(RGB color) : ALight(color)
 {
