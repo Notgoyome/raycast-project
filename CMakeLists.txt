@@ -23,7 +23,9 @@ add_executable(raytracer
         src/utils/ANode.cpp
         src/utils/ANode.hpp
         src/cameras/base/Camera.cpp
-        src/cameras/base/Camera.hpp)
+        src/main/renderer/Renderer.cpp
+        src/cameras/ICamera.hpp
+)
 
 target_link_libraries(raytracer sfml-graphics sfml-window sfml-system config++)
 
@@ -64,6 +66,8 @@ set(SHAPES_SOURCES
 
 set(CAMERA_SOURCES
         src/cameras/base/Camera.cpp
+        src/cameras/ACamera.cpp
+        src/cameras/ACamera.hpp
 )
 
 add_library(lights_point SHARED ${LIGHT_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/lights/point/PointLight.cpp)
@@ -74,7 +78,7 @@ add_library(transformations_translation SHARED ${TRANSFORMATION_SOURCES} ${NODE_
 add_library(shapes_sphere SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/sphere/Sphere.cpp)
 add_library(shapes_plane SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/plane/Plane.cpp)
 add_library(cameras_base SHARED ${CAMERA_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/cameras/base/Camera.cpp)
-add_library(scenes_base SHARED ${SCENE_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/scenes/base/Scene.cpp)
+add_library(scenes_base SHARED ${SCENE_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/scenes/base/sceneCreate.cpp)
 
 set_target_properties(lights_point PROPERTIES
         PREFIX ""
