@@ -89,7 +89,8 @@ namespace ray {
                         if (config.exists("children")) {
                             const libconfig::Setting& children = config["children"];
                             for (int j = 0; j < children.getLength(); ++j) {
-                                int childId = children[j]["id"];
+                                int childId;
+                                children[j].lookupValue("id", childId);
                                 if (nodeMap.find(childId) != nodeMap.end()) {
                                     parentNode->addChild(nodeMap[childId]);
                                 }
