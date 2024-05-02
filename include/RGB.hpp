@@ -11,6 +11,8 @@
 #include <sys/types.h>
 #include "Maybe.hpp"
 #include <string>
+#include <algorithm>
+#include <stdexcept>
 
 class RGB {
 public:

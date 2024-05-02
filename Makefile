@@ -11,7 +11,6 @@ LDFLAGS=-shared
 
 MAIN_SRCS=$(shell find src/main -name "*.cpp") \
 	$(shell find src/scenes/base -name "*.cpp") \
-	$(shell find src/cameras/base -name "*.cpp") \
 	$(shell find src/utils -name "*.cpp") \
 	$(shell find src/math -name "*.cpp")
 TESTS_SRCS=$(shell find src/ -name "*.cpp" ! -name "main.cpp")
