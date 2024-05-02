@@ -19,6 +19,8 @@ ray::Renderer::~Renderer()
 
 void ray::Renderer::getSize(const std::map<Math::Vector2D, RGB> &image)
 {
+    if (image.empty())
+        throw std::runtime_error("Image map is empty");
     for (const auto& pair : image) {
         _width = std::max(_width, (int)pair.first.first);
         _height = std::max(_height, (int)pair.first.second);
@@ -29,6 +31,8 @@ void ray::Renderer::renderPpmImage(Image image, std::string filename)
 {
     auto color = RGB(0, 0, 0);
     std::ofstream file(filename);
+    if (!file.is_open())
+        throw RendererException("Can't open file");
     this->getSize(image.getMap());
     file << "P3\n";
     file << _width << " " << _height << "\n";
@@ -42,5 +46,7 @@ void ray::Renderer::renderPpmImage(Image image, std::string filename)
         }
         file << "\n";
     }
+    if (file.fail())
+        throw std::runtime_error("Failed to write to file: " + filename);
     file.close();
 }
