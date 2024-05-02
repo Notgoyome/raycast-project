@@ -51,7 +51,7 @@ void ray::Renderer::renderPpmImage(Image image, std::string filename)
     file.close();
 }
 
-void ray::Renderer::renderSfmlImage(Image& image)
+void ray::Renderer::renderSfmlImage(Image &image)
 {
     this->getSize(image.getMap());
     _window.create(sf::VideoMode(_width, _height), "Raytracer", sf::Style::Close);
@@ -68,7 +68,7 @@ void ray::Renderer::renderSfmlImage(Image& image)
     }
 }
 
-void ray::Renderer::drawPixels(Image& image)
+void ray::Renderer::drawPixels(Image &image)
 {
     for (int i = 0; i < _height; i++) {
         for (int j = 0; j < _width; j++) {

@@ -32,10 +32,10 @@ namespace ray {
         public:
             Renderer();
             ~Renderer();
-            void getSize(const std::map<Math::Vector2D, RGB>& image);
+            void getSize(const std::map<Math::Vector2D, RGB> &image);
             void renderPpmImage(Image image, std::string filename);
-            void renderSfmlImage(Image& image);
-            void drawPixels(Image& image);
+            void renderSfmlImage(Image &image);
+            void drawPixels(Image &image);
         private:
             int _width;
             int _height;
