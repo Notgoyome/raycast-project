@@ -22,7 +22,7 @@ namespace ray {
 
 }
 
-ray::ITransform *create(const std::map<std::string, std::string> &attributes)
+ray::INode *create(const std::map<std::string, std::string> &attributes)
 {
     if (attributes.find("translation") == attributes.end())
         throw ray::NodeError("ITransform: missing translation attribute", "Translation.cpp");

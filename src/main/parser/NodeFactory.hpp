@@ -25,12 +25,16 @@ namespace ray {
     class NodeFactory {
     public:
         static std::shared_ptr<T> create(const std::string& type, const std::map<std::string, std::string>& properties) {
-            ray::DynamicPlugin plugin;
+            std::shared_ptr<ray::DynamicPlugin> plugin = std::make_shared<ray::DynamicPlugin>();
             try {
-                plugin.open(type);
-                auto create_fun = plugin.getSymbol<std::shared_ptr<T>(*)(const std::map<std::string, std::string>&)>("create");
-                std::shared_ptr<T> instance = create_fun(properties);
-                return std::shared_ptr<T>(instance.get(), [&plugin](T*) { plugin.close(); });
+                plugin->open(type);
+                auto create_fun = plugin->getSymbol<T*(*)(const std::map<std::string, std::string>&)>("create");
+                T* instance = create_fun(properties);
+
+                return std::shared_ptr<T>(instance, [plugin](T* ptr) {
+                    delete ptr;
+                    plugin->close();
+                });
             } catch (const ray::NodeFactoryException& e) {
                 std::cerr << "Factory error: " << e.what() << std::endl;
                 return nullptr;

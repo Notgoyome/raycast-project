@@ -41,8 +41,9 @@ namespace ray {
                 libconfig::Config cfg;
                 try {
                     cfg.readFile(filename.c_str());
-                } catch (const libconfig::FileIOException &fioex) {
-                    throw NodeBuilderException("I/O error while reading file.");
+                } catch (const libconfig::ParseException &pex) {
+                    std::cerr << "Parse error at " << pex.getFile() << ":" << pex.getLine()
+                              << " - " << pex.getError() << std::endl;
                 }
 
                 const libconfig::Setting& nodes = cfg.lookup("nodes");
@@ -51,17 +52,25 @@ namespace ray {
                     int id;
                     std::string typePath;
                     node.lookupValue("id", id);
-                    node.lookupValue("properties.type", typePath);
+                    node.lookupValue("type", typePath);
 
                     // propriétés
                     std::map<std::string, std::string> properties;
-                    const libconfig::Setting& props = node["properties"];
-                    for (int j = 0; j < props.getLength(); ++j) {
-                        const std::string propName = props[j].getName();
-                        properties[propName] = props[j].c_str();
+                    try {
+                        const libconfig::Setting& props = node["properties"];
+                        for (int j = 0; j < props.getLength(); ++j) {
+                            const std::string propName = props[j].getName();
+                            properties[propName] = props[j].c_str();
+                        }
+                    } catch (const libconfig::SettingNotFoundException &nfex) {
+                        std::cerr << "Setting not found: " << nfex.getPath() << std::endl;
+                    } catch (const libconfig::SettingTypeException &tex) {
+                        std::cerr << "Type error in setting: " << tex.getPath() << std::endl;
+                    } catch (const std::exception &ex) {
+                        std::cerr << "General exception: " << ex.what() << std::endl;
                     }
 
-                    auto createdNode = NodeFactory<INode>::create(typePath, properties);
+                    auto createdNode = NodeFactory<INode>::create("plugins/" + typePath, properties);
                     if (!createdNode) {
                         throw NodeBuilderException("Failed to create node for ID " + std::to_string(id));
                     }
