@@ -9,6 +9,8 @@
 #define RGB_HPP
 
 #include <sys/types.h>
+#include "Maybe.hpp"
+#include <string>
 
 class RGB {
 public:
@@ -137,6 +139,51 @@ public:
         G /= val;
         B /= val;
         return *this;
+    }
+
+
+    static Maybe<unsigned int> parseSingleAttr(char attrName, std::string str)
+    {
+        unsigned int res;
+
+        if (str[0] != attrName)
+            return Maybe<unsigned int>{};
+        if (str.find(':') == std::string::npos)
+            return Maybe<unsigned int>{};
+        str.erase(0, str.find(':') + 1);
+
+        try {
+            res = static_cast<unsigned int>(std::stod(str));
+        } catch (std::invalid_argument&) {
+            return Maybe<unsigned int>{};
+        }
+        return Maybe{res};
+    }
+
+    [[nodiscard]] static Maybe<RGB> fromStr(std::string str)
+    {
+
+        if (str[0] != '{' || str[str.size() - 1] != '}')
+            return Maybe<RGB>{};
+        str.erase(0, 1);
+        str.erase(str.size() - 1, 1);
+        str.erase(std::remove(str.begin(), str.end(), ' '), str.end());
+
+        Maybe<unsigned int> maybeNum1 = parseSingleAttr('r', str);
+        if (!maybeNum1.has_value())
+            return Maybe<RGB>{};
+
+        str.erase(0, str.find(';') + 1);
+        Maybe<unsigned int> maybeNum2 = parseSingleAttr('g', str);
+        if (!maybeNum2.has_value())
+            return Maybe<RGB>{};
+
+        str.erase(0, str.find(';') + 1);
+        Maybe<unsigned int> maybeNum3 = parseSingleAttr('b', str);
+        if (!maybeNum3.has_value())
+            return Maybe<RGB>{};
+
+        return Maybe{RGB{maybeNum1.value(), maybeNum2.value(), maybeNum3.value()}};
     }
 };
 
