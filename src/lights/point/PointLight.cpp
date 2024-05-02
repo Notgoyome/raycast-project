@@ -20,3 +20,13 @@ Math::Vector3D ray::PointLight::getIncidentVector(Math::Point3D pos) const
     res /= res.length();
     return res;
 }
+
+extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)
+{
+    if (attributes.find("color") == attributes.end())
+        throw ray::NodeError("ILight: missing color attribute", "PointLight.cpp");
+    Maybe<RGB> color = RGB::fromStr(attributes.at("color"));
+    if (!color.has_value())
+        throw ray::NodeError("ILight: invalid color attribute", "PointLight.cpp");
+    return new ray::PointLight(color.value());
+}

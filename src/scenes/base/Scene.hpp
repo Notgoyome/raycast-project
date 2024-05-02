@@ -8,15 +8,21 @@
 #ifndef SCENE_HPP
 #define SCENE_HPP
 
+#include <map>
+
 #include "../IScene.hpp"
 #include "../../utils/ANode.hpp"
 #include "../../transformations/ITransform.hpp"
 #include "Maybe.hpp"
 #include "../../materials/IMaterial.hpp"
 
+
 namespace ray {
 
     class Scene : public ANode, public IScene {
+    private:
+        template<typename T>
+        [[nodiscard]] std::vector<std::shared_ptr<T>> getNodesType(ray::type type) const;
     public:
         // CONSTR DESTRUCT
         Scene();
@@ -26,10 +32,9 @@ namespace ray {
         Maybe<PosShapePair> hit(const ray::Ray &ray) override;
 
         // GETTERS
-        template<typename T>
-        [[nodiscard]] std::vector<std::shared_ptr<T>> getNodesType(ray::type type) const;
         [[nodiscard]] std::vector<std::shared_ptr<ray::ILight>> getLights() const override;
         [[nodiscard]] std::vector<std::shared_ptr<ray::IShape>> getShapes() const override;
+        [[nodiscard]] std::vector<std::shared_ptr<ray::ICamera>> getCameras() const override;
 
         // STATIC
         [[nodiscard]] static std::shared_ptr<ray::IMaterial> getMaterial(const std::shared_ptr<ray::IShape>& shape);
@@ -41,5 +46,6 @@ namespace ray {
     };
 
 } // ray
+
 
 #endif //SCENE_HPP

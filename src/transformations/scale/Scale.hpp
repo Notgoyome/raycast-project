@@ -22,6 +22,6 @@ namespace ray {
 
 } // ray
 
-extern "C" ray::ITransform *create(const std::map<std::string, std::string> &attributes);
+extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes);
 
 #endif //SCALE_HPP

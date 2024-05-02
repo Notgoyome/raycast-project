@@ -47,3 +47,13 @@ RGB ray::BasicMaterial::getColor(__attribute__((unused))int recursive, Math::Poi
     _phong.setPos(collisionPoint);
     return _phong.calculateColor(scene->getShapes());
 }
+
+extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)
+{
+    if (attributes.find("color") == attributes.end())
+        throw ray::NodeError("IMaterial: missing color attribute", "BasicMaterial.cpp");
+    Maybe<RGB> color = RGB::fromStr(attributes.at("color"));
+    if (!color.has_value())
+        throw ray::NodeError("IMaterial: invalid color attribute", "BasicMaterial.cpp");
+    return new ray::BasicMaterial(color.value());
+}

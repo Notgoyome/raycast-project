@@ -16,6 +16,7 @@
 #include "INode.hpp"
 #include "../lights/ILight.hpp"
 #include "../shapes/IShape.hpp"
+#include "../cameras/ICamera.hpp"
 
 using PosShapePair = std::pair<Math::Point3D, std::shared_ptr<ray::IShape>>;
 
@@ -32,6 +33,7 @@ namespace ray {
         // GETTERS
         [[nodiscard]] virtual std::vector<std::shared_ptr<ray::ILight>> getLights() const = 0;
         [[nodiscard]] virtual std::vector<std::shared_ptr<ray::IShape>> getShapes() const = 0;
+        [[nodiscard]] virtual std::vector<std::shared_ptr<ray::ICamera>> getCameras() const = 0;
     };
 
 }

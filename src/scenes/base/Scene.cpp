@@ -89,6 +89,11 @@ namespace ray {
         return getNodesType<ray::IShape>(ray::type::SHAPE);
     }
 
+    std::vector<std::shared_ptr<ray::ICamera>> Scene::getCameras() const
+    {
+        return getNodesType<ray::ICamera>(ray::type::CAMERA);
+    }
+
     std::shared_ptr<ray::IMaterial> Scene::getMaterial(
         const std::shared_ptr<ray::IShape>& shape)
     {

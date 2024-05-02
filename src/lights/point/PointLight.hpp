@@ -8,6 +8,7 @@
 #ifndef POINTLIGHT_HPP
 #define POINTLIGHT_HPP
 
+#include <map>
 #include <Maybe.hpp>
 
 #include "../ALight.hpp"
@@ -23,5 +24,7 @@ namespace ray {
     };
 
 }
+
+extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes);
 
 #endif //POINTLIGHT_HPP

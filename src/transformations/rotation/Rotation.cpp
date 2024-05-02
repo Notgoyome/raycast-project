@@ -40,7 +40,7 @@ namespace ray {
     }
 } // ray
 
-ray::ITransform *create(const std::map<std::string, std::string> &attributes)
+ray::INode *create(const std::map<std::string, std::string> &attributes)
 {
     if (attributes.find("rotation") == attributes.end())
         throw ray::NodeError("ITransform: missing translation attribute", "Rotation.cpp");
