@@ -91,6 +91,9 @@ namespace ray {
 
             const libconfig::Setting& background = cfg->lookup("background");
 
+            if (background.getLength() == 0) {
+                throw NodeBuilderException("Background block is empty.");
+            }
             background[0].lookupValue("r", background_r);
             background[0].lookupValue("g", background_g);
             background[0].lookupValue("b", background_b);
