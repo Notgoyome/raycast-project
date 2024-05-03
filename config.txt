@@ -1,0 +1,154 @@
+nodes : (
+    {
+        id : 1;
+        name : "scene";
+        type : "scenes_base.so";
+        properties : {
+        };
+    },
+	{
+	    id : 2;
+	    name : "camera";
+	    type : "cameras_base.so";
+	    properties : {
+	        fieldOfView : "200";
+	        height : "500";
+	        width : "500";
+        };
+	},
+	{
+        id : 3;
+        name : "light";
+        type : "lights_point.so";
+        properties : {
+            color : "{ r : 255; g : 255; b : 255; }";
+        };
+    },
+    {
+        id : 4;
+        name : "sphere1";
+        type : "shapes_sphere.so";
+        properties : {
+        };
+    },
+    {
+        id : 5;
+        name : "sphere2";
+        type : "shapes_sphere.so";
+        properties : {
+        };
+    },
+    {
+        id : 6;
+        name : "light_translate";
+        type : "transformations_translation.so";
+        properties : {
+            translation : "{ x : 150; y : 0; z : -50; }";
+        };
+    },
+    {
+        id : 7;
+        name : "sphere1_translate";
+        type : "transformations_translation.so";
+        properties : {
+            translation : "{ x : 0; y : 0; z : 210; }";
+        };
+    },
+    {
+        id : 8;
+        name : "sphere2_translate";
+        type : "transformations_translation.so";
+        properties : {
+            translation : "{ x : 75; y : 0; z : 100; }";
+        };
+    },
+    {
+        id : 9;
+        name : "sphere1_scale";
+        type : "transformations_scale.so";
+        properties : {
+            scale : "{ x : 90; y : 90; z : 90; }";
+        };
+    },
+    {
+        id : 10;
+        name : "sphere2_scale";
+        type : "transformations_scale.so";
+        properties : {
+            scale : "{ x : 10; y : 10; z : 10; }";
+        };
+    },
+    {
+        id : 11;
+        name : "material_red";
+        type : "materials_basic.so";
+        properties : {
+            color : "{ r : 255; g : 0; b : 0; }";
+        };
+    },
+    {
+        id : 12;
+        name : "material_green";
+        type : "materials_basic.so";
+        properties : {
+            color : "{ r : 0; g : 255; b : 0; }";
+        };
+    }
+);
+
+config : (
+    {
+        id : 1;
+        children : (
+            {
+                id : 2;
+            },
+            {
+                id : 6;
+                children : (
+                    { id : 3; }
+                );
+            },
+            {
+                id : 11;
+                children : (
+                    {
+                        id : 9;
+                        children : (
+                            {
+                                id : 7;
+                                children : (
+                                    { id : 4; }
+                                );
+                            }
+                        );
+                    }
+                );
+            },
+            {
+                id : 12;
+                children : (
+                    {
+                        id : 10;
+                        children : (
+                            {
+                                id : 8;
+                                children : (
+                                    { id : 5; }
+                                );
+                            }
+                        );
+                    }
+                );
+            }
+        );
+    }
+);
+
+background : (
+    {
+        r : 0;
+        g : 0;
+        b : 0;
+    }
+);

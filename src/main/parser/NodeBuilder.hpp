@@ -28,98 +28,24 @@ namespace ray {
     };
 
     class NodeBuilder {
-        private:
-            std::map<int, std::shared_ptr<INode>> nodeMap;
-            std::vector<std::shared_ptr<INode>> rootNodes;
-            int background_r;
-            int background_g;
-            int background_b;
+    private:
+        std::map<int, std::shared_ptr<INode>> nodeMap;
+        std::vector<std::shared_ptr<INode>> rootNodes;
+        unsigned int background_r;
+        unsigned int background_g;
+        unsigned int background_b;
 
-        public:
-            NodeBuilder(const std::string& filename)
-            {
-                libconfig::Config cfg;
-                try {
-                    cfg.readFile(filename.c_str());
-                } catch (const libconfig::ParseException &pex) {
-                    std::cerr << "Parse error at " << pex.getFile() << ":" << pex.getLine()
-                              << " - " << pex.getError() << std::endl;
-                }
+        static std::shared_ptr<libconfig::Config> openFile(const std::string& filename);
+        void parseNodes(const std::shared_ptr<libconfig::Config>& cfg);
+        void buildTree(const libconfig::Setting& setting, const std::shared_ptr<INode>& parent);
+        void parseHierarchy(const std::shared_ptr<libconfig::Config>& cfg);
+        void parseBackgroundColor(const std::shared_ptr<libconfig::Config>& cfg);
 
-                const libconfig::Setting& nodes = cfg.lookup("nodes");
-                for (int i = 0; i < nodes.getLength(); ++i) {
-                    const libconfig::Setting& node = nodes[i];
-                    int id;
-                    std::string typePath;
-                    node.lookupValue("id", id);
-                    node.lookupValue("type", typePath);
+    public:
+        NodeBuilder(const std::string& filename);
 
-                    // propriétés
-                    std::map<std::string, std::string> properties;
-                    try {
-                        const libconfig::Setting& props = node["properties"];
-                        for (int j = 0; j < props.getLength(); ++j) {
-                            const std::string propName = props[j].getName();
-                            properties[propName] = props[j].c_str();
-                        }
-                    } catch (const libconfig::SettingNotFoundException &nfex) {
-                        std::cerr << "Setting not found: " << nfex.getPath() << std::endl;
-                    } catch (const libconfig::SettingTypeException &tex) {
-                        std::cerr << "Type error in setting: " << tex.getPath() << std::endl;
-                    } catch (const std::exception &ex) {
-                        std::cerr << "General exception: " << ex.what() << std::endl;
-                    }
-
-                    auto createdNode = NodeFactory<INode>::create("plugins/" + typePath, properties);
-                    if (!createdNode) {
-                        throw NodeBuilderException("Failed to create node for ID " + std::to_string(id));
-                    }
-                    nodeMap[id] = createdNode;
-                }
-
-                // hiérarchie
-                const libconfig::Setting& configs = cfg.lookup("config");
-                for (int i = 0; i < configs.getLength(); ++i) {
-                    const libconfig::Setting& config = configs[i];
-                    int id;
-                    config.lookupValue("id", id);
-
-                    if (nodeMap.find(id) != nodeMap.end()) {
-                        auto parentNode = nodeMap[id];
-                        if (config.exists("children")) {
-                            const libconfig::Setting& children = config["children"];
-                            for (int j = 0; j < children.getLength(); ++j) {
-                                int childId;
-                                children[j].lookupValue("id", childId);
-                                if (nodeMap.find(childId) != nodeMap.end()) {
-                                    parentNode->addChild(nodeMap[childId]);
-                                }
-                            }
-                        }
-                        if (!config.exists("parent")) {
-                            rootNodes.push_back(parentNode);
-                        }
-                    }
-                }
-
-                // background color
-                try {
-                    if (!cfg.exists("background"))
-                        throw NodeBuilderException("Background block is missing in the configuration file.");
-
-                    const libconfig::Setting& background = cfg.lookup("background");
-
-                    background.lookupValue("r", background_r);
-                    background.lookupValue("g", background_g);
-                    background.lookupValue("b", background_b);
-
-                } catch (const libconfig::SettingNotFoundException &nfex) {
-                    std::cerr << "Setting not found: " << nfex.getPath() << std::endl;
-                    throw NodeBuilderException("Missing 'background' in configuration file.");
-                }
-            }
-
-            const std::vector<std::shared_ptr<INode>>& getRootNodes() const { return rootNodes; }
+        [[nodiscard]] const std::vector<std::shared_ptr<INode>>& getRootNodes() const { return rootNodes; }
+        [[nodiscard]] RGB getBackgroundColor() const { return {background_r, background_g, background_b}; }
     };
 }
 

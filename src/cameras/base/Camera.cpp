@@ -10,7 +10,7 @@
 #include <RGB.hpp>
 
 namespace ray {
-    Camera::Camera(double width, double height, double fieldOfView) : screen(
+    Camera::Camera(double width, double height, double fieldOfView) : resolution(width, height), screen(
         Math::Point3D{
             0, 0, 0
         }, Math::Vector3D{width, 0, 0},

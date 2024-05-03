@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.27)
 project(raytracer)
 
 set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
@@ -25,6 +25,8 @@ add_executable(raytracer
         src/cameras/base/Camera.cpp
         src/main/renderer/Renderer.cpp
         src/cameras/ICamera.hpp
+        src/main/parser/NodeBuilder.hpp
+        src/main/parser/NodeBuilder.cpp
 )
 
 target_link_libraries(raytracer sfml-graphics sfml-window sfml-system config++)

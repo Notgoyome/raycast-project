@@ -18,13 +18,16 @@
 namespace ray {
 
     class Camera : public ACamera {
-    public:
+    private:
         Math::Point3D origin{0, 0, 0};
+        std::pair<unsigned int, unsigned int> resolution;
         Math::Rectangle3D screen;
+    public:
 
         Camera(double width, double height, double fieldOfView);
 
         [[nodiscard]] ray::Ray ray(double u, double v) const override;
+        [[nodiscard]] std::pair<unsigned int, unsigned int> getResolution() const override { return resolution; }
     };
 
 } // Raytracer

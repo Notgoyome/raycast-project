@@ -37,12 +37,12 @@ RGB getHitColor(const PosShapePair& hit, ray::Ray ray, const std::shared_ptr<ray
     return material->getColor(0, hit.first, hit.second->getNormale(hit.first), ray.origin, scene);
 }
 
-Image render(int width, int height, const std::shared_ptr<ray::IScene>& scene, const std::shared_ptr<ray::ICamera>& cam)
+Image render(unsigned int width, unsigned int height, const std::shared_ptr<ray::IScene>& scene, const std::shared_ptr<ray::ICamera>& cam)
 {
     Image img;
 
-    for (int i = 0; i < width; i++) {
-        for (int j = 0; j < height; j++) {
+    for (unsigned int i = 0; i < width; i++) {
+        for (unsigned int j = 0; j < height; j++) {
             double u = double(i) / width;
             double v = double(j) / height;
             ray::Ray r = cam->ray(u, v);
@@ -54,7 +54,7 @@ Image render(int width, int height, const std::shared_ptr<ray::IScene>& scene, c
                 img.addPixel({static_cast<double>(i), static_cast<double>(j)}, getHitColor(hit.value(), r, scene));
             }
         }
-        std::cout << std::to_string((static_cast<float>(i) / static_cast<float>(width)) * 100.f) << std::endl;
+        std::cout << "Progression: " << i * 100 / width << "%" << std::endl;
     }
 
     return img;
@@ -76,13 +76,13 @@ int main(int argc, char** argv)
             throw ray::CoreException("No root nodes found in the scene file.");
         }
 
-        int width = 500; // TEMPORARY: store in scene file?
-        int height = 500;
         std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(getScene(nodes));
         std::shared_ptr<ray::ICamera> camera = getCamera(scene);
-        Image img = render(width, height, scene, camera);
+        std::pair size = camera->getResolution();
+        Image img = render(size.first, size.second, scene, camera);
         ray::Renderer renderer;
         renderer.renderSfmlImage(img);
+
     } catch (const std::exception& e) {
         std::cerr << "Exception caught: " << e.what() << std::endl;
         return 84;
