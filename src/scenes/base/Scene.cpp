@@ -79,19 +79,28 @@ namespace ray {
         return res;
     }
 
-    std::vector<std::shared_ptr<ray::ILight>> Scene::getLights() const
+    std::vector<std::shared_ptr<ray::ILight>> Scene::getLights()
     {
-        return getNodesType<ray::ILight>(ray::type::LIGHT);
+        if (_lights.empty()) {
+            _lights = getNodesType<ray::ILight>(ray::type::LIGHT);
+        }
+        return _lights;
     }
 
-    std::vector<std::shared_ptr<ray::IShape>> Scene::getShapes() const
+    std::vector<std::shared_ptr<ray::IShape>> Scene::getShapes()
     {
-        return getNodesType<ray::IShape>(ray::type::SHAPE);
+        if (_shapes.empty()) {
+            _shapes = getNodesType<ray::IShape>(ray::type::SHAPE);
+        }
+        return _shapes;
     }
 
-    std::vector<std::shared_ptr<ray::ICamera>> Scene::getCameras() const
+    std::vector<std::shared_ptr<ray::ICamera>> Scene::getCameras()
     {
-        return getNodesType<ray::ICamera>(ray::type::CAMERA);
+        if (_cameras.empty()) {
+            _cameras = getNodesType<ray::ICamera>(ray::type::CAMERA);
+        }
+        return _cameras;
     }
 
     std::shared_ptr<ray::IMaterial> Scene::getMaterial(

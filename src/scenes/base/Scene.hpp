@@ -23,6 +23,9 @@ namespace ray {
     private:
         template<typename T>
         [[nodiscard]] std::vector<std::shared_ptr<T>> getNodesType(ray::type type) const;
+        std::vector<std::shared_ptr<ray::ILight>> _lights;
+        std::vector<std::shared_ptr<ray::IShape>> _shapes;
+        std::vector<std::shared_ptr<ray::ICamera>> _cameras;
     public:
         // CONSTR DESTRUCT
         Scene();
@@ -32,9 +35,9 @@ namespace ray {
         Maybe<PosShapePair> hit(const ray::Ray &ray) override;
 
         // GETTERS
-        [[nodiscard]] std::vector<std::shared_ptr<ray::ILight>> getLights() const override;
-        [[nodiscard]] std::vector<std::shared_ptr<ray::IShape>> getShapes() const override;
-        [[nodiscard]] std::vector<std::shared_ptr<ray::ICamera>> getCameras() const override;
+        [[nodiscard]] std::vector<std::shared_ptr<ray::ILight>> getLights() override;
+        [[nodiscard]] std::vector<std::shared_ptr<ray::IShape>> getShapes() override;
+        [[nodiscard]] std::vector<std::shared_ptr<ray::ICamera>> getCameras() override;
 
         // STATIC
         [[nodiscard]] static std::shared_ptr<ray::IMaterial> getMaterial(const std::shared_ptr<ray::IShape>& shape);
