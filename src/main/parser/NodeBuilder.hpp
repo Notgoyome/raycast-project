@@ -104,22 +104,18 @@ namespace ray {
 
                 // background color
                 try {
-                    const libconfig::Setting& settings = cfg.lookup("settings");
-                    for (int i = 0; i < settings.getLength(); ++i) {
-                        const libconfig::Setting& setting = settings[i];
-                        if (setting.exists("background_color")) {
-                            const libconfig::Setting& color = setting["background_color"];
-                            int r, g, b;
-                            color.lookupValue("r", r);
-                            color.lookupValue("g", g);
-                            color.lookupValue("b", b);
-                            background_r = r;
-                            background_g = g;
-                            background_b = b;
-                        }
-                    }
+                    if (!cfg.exists("background"))
+                        throw NodeBuilderException("Background block is missing in the configuration file.");
+
+                    const libconfig::Setting& background = cfg.lookup("background");
+
+                    background.lookupValue("r", background_r);
+                    background.lookupValue("g", background_g);
+                    background.lookupValue("b", background_b);
+
                 } catch (const libconfig::SettingNotFoundException &nfex) {
-                    throw NodeBuilderException("Missing 'settings' in configuration file.");
+                    std::cerr << "Setting not found: " << nfex.getPath() << std::endl;
+                    throw NodeBuilderException("Missing 'background' in configuration file.");
                 }
             }
 
