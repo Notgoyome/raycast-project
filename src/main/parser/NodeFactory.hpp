@@ -10,6 +10,7 @@
 
 #include "DLClass.hpp"
 #include "INode.hpp"
+#include "../../utils/ANode.hpp"
 #include <map>
 
 namespace ray {
@@ -30,13 +31,15 @@ namespace ray {
                 plugin->open(type);
                 auto create_fun = plugin->getSymbol<T*(*)(const std::map<std::string, std::string>&)>("create");
                 T* instance = create_fun(properties);
-
                 return std::shared_ptr<T>(instance, [plugin](T* ptr) {
                     delete ptr;
                     plugin->close();
                 });
             } catch (const ray::NodeFactoryException& e) {
                 std::cerr << "Factory error: " << e.what() << std::endl;
+                return nullptr;
+            } catch (ray::NodeError& e) {
+                std::cerr << "NODE ERROR " << e.where() << ": " << e.what() << std::endl;
                 return nullptr;
             }
         }

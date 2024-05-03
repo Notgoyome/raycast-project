@@ -31,9 +31,9 @@ namespace ray {
         [[nodiscard]] virtual Maybe<PosShapePair> hit(const ray::Ray& ray) = 0;
 
         // GETTERS
-        [[nodiscard]] virtual std::vector<std::shared_ptr<ray::ILight>> getLights() const = 0;
-        [[nodiscard]] virtual std::vector<std::shared_ptr<ray::IShape>> getShapes() const = 0;
-        [[nodiscard]] virtual std::vector<std::shared_ptr<ray::ICamera>> getCameras() const = 0;
+        [[nodiscard]] virtual std::vector<std::shared_ptr<ray::ILight>> getLights() = 0;
+        [[nodiscard]] virtual std::vector<std::shared_ptr<ray::IShape>> getShapes() = 0;
+        [[nodiscard]] virtual std::vector<std::shared_ptr<ray::ICamera>> getCameras() = 0;
     };
 
 }

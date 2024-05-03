@@ -91,9 +91,12 @@ namespace ray {
 
             const libconfig::Setting& background = cfg->lookup("background");
 
-            background.lookupValue("r", background_r);
-            background.lookupValue("g", background_g);
-            background.lookupValue("b", background_b);
+            if (background.getLength() == 0) {
+                throw NodeBuilderException("Background block is empty.");
+            }
+            background[0].lookupValue("r", background_r);
+            background[0].lookupValue("g", background_g);
+            background[0].lookupValue("b", background_b);
 
         } catch (const libconfig::SettingNotFoundException &nfex) {
             std::cerr << "Setting not found: " << nfex.getPath() << std::endl;
