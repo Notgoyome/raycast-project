@@ -22,7 +22,8 @@ namespace ray {
         virtual void setColor(RGB color) = 0;
 
         [[nodiscard]] virtual RGB getColor() const = 0;
-        [[nodiscard]] virtual Math::Vector3D getIncidentVector(Math::Point3D pos) const = 0;
+        [[nodiscard]] virtual Math::Vector3D getIncidentVector(Math::Point3D pos) = 0;
+        [[nodiscard]] virtual Math::Point3D getPos() = 0;
     };
 
 }

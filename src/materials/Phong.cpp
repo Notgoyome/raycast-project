@@ -64,7 +64,7 @@ RGB getLightColor(std::shared_ptr<ray::ILight> light,
     Math::Vector3D lightDir = light->getIncidentVector(pos);
     Math::Vector3D perpendicular = getPerpendicularVector(lightDir);
     Math::Vector3D actualRotation;
-    Math::Point3D lightPos = ray::Scene::getPosition(light);
+    Math::Point3D lightPos = light->getPos();
     ray::Ray ray = {lightPos, lightDir};
     int nbHits = 0;
     int nbAngles = quality < 10 ? quality : 10;
