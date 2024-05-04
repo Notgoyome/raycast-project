@@ -22,7 +22,7 @@ namespace ray {
         explicit PointLight(RGB color);
         ~PointLight() override = default;
 
-        [[nodiscard]] Math::Vector3D getIncidentVector(Math::Point3D pos) override;
+        [[nodiscard]] ray::Ray getIncidentVector(Math::Point3D pos) override;
         [[nodiscard]] Math::Point3D getPos() override;
     };
 

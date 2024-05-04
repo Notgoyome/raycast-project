@@ -12,7 +12,7 @@ ray::PointLight::PointLight(RGB color) : ALight(color)
 {
 }
 
-Math::Vector3D ray::PointLight::getIncidentVector(Math::Point3D pos)
+ray::Ray ray::PointLight::getIncidentVector(Math::Point3D pos)
 {
     if (_gotPos == false) {
         _pos = Scene::getPosition(*this);
@@ -22,7 +22,7 @@ Math::Vector3D ray::PointLight::getIncidentVector(Math::Point3D pos)
     Math::Vector3D res = {myPos.X - pos.X, myPos.Y - pos.Y, myPos.Z - pos.Z};
 
     res /= res.length();
-    return res;
+    return {pos, res};
 }
 
 Math::Point3D ray::PointLight::getPos()

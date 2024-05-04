@@ -70,11 +70,10 @@ RGB getLightColor(std::shared_ptr<ray::ILight> light,
     std::vector<std::shared_ptr<ray::IShape>> scene, Math::Point3D pos,
     double quality)
 {
-    Math::Vector3D lightDir = light->getIncidentVector(pos);
-    Math::Vector3D perpendicular = getPerpendicularVector(lightDir);
+    ray::Ray lightRay = light->getIncidentVector(pos);
+    Math::Vector3D perpendicular = getPerpendicularVector(lightRay.direction);
     Math::Vector3D actualRotation;
-    Math::Point3D lightPos = light->getPos();
-    ray::Ray ray = {lightPos, lightDir};
+    ray::Ray ray = {lightRay.origin, lightRay.direction};
 
     int nbHits = 0;
     int nbAngles = quality < 10 ? static_cast<int>(quality) : 10;
@@ -82,9 +81,9 @@ RGB getLightColor(std::shared_ptr<ray::ILight> light,
     perpendicular /= perpendicular.length();
 
     for (int angle = 0; angle < nbAngles; angle++) {
-        actualRotation = rotateVectorAlong(perpendicular, lightDir, 2 * M_PI * angle / nbAngles);
+        actualRotation = rotateVectorAlong(perpendicular, lightRay.direction, 2 * M_PI * angle / nbAngles);
         for (int scale = 1; scale <= nbScales; scale++) {
-            ray.origin = lightPos + actualRotation * scale;
+            ray.origin = lightRay.origin + actualRotation * scale;
             ray.direction = {ray.origin.X - pos.X, ray.origin.Y - pos.Y, ray.origin.Z - pos.Z};
             if (hitsBefore(scene, pos, ray) == false)
                 nbHits++;
@@ -134,7 +133,7 @@ RGB Phong::Model::calculateColor(std::vector<std::shared_ptr<ray::IShape>> objec
     unsigned int BRes;
 
     for (const std::shared_ptr<ray::ILight>& light : _lights) {
-        Math::Vector3D lightDir = light->getIncidentVector(_pos);
+        Math::Vector3D lightDir = light->getIncidentVector(_pos).direction;
         Math::Vector3D reflection = getLightReflection(lightDir, _normale);
         RGB lightColor = getLightColor(light, objects, _pos, _shadowQuality);
 
