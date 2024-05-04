@@ -4,7 +4,7 @@ project(raytracer)
 set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -Wall -Wextra -Werror -pedantic -Wmissing-include-dirs -g3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -Wall -Wextra -Werror -pedantic -Wmissing-include-dirs -g3 -O0")
 
 include_directories(include)
 
@@ -67,12 +67,12 @@ set(SHAPES_SOURCES
 )
 
 set(CAMERA_SOURCES
-        src/cameras/base/Camera.cpp
         src/cameras/ACamera.cpp
         src/cameras/ACamera.hpp
 )
 
 add_library(lights_point SHARED ${LIGHT_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/lights/point/PointLight.cpp)
+add_library(lights_directional SHARED ${LIGHT_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/lights/directional/DirectionalLight.cpp)
 add_library(materials_basic SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/basic/BasicMaterial.cpp)
 add_library(transformations_rotation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/rotation/Rotation.cpp)
 add_library(transformations_scale SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/scale/Scale.cpp)
@@ -85,6 +85,10 @@ add_library(scenes_base SHARED ${SCENE_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES}
 set_target_properties(lights_point PROPERTIES
         PREFIX ""
         OUTPUT_NAME "lights_point"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(lights_directional PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "lights_directional"
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
 set_target_properties(materials_basic PROPERTIES
         PREFIX ""
@@ -121,6 +125,7 @@ set_target_properties(scenes_base PROPERTIES
 
 add_dependencies(raytracer
         lights_point
+        lights_directional
         materials_basic
         transformations_rotation
         transformations_scale
