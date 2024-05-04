@@ -72,7 +72,7 @@ Maybe<Math::Point3D> ray::Sphere::hit(const ray::Ray &ray)
     return Maybe{getClosestRoot(a, b, det, ray)};
 }
 
-Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point)
+Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay)
 {
     Math::Vector3D normale = {point.X - center.X,
                               point.Y - center.Y,

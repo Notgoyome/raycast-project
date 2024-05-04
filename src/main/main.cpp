@@ -34,7 +34,7 @@ RGB getHitColor(const PosShapePair& hit, ray::Ray ray, const std::shared_ptr<ray
 {
     std::shared_ptr<ray::IMaterial> material = ray::Scene::getMaterial(hit.second);
 
-    return material->getColor(0, hit.first, hit.second->getNormale(hit.first), ray.origin, scene);
+    return material->getColor(0, hit.first, hit.second->getNormale(hit.first, ray), ray.origin, scene);
 }
 
 Image render(unsigned int width, unsigned int height,

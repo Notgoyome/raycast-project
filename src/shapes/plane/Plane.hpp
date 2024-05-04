@@ -22,7 +22,7 @@ namespace ray {
         void setPosition();
         Maybe<Math::Point3D> hit(const ray::Ray &ray) override;
 
-        Math::Vector3D getNormale(const Math::Point3D &point) override;
+        Math::Vector3D getNormale(const Math::Point3D &point, const ray::Ray& camRay) override;
     private:
         bool _transform;
     };
