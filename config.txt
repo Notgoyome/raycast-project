@@ -43,7 +43,7 @@ nodes : (
         name : "light_translate";
         type : "transformations_translation.so";
         properties : {
-            translation : "{ x : 150; y : 0; z : -50; }";
+            translation : "{ x : 150; y : 0; z : 45; }";
         };
     },
     {
@@ -84,6 +84,7 @@ nodes : (
         type : "materials_basic.so";
         properties : {
             color : "{ r : 255; g : 0; b : 0; }";
+            shadow_quality : "1";
         };
     },
     {
@@ -92,6 +93,7 @@ nodes : (
         type : "materials_basic.so";
         properties : {
             color : "{ r : 0; g : 255; b : 0; }";
+            shadow_quality : "0";
         };
     }
 );
