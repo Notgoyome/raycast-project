@@ -34,19 +34,18 @@ Math::Vector3D ray::Plane::getNormale(__attribute__((unused))const Math::Point3D
     if (_transform == false) {
         applyMatrix();
         setPosition();
+        _normale(0,0) = 0;
+        _normale(1,0) = 1;
+        _normale(2,0) = 0;
+        _normale(3,0) = 0;
+        _normale = _transformMatrix * _normale;
         _transform = true;
     }
-    Math::Matrix<4,1> normale;
-    normale(0,0) = 0;
-    normale(1,0) = 1;
-    normale(2,0) = 0;
-    normale(3,0) = 0;
     Math::Vector3D vectorNormale;
 
-    normale = _transformMatrix * normale;
-    vectorNormale.X = normale(0,0);
-    vectorNormale.Y = normale(1,0);
-    vectorNormale.Z = normale(2,0);
+    vectorNormale.X = _normale(0,0);
+    vectorNormale.Y = _normale(1,0);
+    vectorNormale.Z = _normale(2,0);
 
     if (vectorNormale.dot(camRay.direction) > 0)
         vectorNormale = vectorNormale * -1;

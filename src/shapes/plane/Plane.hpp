@@ -25,6 +25,7 @@ namespace ray {
         Math::Vector3D getNormale(const Math::Point3D &point, const ray::Ray& camRay) override;
     private:
         bool _transform;
+        Math::Matrix<4, 1> _normale;
     };
 }
 extern "C" ray::INode *create(std::map<std::string, std::string>& properties);
