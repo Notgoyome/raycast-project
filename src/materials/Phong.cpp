@@ -39,6 +39,14 @@ Math::Vector3D getPerpendicularVector(Math::Vector3D vec)
     return vectorProduct(vec, {1, 0, 0});
 }
 
+bool isBehind(Math::Point3D pos, Math::Point3D lightPos, Math::Vector3D lightDir)
+{
+    Math::Vector3D lightToPos = {pos.X - lightPos.X, pos.Y - lightPos.Y, pos.Z - lightPos.Z};
+    double angle = lightToPos.dot(lightDir);
+
+    return angle < 0;
+}
+
 bool hitsBefore(std::vector<std::shared_ptr<ray::IShape>> objects, Math::Point3D pos, ray::Ray ray)
 {
     std::vector hits = {pos};
@@ -46,7 +54,7 @@ bool hitsBefore(std::vector<std::shared_ptr<ray::IShape>> objects, Math::Point3D
     for (const std::shared_ptr<ray::IShape>& object : objects) {
         Maybe<Math::Point3D> maybePos = object->hit(ray);
 
-        if (maybePos.has_value())
+        if (maybePos.has_value() && isBehind(maybePos.value(), ray.origin, ray.direction) == false)
             hits.push_back(maybePos.value());
     }
     Math::Point3D closest = roundPoint(getClosest(hits, ray.origin));
@@ -66,9 +74,10 @@ RGB getLightColor(std::shared_ptr<ray::ILight> light,
     Math::Vector3D actualRotation;
     Math::Point3D lightPos = light->getPos();
     ray::Ray ray = {lightPos, lightDir};
+
     int nbHits = 0;
-    int nbAngles = quality < 10 ? quality : 10;
-    int nbScales = quality > 10 ? quality / 10 : 1;
+    int nbAngles = quality < 10 ? static_cast<int>(quality) : 10;
+    int nbScales = quality > 10 ? static_cast<int>(quality) / 10 : 1;
     perpendicular /= perpendicular.length();
 
     for (int angle = 0; angle < nbAngles; angle++) {
@@ -113,30 +122,37 @@ Math::Vector3D getLightReflection(Math::Vector3D lightDir, Math::Vector3D normal
     return res / res.length();
 }
 
-unsigned int Phong::Model::getPhongForValues(int idx, std::vector<std::shared_ptr<ray::IShape>> objects) const
+RGB Phong::Model::calculateColor(std::vector<std::shared_ptr<ray::IShape>> objects)
 {
-    double sum = 0;
+    double sumR = 0;
+    double sumG = 0;
+    double sumB = 0;
+
+    unsigned int RRes;
+    unsigned int GRes;
+    unsigned int BRes;
 
     for (const std::shared_ptr<ray::ILight>& light : _lights) {
         Math::Vector3D lightDir = light->getIncidentVector(_pos);
         Math::Vector3D reflection = getLightReflection(lightDir, _normale);
         RGB lightColor = getLightColor(light, objects, _pos, _shadowQuality);
+        // lightColor = light->getColor();
 
         double diff = std::max(lightDir.dot(_normale), 0.0);
         double ref = std::max(pow(reflection.dot(_view), _alpha), 0.0);
 
-        sum += _kd(0, idx) * diff * getLightDiffuseIntensity(lightColor)(0, idx);
+        sumR += _kd(0, 0) * diff * getLightDiffuseIntensity(lightColor)(0, 0);
         if (diff > 0.2)
-            sum += _ks(0, idx) * ref * getLightSpecularIntensity(lightColor)(0, idx);
+            sumR += _ks(0, 0) * ref * getLightSpecularIntensity(lightColor)(0, 0);
+        sumG += _kd(0, 1) * diff * getLightDiffuseIntensity(lightColor)(0, 1);
+        if (diff > 0.2)
+            sumG += _ks(0, 1) * ref * getLightSpecularIntensity(lightColor)(0, 1);
+        sumB += _kd(0, 2) * diff * getLightDiffuseIntensity(lightColor)(0, 2);
+        if (diff > 0.2)
+            sumB += _ks(0, 2) * ref * getLightSpecularIntensity(lightColor)(0, 2);
     }
-    return static_cast<unsigned int>(std::min(static_cast<float>(_ka(0, idx) * _ia + sum) * 255.F, 255.F));
-}
-
-RGB Phong::Model::calculateColor(std::vector<std::shared_ptr<ray::IShape>> objects)
-{
-    unsigned int RRes = getPhongForValues(0, objects);
-    unsigned int GRes = getPhongForValues(1, objects);
-    unsigned int BRes = getPhongForValues(2, objects);
-
-    return {RRes, GRes, BRes};
+    RRes = static_cast<unsigned int>(std::min(static_cast<float>(_ka(0, 0) * _ia + sumR) * 255.F, 255.F));
+    GRes = static_cast<unsigned int>(std::min(static_cast<float>(_ka(0, 1) * _ia + sumG) * 255.F, 255.F));
+    BRes = static_cast<unsigned int>(std::min(static_cast<float>(_ka(0, 2) * _ia + sumB) * 255.F, 255.F));
+    return RGB{RRes, GRes, BRes};
 }

@@ -33,8 +33,6 @@ namespace Phong {
         Math::Vector3D _normale;
         Math::Vector3D _view;
 
-        [[nodiscard]] unsigned int getPhongForValues(int idx, std::vector<std::shared_ptr<ray::IShape>> objects) const;
-
     public:
         // CONSTR DESTRUCT
         Model(
