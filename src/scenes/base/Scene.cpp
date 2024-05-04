@@ -142,7 +142,7 @@ namespace ray {
             }
             parent = parent->getParent();
         }
-        for (int i = static_cast<int>(transformations.size()) - 1; i >= 0; i--) {
+        for (int i = 0; i < static_cast<int>(transformations.size()); i++) {
             finalMatrix = transformations[i] * finalMatrix;
         }
         return finalMatrix;
@@ -162,7 +162,7 @@ namespace ray {
             }
             parent = parent->getParent();
         }
-        for (int i = static_cast<int>(transformations.size()) - 1; i >= 0; i--) {
+        for (int i = 0; i < static_cast<int>(transformations.size()); i++) {
             finalMatrix = transformations[i] * finalMatrix;
         }
         return finalMatrix;
