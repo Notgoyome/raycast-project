@@ -20,16 +20,17 @@ double getVectorAngle(Math::Vector3D vec1, Math::Vector3D vec2)
     return acos(vec1.dot(vec2) / (vec1.length() * vec2.length()));
 }
 
-ray::BasicMaterial::BasicMaterial(RGB color) : _color(color),
-                                               _phong({},
-                                                   0.05,
-                                                   50,
-                                                   Math::Matrix<1, 3>({{1, 1, 1}}),
-                                                   Math::Matrix<1, 3>{{{0, 0, 0}}},
-                                                   Math::Matrix<1, 3>{{{0.1, 0.5, 0.5}}},
-                                                   {0, 0, 0},
-                                                   {0, 0, 0},
-                                                   {0, 0, 0})
+ray::BasicMaterial::BasicMaterial(RGB color, double shadowQuality) : _color(color),
+    _phong({},
+       0.05,
+       50,
+       shadowQuality,
+       Math::Matrix<1, 3>({{1, 1, 1}}),
+       Math::Matrix<1, 3>{{{0, 0, 0}}},
+       Math::Matrix<1, 3>{{{0.1, 0.5, 0.5}}},
+       {0, 0, 0},
+       {0, 0, 0},
+       {0, 0, 0})
 {
     _phong.setKd(Math::Matrix<1, 3>({{color.R / 255.f, color.G / 255.f, color.B / 255.f}}));
 }
@@ -52,8 +53,16 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
 {
     if (attributes.find("color") == attributes.end())
         throw ray::NodeError("IMaterial: missing color attribute", "BasicMaterial.cpp");
+    if (attributes.find("shadow_quality") == attributes.end())
+        throw ray::NodeError("IMaterial: missing shadow_quality attribute (number between 0 and 100 for render time)", "BasicMaterial.cpp");
+
     Maybe<RGB> color = RGB::fromStr(attributes.at("color"));
+    double shadowQuality = std::stod(attributes.at("shadow_quality"));
+
     if (!color.has_value())
         throw ray::NodeError("IMaterial: invalid color attribute", "BasicMaterial.cpp");
-    return new ray::BasicMaterial(color.value());
+    if (shadowQuality < 1 || shadowQuality > 100)
+        throw ray::NodeError("IMaterial: shadow_quality must be a number between 0 and 100", "BasicMaterial.cpp");
+
+    return new ray::BasicMaterial(color.value(), shadowQuality);
 }

@@ -25,6 +25,7 @@ namespace Phong {
         ListLight _lights;
         double _ia;
         double _alpha;
+        double _shadowQuality;
         Math::Matrix<1, 3> _ka;
         Math::Matrix<1, 3> _kd;
         Math::Matrix<1, 3> _ks;
@@ -40,13 +41,14 @@ namespace Phong {
             ListLight lights,
             double ia,
             double alpha,
+            double shadowQuality,
             Math::Matrix<1, 3> ka,
             Math::Matrix<1, 3> kd,
             Math::Matrix<1, 3> ks,
             Math::Point3D pos,
             Math::Vector3D normale,
             Math::Vector3D view)
-            : _lights(std::move(lights)), _ia(ia), _alpha(alpha),
+            : _lights(std::move(lights)), _ia(ia), _alpha(alpha), _shadowQuality(shadowQuality),
             _ka(ka), _kd(kd), _ks(ks), _pos(pos), _normale(normale),
             _view(view) {}
         ~Model() = default;

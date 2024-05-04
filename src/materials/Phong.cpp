@@ -57,7 +57,9 @@ bool hitsBefore(std::vector<std::shared_ptr<ray::IShape>> objects, Math::Point3D
     return true;
 }
 
-RGB getLightColor(std::shared_ptr<ray::ILight> light, std::vector<std::shared_ptr<ray::IShape>> scene, Math::Point3D pos)
+RGB getLightColor(std::shared_ptr<ray::ILight> light,
+    std::vector<std::shared_ptr<ray::IShape>> scene, Math::Point3D pos,
+    double quality)
 {
     Math::Vector3D lightDir = light->getIncidentVector(pos);
     Math::Vector3D perpendicular = getPerpendicularVector(lightDir);
@@ -65,18 +67,20 @@ RGB getLightColor(std::shared_ptr<ray::ILight> light, std::vector<std::shared_pt
     Math::Point3D lightPos = ray::Scene::getPosition(light);
     ray::Ray ray = {lightPos, lightDir};
     int nbHits = 0;
+    int nbAngles = quality < 10 ? quality : 10;
+    int nbScales = quality > 10 ? quality / 10 : 1;
     perpendicular /= perpendicular.length();
 
-    for (int angle = 0; angle < 10; angle++) {
-        actualRotation = rotateVectorAlong(perpendicular, lightDir, 2 * M_PI * angle / 10);
-        for (int scale = 1; scale <= 10; scale++) {
+    for (int angle = 0; angle < nbAngles; angle++) {
+        actualRotation = rotateVectorAlong(perpendicular, lightDir, 2 * M_PI * angle / nbAngles);
+        for (int scale = 1; scale <= nbScales; scale++) {
             ray.origin = lightPos + actualRotation * scale;
             ray.direction = {ray.origin.X - pos.X, ray.origin.Y - pos.Y, ray.origin.Z - pos.Z};
             if (hitsBefore(scene, pos, ray) == false)
                 nbHits++;
         }
     }
-    return light->getColor() * (static_cast<float>(nbHits) / 100.f);
+    return light->getColor() * (static_cast<float>(nbHits) / static_cast<float>(nbScales * nbAngles));
 }
 
 Math::Matrix<1, 3> getLightDiffuseIntensity(RGB lightColor)
@@ -116,7 +120,7 @@ unsigned int Phong::Model::getPhongForValues(int idx, std::vector<std::shared_pt
     for (const std::shared_ptr<ray::ILight>& light : _lights) {
         Math::Vector3D lightDir = light->getIncidentVector(_pos);
         Math::Vector3D reflection = getLightReflection(lightDir, _normale);
-        RGB lightColor = getLightColor(light, objects, _pos);
+        RGB lightColor = getLightColor(light, objects, _pos, _shadowQuality);
 
         double diff = std::max(lightDir.dot(_normale), 0.0);
         double ref = std::max(pow(reflection.dot(_view), _alpha), 0.0);
