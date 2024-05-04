@@ -39,7 +39,7 @@ namespace ray {
                 std::cerr << "Factory error: " << e.what() << std::endl;
                 return nullptr;
             } catch (ray::NodeError& e) {
-                std::cerr << "NODE ERROR " << e.where() << ": " << e.what() << std::endl;
+                std::cerr << "[Config File error] " << e.where() << ": " << e.what() << std::endl;
                 return nullptr;
             }
         }
