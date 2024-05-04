@@ -1,127 +1,192 @@
 nodes : (
     {
-        id : 1;
-        name : "scene";
+        id : "scene";
         type : "scenes_base.so";
         properties : {
         };
     },
 	{
-	    id : 2;
-	    name : "camera";
+	    id : "camera";
 	    type : "cameras_base.so";
 	    properties : {
 	        fieldOfView : "75";
-	        width : "500";
-	        height : "500";
+	        width : "700";
+	        height : "700";
         };
 	},
 	{
-        id : 3;
-        name : "light";
-        type : "lights_directional.so";
+        id : "light";
+        type : "lights_point.so";
         properties : {
             color : "{ r : 255; g : 255; b : 255; }";
-            direction : "{ x : 1; y : 11; z : 0; }";
         };
     },
     {
-        id : 4;
-        name : "sphere1";
+        id : "light_translate";
+        type : "transformations_translation.so";
+        properties : {
+            translation : "{ x : 0; y : -500; z : -200; }";
+        };
+    },
+    {
+        id : "plane1";
+        type : "shapes_plane.so";
+        properties : {
+        };
+    },
+    {
+        id : "plane2";
+        type : "shapes_plane.so";
+        properties : {
+        };
+    },
+    {
+        id : "plane3";
+        type : "shapes_plane.so";
+        properties : {
+        };
+    },
+    {
+        id : "plane4";
+        type : "shapes_plane.so";
+        properties : {
+        };
+    },
+    {
+        id : "sphere1";
         type : "shapes_sphere.so";
         properties : {
         };
     },
     {
-        id : 5;
-        name : "sphere2";
-        type : "shapes_sphere.so";
+        id : "rotate_plane1";
+        type : "transformations_rotation.so";
         properties : {
+            rotation : "{ x : 0; y : 0; z : 1.57; }";
         };
     },
     {
-        id : 6;
-        name : "light_translate";
+        id : "rotate_plane2";
+        type : "transformations_rotation.so";
+        properties : {
+            rotation : "{ x : 0; y : 0; z : 1.57; }";
+        };
+    },
+    {
+        id : "rotate_plane3";
+        type : "transformations_rotation.so";
+        properties : {
+            rotation : "{ x : 1.57; y : 0; z : 0; }";
+        };
+    },
+    {
+        id : "rotate_plane4";
+        type : "transformations_rotation.so";
+        properties : {
+            rotation : "{ x : 0; y : 0.2; z : 0; }";
+        };
+    },
+    {
+        id : "translate_plane_left";
         type : "transformations_translation.so";
         properties : {
-            translation : "{ x : 0; y : 0; z : 0; }";
+            translation : "{ x : -400; y : 0; z : 0; }";
         };
     },
     {
-        id : 7;
-        name : "sphere1_translate";
+        id : "translate_plane_right";
         type : "transformations_translation.so";
         properties : {
-            translation : "{ x : -100; y : 0; z : 100; }";
+            translation : "{ x : 400; y : 0; z : 0; }";
         };
     },
     {
-        id : 8;
-        name : "sphere2_translate";
+        id : "translate_plane_back";
         type : "transformations_translation.so";
         properties : {
-            translation : "{ x : 100; y : 0; z : -100; }";
+            translation : "{ x : 0; y : 0; z : 2000; }";
         };
     },
     {
-        id : 9;
-        name : "sphere1_scale";
+        id : "translate_plane_floor";
+        type : "transformations_translation.so";
+        properties : {
+            translation : "{ x : 0; y : 300; z : 0; }";
+        };
+    },
+    {
+        id : "translate_sphere1";
+        type : "transformations_translation.so";
+        properties : {
+            translation : "{ x : 0; y : 0; z : 150; }";
+        };
+    },
+    {
+        id : "scale_sphere1";
         type : "transformations_scale.so";
         properties : {
             scale : "{ x : 60; y : 60; z : 60; }";
         };
     },
     {
-        id : 10;
-        name : "sphere2_scale";
-        type : "transformations_scale.so";
+        id : "green_material";
+        type : "materials_basic.so";
         properties : {
-            scale : "{ x : 60; y : 60; z : 60; }";
+            color : "{ r : 0; g : 255; b : 0; }";
+            shadow_quality : "20";
         };
     },
     {
-        id : 11;
-        name : "material_red";
+        id : "red_material";
         type : "materials_basic.so";
         properties : {
-            color : "{ r : 255; g : 255; b : 255; }";
-            shadow_quality : "1";
+            color : "{ r : 255; g : 0; b : 0; }";
+            shadow_quality : "20";
         };
     },
     {
-        id : 12;
-        name : "material_green";
+        id : "white_material";
         type : "materials_basic.so";
         properties : {
             color : "{ r : 255; g : 255; b : 255; }";
-            shadow_quality : "1";
+            shadow_quality : "20";
+        };
+    },
+    {
+        id : "grey_material";
+        type : "materials_basic.so";
+        properties : {
+            color : "{ r : 180; g : 180; b : 180; }";
+            shadow_quality : "20";
         };
     }
 );
 
 config : (
     {
-        id : 1;
+        id : "scene";
         children : (
             {
-                id : 2;
+                id : "camera";
             },
             {
-                id : 6;
+                id : "light_translate";
                 children : (
-                    { id : 3; }
+                    {
+                        id : "light";
+                    }
                 );
             },
             {
-                id : 11;
+                id : "red_material";
                 children : (
                     {
-                        id : 7;
+                        id : "translate_plane_right";
                         children : (
                             {
-                                id : 9;
+                                id : "rotate_plane2";
                                 children : (
-                                    { id : 4; }
+                                    { id : "plane2"; }
                                 );
                             }
                         );
@@ -129,15 +194,58 @@ config : (
                 );
             },
             {
-                id : 12;
+                id : "green_material";
                 children : (
                     {
-                        id : 8;
+                        id : "translate_plane_left";
                         children : (
                             {
-                                id : 10;
+                                id : "rotate_plane1";
                                 children : (
-                                    { id : 5; }
+                                    { id : "plane1"; }
+                                );
+                            }
+                        );
+                    }
+                );
+            },
+            {
+                id : "white_material";
+                children : (
+                    {
+                        id : "translate_plane_back";
+                        children : (
+                            {
+                                id : "rotate_plane3";
+                                children : (
+                                    { id : "plane3"; }
+                                );
+                            }
+                        );
+                    },
+                    {
+                        id : "translate_sphere1";
+                        children : (
+                            {
+                                id : "scale_sphere1";
+                                children : (
+                                    { id : "sphere1"; }
+                                );
+                            }
+                        );
+                    }
+                );
+            },
+            {
+                id : "grey_material";
+                children : (
+                    {
+                        id : "translate_plane_floor";
+                        children : (
+                            {
+                                id : "rotate_plane4";
+                                children : (
+                                    { id : "plane4"; }
                                 );
                             }
                         );
@@ -160,6 +268,6 @@ image : (
     {
         file : "output.ppm";
         width : 1000;
-        height : 2000;
+        height : 1000;
     }
 );

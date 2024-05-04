@@ -88,6 +88,7 @@ int main(int argc, char** argv)
         Image img = render(imageData.width, imageData.height, scene, camera, backgroundColor);
         ray::Renderer renderer;
         renderer.renderPpmImage(img, imageData.filename);
+        renderer.renderSfmlImage(img);
 
     } catch (const std::exception& e) {
         std::cerr << "Exception caught: " << e.what() << std::endl;

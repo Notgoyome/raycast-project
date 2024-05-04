@@ -35,7 +35,7 @@ namespace ray {
 
     class NodeBuilder {
     private:
-        std::map<int, std::shared_ptr<INode>> nodeMap;
+        std::map<std::string, std::shared_ptr<INode>> nodeMap;
         std::vector<std::shared_ptr<INode>> rootNodes;
         unsigned int background_r;
         unsigned int background_g;
