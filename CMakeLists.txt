@@ -81,6 +81,7 @@ add_library(shapes_sphere SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURC
 add_library(shapes_plane SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/plane/Plane.cpp)
 add_library(cameras_base SHARED ${CAMERA_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/cameras/base/Camera.cpp)
 add_library(scenes_base SHARED ${SCENE_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/scenes/base/sceneCreate.cpp)
+add_library(shapes_cone SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/cone/Cone.cpp)
 
 set_target_properties(lights_point PROPERTIES
         PREFIX ""
@@ -118,6 +119,10 @@ set_target_properties(cameras_base PROPERTIES
         PREFIX ""
         OUTPUT_NAME "cameras_base"
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(shapes_cone PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "shapes_cone"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
 set_target_properties(scenes_base PROPERTIES
         PREFIX ""
         OUTPUT_NAME "scenes_base"
@@ -134,4 +139,5 @@ add_dependencies(raytracer
         shapes_plane
         cameras_base
         scenes_base
+        shapes_cone
 )
