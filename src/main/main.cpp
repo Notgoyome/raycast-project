@@ -42,21 +42,24 @@ Image render(unsigned int width, unsigned int height,
     const std::shared_ptr<ray::ICamera>& cam, RGB backgroundColor)
 {
     Image img;
+    auto biggest = static_cast<unsigned int>(std::max(width, height));
+    unsigned int startI = biggest == width ? 0 : static_cast<unsigned int>(static_cast<float>(biggest - width) / 2.f);
+    unsigned int startJ = biggest == height ? 0 : static_cast<unsigned int>(static_cast<float>(biggest - height) / 2.f);
 
-    for (unsigned int i = 0; i < width; i++) {
-        for (unsigned int j = 0; j < height; j++) {
-            double u = double(i) / width;
-            double v = double(j) / height;
+    for (unsigned int i = startI; i < biggest - startI; i++) {
+        for (unsigned int j = startJ; j < biggest - startJ; j++) {
+            double u = double(i) / biggest;
+            double v = double(j) / biggest;
             ray::Ray r = cam->ray(u, v);
             Maybe<PosShapePair> hit = scene->hit(r);
 
             if (hit.has_value() == false) {
-                img.addPixel({static_cast<double>(i), static_cast<double>(j)}, backgroundColor);
+                img.addPixel({static_cast<double>(i - startI), static_cast<double>(j - startJ)}, backgroundColor);
             } else {
-                img.addPixel({static_cast<double>(i), static_cast<double>(j)}, getHitColor(hit.value(), r, scene));
+                img.addPixel({static_cast<double>(i - startI), static_cast<double>(j - startJ)}, getHitColor(hit.value(), r, scene));
             }
         }
-        std::cout << "Rendering: " << i << "/" << width << std::endl;
+        std::cout << "Rendering: " << i - startI << "/" << width << std::endl;
     }
 
     return img;
@@ -74,6 +77,7 @@ int main(int argc, char** argv)
         ray::NodeBuilder builder(argv[1]);
         const auto& nodes = builder.getRootNodes();
         RGB backgroundColor = builder.getBackgroundColor();
+        image_data_t imageData = builder.getImageData();
 
         if (nodes.empty()) {
             throw ray::CoreException("No root nodes found in the scene file.");
@@ -81,10 +85,9 @@ int main(int argc, char** argv)
 
         std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(getScene(nodes));
         std::shared_ptr<ray::ICamera> camera = getCamera(scene);
-        std::pair size = camera->getResolution();
-        Image img = render(size.first, size.second, scene, camera, backgroundColor);
+        Image img = render(imageData.width, imageData.height, scene, camera, backgroundColor);
         ray::Renderer renderer;
-        renderer.renderSfmlImage(img);
+        renderer.renderPpmImage(img, imageData.filename);
 
     } catch (const std::exception& e) {
         std::cerr << "Exception caught: " << e.what() << std::endl;

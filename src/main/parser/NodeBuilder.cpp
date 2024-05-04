@@ -104,6 +104,21 @@ namespace ray {
         }
     }
 
+    void NodeBuilder::parseImageData(
+        const std::shared_ptr<libconfig::Config> &cfg)
+    {
+        if (!cfg->exists("image"))
+            throw NodeBuilderException("NodeBuilder: \"image\" block is missing in the configuration file.");
+        const libconfig::Setting& image = cfg->lookup("image");
+
+        if (image.getLength() != 1)
+            throw NodeBuilderException("NodeBuilder: \"image\" block is wrongly formatted / empty.");
+
+        image[0].lookupValue("file", imageData.filename);
+        image[0].lookupValue("width", imageData.width);
+        image[0].lookupValue("height", imageData.height);
+    }
+
     NodeBuilder::NodeBuilder(const std::string &filename) : background_r(0), background_g(0), background_b(0)
     {
         std::shared_ptr<libconfig::Config> cfg = openFile(filename);
@@ -111,6 +126,7 @@ namespace ray {
         parseNodes(cfg);
         parseHierarchy(cfg);
         parseBackgroundColor(cfg);
+        parseImageData(cfg);
     }
 
 }

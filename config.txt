@@ -12,8 +12,8 @@ nodes : (
 	    type : "cameras_base.so";
 	    properties : {
 	        fieldOfView : "75";
+	        width : "500";
 	        height : "500";
-	        width : "888";
         };
 	},
 	{
@@ -85,7 +85,7 @@ nodes : (
         type : "materials_basic.so";
         properties : {
             color : "{ r : 255; g : 255; b : 255; }";
-            shadow_quality : "100";
+            shadow_quality : "1";
         };
     },
     {
@@ -94,7 +94,7 @@ nodes : (
         type : "materials_basic.so";
         properties : {
             color : "{ r : 255; g : 255; b : 255; }";
-            shadow_quality : "100";
+            shadow_quality : "1";
         };
     }
 );
@@ -153,5 +153,13 @@ background : (
         r : 0;
         g : 0;
         b : 0;
+    }
+);
+
+image : (
+    {
+        file : "output.ppm";
+        width : 1000;
+        height : 2000;
     }
 );
