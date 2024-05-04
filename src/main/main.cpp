@@ -49,23 +49,14 @@ Image render(unsigned int width, unsigned int height,
             double v = double(j) / height;
             ray::Ray r = cam->ray(u, v);
             Maybe<PosShapePair> hit = scene->hit(r);
-            RGB color;
 
             if (hit.has_value() == false) {
                 img.addPixel({static_cast<double>(i), static_cast<double>(j)}, backgroundColor);
-                color = backgroundColor;
             } else {
                 img.addPixel({static_cast<double>(i), static_cast<double>(j)}, getHitColor(hit.value(), r, scene));
-                color = getHitColor(hit.value(), r, scene);
             }
-            std::cout << "RENDER: [" << i << "," << j << "] / [" << width << "," << height <<  "] ";
-            std::cout << "HIT: " << hit.has_value() << " ";
-            if (hit.has_value()) {
-                std::cout << "COLOR: [" << color.R << "," << color.G << "," << color.B << "] ";
-                std::cout << "POSITION: [" << hit.value().first.X << "," << hit.value().first.Y << "," << hit.value().first.Z << "] ";
-            }
-            std::cout << std::endl;
         }
+        std::cout << "Rendering: " << i << "/" << width << std::endl;
     }
 
     return img;
