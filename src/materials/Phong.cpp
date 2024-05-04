@@ -62,7 +62,6 @@ bool hitsBefore(std::vector<std::shared_ptr<ray::IShape>> objects, Math::Point3D
 
     if (closest == actual)
         return false;
-    isBehind(closest, ray.origin, ray.direction);
     return true;
 }
 
