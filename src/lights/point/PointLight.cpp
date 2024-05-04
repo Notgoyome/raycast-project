@@ -15,23 +15,22 @@ ray::PointLight::PointLight(RGB color) : ALight(color)
 ray::Ray ray::PointLight::getIncidentVector(Math::Point3D pos)
 {
     if (_gotPos == false) {
-        _pos = Scene::getPosition(*this);
+        _myPos = Scene::getPosition(*this);
         _gotPos = true;
     }
-    Math::Point3D myPos = _pos;
-    Math::Vector3D res = {myPos.X - pos.X, myPos.Y - pos.Y, myPos.Z - pos.Z};
+    Math::Vector3D res = {_myPos.X - pos.X, _myPos.Y - pos.Y, _myPos.Z - pos.Z};
 
     res /= res.length();
-    return {pos, res};
+    return {_myPos, res};
 }
 
 Math::Point3D ray::PointLight::getPos()
 {
     if (_gotPos == false) {
-        _pos = Scene::getPosition(*this);
+        _myPos = Scene::getPosition(*this);
         _gotPos = true;
     }
-    return _pos;
+    return _myPos;
 }
 
 extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)

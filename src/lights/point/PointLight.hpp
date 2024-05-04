@@ -16,7 +16,7 @@
 namespace ray {
 
     class PointLight : public ray::ALight {
-        Math::Point3D _pos;
+        Math::Point3D _myPos;
         bool _gotPos = false;
     public:
         explicit PointLight(RGB color);
