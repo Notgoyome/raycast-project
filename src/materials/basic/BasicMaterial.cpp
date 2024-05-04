@@ -27,7 +27,7 @@ ray::BasicMaterial::BasicMaterial(RGB color, double shadowQuality) : _color(colo
        shadowQuality,
        Math::Matrix<1, 3>({{1, 1, 1}}),
        Math::Matrix<1, 3>{{{0, 0, 0}}},
-       Math::Matrix<1, 3>{{{0.1, 0.5, 0.5}}},
+       Math::Matrix<1, 3>{{{0.5, 0.5, 0.5}}},
        {0, 0, 0},
        {0, 0, 0},
        {0, 0, 0})

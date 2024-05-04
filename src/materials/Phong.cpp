@@ -44,7 +44,7 @@ bool isBehind(Math::Point3D pos, Math::Point3D lightPos, Math::Vector3D lightDir
     Math::Vector3D lightToPos = {pos.X - lightPos.X, pos.Y - lightPos.Y, pos.Z - lightPos.Z};
     double angle = lightToPos.dot(lightDir);
 
-    return angle < 0;
+    return angle > 0;
 }
 
 bool hitsBefore(std::vector<std::shared_ptr<ray::IShape>> objects, Math::Point3D pos, ray::Ray ray)
@@ -62,6 +62,7 @@ bool hitsBefore(std::vector<std::shared_ptr<ray::IShape>> objects, Math::Point3D
 
     if (closest == actual)
         return false;
+    isBehind(closest, ray.origin, ray.direction);
     return true;
 }
 
@@ -136,7 +137,6 @@ RGB Phong::Model::calculateColor(std::vector<std::shared_ptr<ray::IShape>> objec
         Math::Vector3D lightDir = light->getIncidentVector(_pos);
         Math::Vector3D reflection = getLightReflection(lightDir, _normale);
         RGB lightColor = getLightColor(light, objects, _pos, _shadowQuality);
-        // lightColor = light->getColor();
 
         double diff = std::max(lightDir.dot(_normale), 0.0);
         double ref = std::max(pow(reflection.dot(_view), _alpha), 0.0);
