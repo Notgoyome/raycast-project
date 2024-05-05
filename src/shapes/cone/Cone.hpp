@@ -23,6 +23,8 @@ namespace ray {
         void setPosition();
         void setRadius(float radius);
         void setHeight(float height);
+        void transform();
+        void setAxis(Math::Vector3D axis);
         Math::Vector3D getAxis();
 
     private:
@@ -30,6 +32,7 @@ namespace ray {
         Math::Point3D center;
         float _height;
         float _radius;
+        Math::Vector3D _axis;
     };
 }
 
