@@ -9,34 +9,33 @@
 #include "../scenes/base/Scene.hpp"
 #include "utils/getClosest.h"
 
+double pointsDistance(Math::Point3D point1, Math::Point3D point2)
+{
+    Math::Vector3D vec = {point1.X - point2.X, point1.Y - point2.Y, point1.Z - point2.Z};
+    return vec.length();
+}
+
 Math::Point3D roundPoint(Math::Point3D point)
 {
     return {round(point.X * 10000) / 10000, round(point.Y * 10000) / 10000, round(point.Z * 10000) / 10000};
 }
 
-Math::Vector3D vectorProduct(Math::Vector3D a, Math::Vector3D b)
-{
-    return {a.Y * b.Z - a.Z * b.Y,
-        a.Z * b.X - a.X * b.Z,
-        a.X * b.Y - a.Y * b.X};
-}
-
 Math::Vector3D rotateVectorAlong(Math::Vector3D toRotate, Math::Vector3D axis, double angle)
 {
     return toRotate * std::cos(angle) +
-        vectorProduct(axis, toRotate) * std::sin(angle) +
+        axis.product(toRotate) * std::sin(angle) +
             axis * axis.dot(toRotate) * (1 - std::cos(angle));
 }
 
 Math::Vector3D getPerpendicularVector(Math::Vector3D vec)
 {
-    Math::Vector3D res = vectorProduct(vec, {0, 0, 1});
+    Math::Vector3D res = vec.product({0, 0, 1});
     if (res != Math::Vector3D{0, 0, 0})
         return res;
-    res = vectorProduct(vec, {0, 1, 0});
+    res = vec.product({0, 1, 0});
     if (res != Math::Vector3D{0, 0, 0})
         return res;
-    return vectorProduct(vec, {1, 0, 0});
+    return vec.product({1, 0, 0});
 }
 
 bool isBehind(Math::Point3D pos, Math::Point3D lightPos, Math::Vector3D lightDir)
@@ -44,17 +43,17 @@ bool isBehind(Math::Point3D pos, Math::Point3D lightPos, Math::Vector3D lightDir
     Math::Vector3D lightToPos = {pos.X - lightPos.X, pos.Y - lightPos.Y, pos.Z - lightPos.Z};
     double angle = lightToPos.dot(lightDir);
 
-    return angle > 0;
+    return angle < 0;
 }
 
-bool hitsBefore(std::vector<std::shared_ptr<ray::IShape>> objects, Math::Point3D pos, ray::Ray ray)
+bool hitsBefore(const std::vector<std::shared_ptr<ray::IShape>>& objects, Math::Point3D pos, ray::Ray ray)
 {
     std::vector hits = {pos};
 
     for (const std::shared_ptr<ray::IShape>& object : objects) {
         Maybe<Math::Point3D> maybePos = object->hit(ray);
 
-        if (maybePos.has_value() && isBehind(maybePos.value(), ray.origin, ray.direction) == false)
+        if (maybePos.has_value() && isBehind(maybePos.value(), ray.origin, ray.direction * -1) == false)
             hits.push_back(maybePos.value());
     }
     Math::Point3D closest = roundPoint(getClosest(hits, ray.origin));
@@ -65,8 +64,39 @@ bool hitsBefore(std::vector<std::shared_ptr<ray::IShape>> objects, Math::Point3D
     return true;
 }
 
-RGB getLightColor(std::shared_ptr<ray::ILight> light,
-    std::vector<std::shared_ptr<ray::IShape>> scene, Math::Point3D pos,
+double getAmbientOcclusion(Math::Vector3D normale,
+    const std::shared_ptr<ray::IScene>& scene,
+    Math::Point3D pos, double quality)
+{
+    if (quality == 0)
+        return 1;
+
+    Math::Vector3D perpendicular = getPerpendicularVector(normale);
+    Math::Vector3D actualRotation;
+    ray::Ray ray = {pos + normale * 0.0001, normale}; // 0.0001 offset to avoid hitting the same object
+    Maybe<PosShapePair> maybeHit;
+    double res = 0;
+    double distance;
+    int nbAngles = quality < 10 ? static_cast<int>(quality) : 10;
+    int nbRotates = quality > 10 ? static_cast<int>(quality) / 10 : 4;
+
+    for (int angle = 0; angle < nbAngles; angle++) {
+        actualRotation = rotateVectorAlong(perpendicular, normale, 2 * M_PI * angle / (nbAngles * 2));
+        for (int rotate = -(nbRotates / 2) + 1; rotate < nbRotates / 2; rotate++) {
+            ray.direction = rotateVectorAlong(normale, actualRotation, 2 * M_PI * rotate / (nbRotates * 2));
+            maybeHit = scene->hit(ray);
+            distance = pointsDistance(pos, maybeHit.value().first);
+            if (maybeHit.has_value() && distance < 10)
+                res += distance / 10;
+            else
+                res += 1;
+        }
+    }
+    return res / (nbAngles * (nbRotates - 1));
+}
+
+RGB getLightColor(const std::shared_ptr<ray::ILight>& light,
+    const std::vector<std::shared_ptr<ray::IShape>>& scene, Math::Point3D pos,
     double quality)
 {
     ray::Ray lightRay = light->getIncidentVector(pos);
@@ -95,9 +125,9 @@ Math::Matrix<1, 3> getLightDiffuseIntensity(RGB lightColor)
 {
     Math::Matrix<1, 3> res{{
         {
-            lightColor.R / 255.f / 2.f,
-            lightColor.G / 255.f / 2.f,
-            lightColor.B / 255.f / 2.f
+            static_cast<float>(lightColor.R) / 255.f / 2.f,
+            static_cast<float>(lightColor.G) / 255.f / 2.f,
+            static_cast<float>(lightColor.B) / 255.f / 2.f
         }}};
 
     return res;
@@ -107,9 +137,9 @@ Math::Matrix<1, 3> getLightSpecularIntensity(RGB lightColor)
 {
     Math::Matrix<1, 3> res{{
         {
-            lightColor.R / 255.f / 2,
-            lightColor.G / 255.f / 2,
-            lightColor.B / 255.f / 2
+            static_cast<float>(lightColor.R) / 255.f / 2.f,
+            static_cast<float>(lightColor.G) / 255.f / 2.f,
+            static_cast<float>(lightColor.B) / 255.f / 2.f
         }}};
 
     return res;
@@ -121,8 +151,9 @@ Math::Vector3D getLightReflection(Math::Vector3D lightDir, Math::Vector3D normal
     return res / res.length();
 }
 
-RGB Phong::Model::calculateColor(std::vector<std::shared_ptr<ray::IShape>> objects)
+RGB Phong::Model::calculateColor(const std::shared_ptr<ray::IScene>& scene)
 {
+    const std::vector<std::shared_ptr<ray::IShape>> objects = scene->getShapes();
     double sumR = 0;
     double sumG = 0;
     double sumB = 0;
@@ -131,10 +162,13 @@ RGB Phong::Model::calculateColor(std::vector<std::shared_ptr<ray::IShape>> objec
     unsigned int GRes;
     unsigned int BRes;
 
+    double ambiantOcc = getAmbientOcclusion(_normale, scene, _pos, _ambOccQuality);
+
     for (const std::shared_ptr<ray::ILight>& light : _lights) {
         Math::Vector3D lightDir = light->getIncidentVector(_pos).direction;
         Math::Vector3D reflection = getLightReflection(lightDir, _normale);
         RGB lightColor = getLightColor(light, objects, _pos, _shadowQuality);
+        lightColor *= ambiantOcc;
 
         double diff = std::max(lightDir.dot(_normale), 0.0);
         double ref = std::max(pow(reflection.dot(_view), _alpha), 0.0);

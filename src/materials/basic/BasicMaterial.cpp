@@ -20,17 +20,18 @@ double getVectorAngle(Math::Vector3D vec1, Math::Vector3D vec2)
     return acos(vec1.dot(vec2) / (vec1.length() * vec2.length()));
 }
 
-ray::BasicMaterial::BasicMaterial(RGB color, double shadowQuality) : _color(color),
+ray::BasicMaterial::BasicMaterial(RGB color, double shadowQuality, double ambiantOccQuality) : _color(color),
     _phong({},
-       0.05,
-       50,
-       shadowQuality,
-       Math::Matrix<1, 3>({{1, 1, 1}}),
-       Math::Matrix<1, 3>{{{0, 0, 0}}},
-       Math::Matrix<1, 3>{{{0.5, 0.5, 0.5}}},
-       {0, 0, 0},
-       {0, 0, 0},
-       {0, 0, 0})
+        0.05,
+        50,
+        shadowQuality,
+        ambiantOccQuality,
+        Math::Matrix<1, 3>({{1, 1, 1}}),
+        Math::Matrix<1, 3>{{{0, 0, 0}}},
+        Math::Matrix<1, 3>{{{0.5, 0.5, 0.5}}},
+        {0, 0, 0},
+        {0, 0, 0},
+        {0, 0, 0})
 {
     _phong.setKd(Math::Matrix<1, 3>({{color.R / 255.f, color.G / 255.f, color.B / 255.f}}));
 }
@@ -46,7 +47,7 @@ RGB ray::BasicMaterial::getColor(__attribute__((unused))int recursive, Math::Poi
     _phong.setView(view);
     _phong.setNormale(normale);
     _phong.setPos(collisionPoint);
-    return _phong.calculateColor(scene->getShapes());
+    return _phong.calculateColor(scene);
 }
 
 extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)
@@ -55,14 +56,19 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
         throw ray::NodeError("IMaterial: missing color attribute", "BasicMaterial.cpp");
     if (attributes.find("shadow_quality") == attributes.end())
         throw ray::NodeError("IMaterial: missing shadow_quality attribute (number between 0 and 100 for render time)", "BasicMaterial.cpp");
+    if (attributes.find("ambiant_occlusion") == attributes.end())
+        throw ray::NodeError("IMaterial: missing ambiant_occlusion attribute (number between 0 and 100 for render time)", "BasicMaterial.cpp");
 
     Maybe<RGB> color = RGB::fromStr(attributes.at("color"));
     double shadowQuality = std::stod(attributes.at("shadow_quality"));
+    double ambiantOcclusion = std::stod(attributes.at("ambiant_occlusion"));
 
     if (!color.has_value())
         throw ray::NodeError("IMaterial: invalid color attribute", "BasicMaterial.cpp");
     if (shadowQuality < 1 || shadowQuality > 100)
-        throw ray::NodeError("IMaterial: shadow_quality must be a number between 0 and 100", "BasicMaterial.cpp");
+        throw ray::NodeError("IMaterial: shadow_quality must be a number between 1 and 100", "BasicMaterial.cpp");
+    if (ambiantOcclusion < 0 || ambiantOcclusion > 100)
+        throw ray::NodeError("IMaterial: ambiant_occlusion must be a number between 0 and 100", "BasicMaterial.cpp");
 
-    return new ray::BasicMaterial(color.value(), shadowQuality);
+    return new ray::BasicMaterial(color.value(), shadowQuality, ambiantOcclusion);
 }

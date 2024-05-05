@@ -49,6 +49,7 @@ namespace Math {
         Vector3D& operator/=(double val);
 
         [[nodiscard]] double dot(const Vector3D& other) const;
+        [[nodiscard]] Vector3D product(const Vector3D& other) const;
 
         // GETTERS
         [[nodiscard]] double length() const;

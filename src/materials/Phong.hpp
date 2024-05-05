@@ -14,6 +14,7 @@
 #include "math/MatrixN.hpp"
 #include "math/Point3D.hpp"
 #include "../lights/ILight.hpp"
+#include "../scenes/IScene.hpp"
 #include "../shapes/IShape.hpp"
 
 using ListLight = std::vector<std::shared_ptr<ray::ILight>>;
@@ -26,6 +27,7 @@ namespace Phong {
         double _ia;
         double _alpha;
         double _shadowQuality;
+        double _ambOccQuality;
         Math::Matrix<1, 3> _ka;
         Math::Matrix<1, 3> _kd;
         Math::Matrix<1, 3> _ks;
@@ -40,19 +42,20 @@ namespace Phong {
             double ia,
             double alpha,
             double shadowQuality,
+            double ambOccQuality,
             Math::Matrix<1, 3> ka,
             Math::Matrix<1, 3> kd,
             Math::Matrix<1, 3> ks,
             Math::Point3D pos,
             Math::Vector3D normale,
             Math::Vector3D view)
-            : _lights(std::move(lights)), _ia(ia), _alpha(alpha), _shadowQuality(shadowQuality),
+            : _lights(std::move(lights)), _ia(ia), _alpha(alpha), _shadowQuality(shadowQuality), _ambOccQuality(ambOccQuality),
             _ka(ka), _kd(kd), _ks(ks), _pos(pos), _normale(normale),
             _view(view) {}
         ~Model() = default;
 
         // RUNTIME
-        [[nodiscard]] RGB calculateColor(std::vector<std::shared_ptr<ray::IShape>> objects);
+        [[nodiscard]] RGB calculateColor(const std::shared_ptr<ray::IScene>& scene);
 
         // SETTERS
         void setLights(ListLight lights) { _lights = lights; }

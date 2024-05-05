@@ -133,7 +133,8 @@ nodes : (
         type : "materials_basic.so";
         properties : {
             color : "{ r : 0; g : 255; b : 0; }";
-            shadow_quality : "20";
+            shadow_quality : "50";
+            ambiant_occlusion : "100";
         };
     },
     {
@@ -141,7 +142,8 @@ nodes : (
         type : "materials_basic.so";
         properties : {
             color : "{ r : 255; g : 0; b : 0; }";
-            shadow_quality : "20";
+            shadow_quality : "50";
+            ambiant_occlusion : "100";
         };
     },
     {
@@ -149,7 +151,8 @@ nodes : (
         type : "materials_basic.so";
         properties : {
             color : "{ r : 255; g : 255; b : 255; }";
-            shadow_quality : "20";
+            shadow_quality : "50";
+            ambiant_occlusion : "100";
         };
     },
     {
@@ -157,7 +160,8 @@ nodes : (
         type : "materials_basic.so";
         properties : {
             color : "{ r : 180; g : 180; b : 180; }";
-            shadow_quality : "20";
+            shadow_quality : "50";
+            ambiant_occlusion : "100";
         };
     }
 );
@@ -266,8 +270,8 @@ background : (
 
 image : (
     {
-        file : "output.ppm";
-        width : 1000;
-        height : 1000;
+        file : "italy.ppm";
+        width : 500;
+        height : 500;
     }
 );

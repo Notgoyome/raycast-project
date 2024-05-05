@@ -10,6 +10,14 @@
 
 namespace ray {
 
+    bool isBehind(Math::Point3D pos, Math::Point3D lightPos, Math::Vector3D lightDir)
+    {
+        Math::Vector3D lightToPos = {pos.X - lightPos.X, pos.Y - lightPos.Y, pos.Z - lightPos.Z};
+        double angle = lightToPos.dot(lightDir);
+
+        return angle < 0;
+    }
+
     template<typename T>
     std::vector<std::shared_ptr<T>> recursiveGetType(const std::shared_ptr<ray::INode> node, ray::type type)
     {
@@ -42,7 +50,8 @@ namespace ray {
         for (const std::shared_ptr<ray::IShape>& obj : objects) {
             Maybe<Math::Point3D> hit = obj->hit(ray);
 
-            if (hit.has_value()) {
+            if (hit.has_value() &&
+                isBehind(hit.value(), ray.origin, ray.direction) == false) {
                 if (closestObj == nullptr) {
                     point = hit.value();
                     closestObj = obj;

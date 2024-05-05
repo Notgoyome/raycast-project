@@ -104,6 +104,11 @@ namespace Math {
         return X * other.X + Y * other.Y + Z * other.Z;
     }
 
+    Vector3D Vector3D::product(const Vector3D &other) const
+    {
+        return Vector3D{Y * other.Z - Z * other.Y, Z * other.X - X * other.Z, X * other.Y - Y * other.X};
+    }
+
     double Vector3D::length() const
     {
         return std::sqrt(X * X + Y * Y + Z * Z);
