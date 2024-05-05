@@ -37,6 +37,21 @@ RGB getHitColor(const PosShapePair& hit, ray::Ray ray, const std::shared_ptr<ray
     return material->getColor(0, hit.first, hit.second->getNormale(hit.first, ray), ray.origin, scene);
 }
 
+RGB renderPixel(
+    const std::shared_ptr<ray::IScene>& scene,
+    const std::shared_ptr<ray::ICamera>& cam, double u, double v,
+    RGB backgroundColor)
+{
+    ray::Ray r = cam->ray(u, v);
+    Maybe<PosShapePair> hit = scene->hit(r);
+
+    if (hit.has_value() == false) {
+        return backgroundColor;
+    } else {
+        return getHitColor(hit.value(), r, scene);
+    }
+}
+
 Image render(unsigned int width, unsigned int height,
     const std::shared_ptr<ray::IScene>& scene,
     const std::shared_ptr<ray::ICamera>& cam, RGB backgroundColor)
@@ -50,14 +65,8 @@ Image render(unsigned int width, unsigned int height,
         for (unsigned int j = startJ; j < biggest - startJ; j++) {
             double u = double(i) / biggest;
             double v = double(j) / biggest;
-            ray::Ray r = cam->ray(u, v);
-            Maybe<PosShapePair> hit = scene->hit(r);
-
-            if (hit.has_value() == false) {
-                img.addPixel({static_cast<double>(i - startI), static_cast<double>(j - startJ)}, backgroundColor);
-            } else {
-                img.addPixel({static_cast<double>(i - startI), static_cast<double>(j - startJ)}, getHitColor(hit.value(), r, scene));
-            }
+            RGB color = renderPixel(scene, cam, u, v, backgroundColor);
+            img.addPixel(Math::Vector2D{static_cast<double>(i - startI), static_cast<double>(j - startJ)}, color);
         }
         std::cout << "Rendering: " << i - startI << "/" << width << std::endl;
     }
