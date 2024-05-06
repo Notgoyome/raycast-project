@@ -89,6 +89,7 @@ namespace ray {
                     if (client_sockfd < 0) {
                         throw ServerException("Failed to accept connection");
                     }
+                    std::cout << "Client " << i << " connected" << std::endl;
                     client_sockets.push_back(client_sockfd);
                     client_threads[client_sockfd] = std::thread(&Server::monitor_client, this, client_sockfd);
                     send_data(client_sockfd, {"CFG", cfg});

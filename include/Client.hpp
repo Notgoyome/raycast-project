@@ -168,6 +168,7 @@ namespace ray {
                     throw ClientException("Connection to server failed");
                 }
                 std::pair<std::string, std::string> data = receive_data();
+                std::cout << data.second << std::endl;
                 if (data.first == "CFG") {
                     NodeBuilder builder(data.second, true);
                     rootNodes = builder.getRootNodes();
