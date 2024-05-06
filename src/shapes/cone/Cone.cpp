@@ -90,7 +90,7 @@ Maybe<Math::Point3D> ray::Cone::hit(const ray::Ray& ray) {
     }
 
     float r = (rayOrigin.Y + t * rayDir.Y);
-    if (r < center.Y || r > center.Y + _height || r < center.Y + _height/2) {
+    if (_finite && (r < center.Y - _height/2 || r > center.Y + _height)) { //|| r < center.Y + _height/2) {
         return Maybe<Math::Point3D>{};
     }
     return Maybe<Math::Point3D>{rayOrigin + rayDir * t};
@@ -136,6 +136,17 @@ extern "C" ray::INode *create(std::map<std::string, std::string>& properties)
         cone->setRadius(std::stof(properties["radius"]));
     } else {
         throw std::invalid_argument("Cone must have a radius");
+    }
+    if (properties.find("finite") != properties.end()) {
+        if (properties["finite"] == "true") {
+            cone->setFinite(true);
+        } else if (properties["finite"] == "false") {
+            cone->setFinite(false);
+        } else {
+            throw std::invalid_argument("Cone finite must be true or false");
+        }
+    } else {
+        cone->setFinite(false);
     }
     return cone;
 }

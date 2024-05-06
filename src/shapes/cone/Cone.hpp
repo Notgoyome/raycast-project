@@ -26,6 +26,7 @@ namespace ray {
         void transform();
         void setAxis(Math::Vector3D axis);
         Math::Vector3D getAxis();
+        void setFinite(bool finite) { _finite = finite; }
 
     private:
         bool _transform;
@@ -33,6 +34,7 @@ namespace ray {
         float _height;
         float _radius;
         Math::Vector3D _axis;
+        bool _finite;
     };
 }
 
