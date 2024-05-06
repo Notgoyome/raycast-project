@@ -14,6 +14,9 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include "RGB.hpp"
 
 typedef struct image_data_s {
@@ -43,6 +46,7 @@ namespace ray {
         image_data_t imageData;
 
         static std::shared_ptr<libconfig::Config> openFile(const std::string& filename);
+        static std::shared_ptr<libconfig::Config> openContent(const std::string& content);
         void parseNodes(const std::shared_ptr<libconfig::Config>& cfg);
         void buildTree(const libconfig::Setting& setting, const std::shared_ptr<INode>& parent);
         void parseHierarchy(const std::shared_ptr<libconfig::Config>& cfg);
@@ -51,6 +55,7 @@ namespace ray {
 
     public:
         explicit NodeBuilder(const std::string& filename);
+        explicit NodeBuilder(const std::string& content, bool isContent);
 
         [[nodiscard]] const std::vector<std::shared_ptr<INode>>& getRootNodes() const { return rootNodes; }
         [[nodiscard]] RGB getBackgroundColor() const { return {background_r, background_g, background_b}; }
