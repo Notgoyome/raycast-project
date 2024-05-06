@@ -21,7 +21,7 @@ namespace ray {
     public:
         DirectionalLight(RGB color, Math::Vector3D direction);
 
-        Math::Vector3D getIncidentVector(Math::Point3D pos) override;
+        ray::Ray getIncidentVector(Math::Point3D pos) override;
         Math::Point3D getPos() override;
     };
 

@@ -7,15 +7,18 @@
 
 #include "DirectionalLight.hpp"
 
+#include "Ray.hpp"
+
 namespace ray {
     DirectionalLight::DirectionalLight(RGB color, Math::Vector3D direction) : ALight(color),
         _direction(direction / direction.length())
     {
     }
 
-    Math::Vector3D DirectionalLight::getIncidentVector(__attribute__((unused))Math::Point3D pos)
+    ray::Ray DirectionalLight::getIncidentVector(Math::Point3D pos)
     {
-        return _direction;
+        Math::Point3D pointAt = pos + _direction * -9999;
+        return {pointAt, _direction * -1};
     }
 
     Math::Point3D DirectionalLight::getPos()

@@ -9,6 +9,7 @@
 #define ILIGHT_HPP
 
 #include "INode.hpp"
+#include "Ray.hpp"
 #include "math/Vector3D.hpp"
 #include "RGB.hpp"
 #include "math/Point3D.hpp"
@@ -22,7 +23,7 @@ namespace ray {
         virtual void setColor(RGB color) = 0;
 
         [[nodiscard]] virtual RGB getColor() const = 0;
-        [[nodiscard]] virtual Math::Vector3D getIncidentVector(Math::Point3D pos) = 0;
+        [[nodiscard]] virtual ray::Ray getIncidentVector(Math::Point3D pos) = 0;
         [[nodiscard]] virtual Math::Point3D getPos() = 0;
     };
 

@@ -15,7 +15,6 @@ add_executable(raytracer
         src/math/Vector3D.cpp
         src/main/main.cpp
         src/scenes/IScene.hpp
-        src/scenes/base/Scene.hpp
         src/math/Vector2D.cpp
         src/math/Rectangle3D.cpp
         src/scenes/base/Scene.cpp
