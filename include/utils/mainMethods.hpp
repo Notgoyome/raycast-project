@@ -10,12 +10,12 @@
 
 #include "RGB.hpp"
 #include "Ray.hpp"
-#include "IScene.hpp"
-#include "ICamera.hpp"
+#include "../../src/scenes/IScene.hpp"
+#include "../../src/cameras/ICamera.hpp"
 #include "INode.hpp"
-#include "IMaterial.hpp"
-#include "../cameras/base/Camera.hpp"
-#include "../scenes/base/Scene.hpp"
+#include "../../src/materials/IMaterial.hpp"
+#include "../../src/cameras/base/Camera.hpp"
+#include "../../src/scenes/base/Scene.hpp"
 
 namespace ray {
     class RayTracerUtils {

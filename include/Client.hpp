@@ -14,6 +14,7 @@
 #include <deque>
 #include <thread>
 #include <mutex>
+#include <cstring>
 #include "utils/mainMethods.hpp"
 
 #ifdef _WIN32

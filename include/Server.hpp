@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <exception>
 #include <vector>
 #include <deque>
@@ -18,6 +19,7 @@
 #include <map>
 #include "Image.hpp"
 #include "RGB.hpp"
+#include "utils/mainMethods.hpp"
 #include <libconfig.h++>
 
 #ifdef _WIN32
@@ -154,6 +156,9 @@ namespace ray {
                 const std::shared_ptr<ray::IScene>& scene,
                 const std::shared_ptr<ray::ICamera>& cam, RGB backgroundColor)
             {
+                (void)scene;
+                (void)cam;
+                (void)backgroundColor;
                 Image img;
                 std::deque<std::pair<int, int>> bands;
 
