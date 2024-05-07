@@ -40,7 +40,7 @@ namespace ray {
             {
                 std::shared_ptr<ray::IMaterial> material = hit.second->getMaterial();
 
-                return material->getColor(0, hit.first, hit.second->getNormale(hit.first, ray), ray.origin, scene);
+                return material->getColor(0, hit.first, hit.second->getNormale(hit.first, ray), ray.origin, hit.second, scene);
             }
 
             static RGB renderPixel(const std::shared_ptr<ray::IScene>& scene, const std::shared_ptr<ray::ICamera>& cam, double u, double v, RGB backgroundColor)
