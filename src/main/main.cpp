@@ -9,9 +9,7 @@
 
 #include "Image.hpp"
 #include "parsing.hpp"
-#include "Ray.hpp"
 #include "../cameras/base/Camera.hpp"
-#include "../scenes/base/Scene.hpp"
 #include "Renderer.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
