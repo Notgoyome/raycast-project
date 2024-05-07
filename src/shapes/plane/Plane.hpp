@@ -16,7 +16,9 @@
 namespace ray {
     class Plane : public ray::AShape {
         Math::Point3D center;
-        Math::Matrix<4, 1> _normale;
+        Math::Vector3D _normale;
+        Math::Vector3D _u;
+        Math::Vector3D _v;
 
     public:
         Plane() = default;
@@ -27,8 +29,10 @@ namespace ray {
 
         Maybe<Math::Point3D> hit(const ray::Ray &ray) const override;
         Math::Vector3D getNormale(const Math::Point3D &point, const ray::Ray& camRay) const override;
+        Math::Vector2D getUVMapping(Math::Point3D coords) const override;
     };
 }
+
 extern "C" ray::INode *create(std::map<std::string, std::string>& properties);
 
 #endif //B_OOP_400_MPL_4_1_RAYTRACER_ROBIN_GLAUDE_PLANE_HPP
