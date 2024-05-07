@@ -11,11 +11,13 @@
 
 namespace ray {
 
-    double interpolate(double a0, double a1, float w) {
+    double interpolate(double a0, double a1, float w)
+    {
         return (a1 - a0) * w + a0;
     }
 
-    Math::Vector2D randomGradient(int ix, int iy) {
+    Math::Vector2D randomGradient(int ix, int iy)
+    {
         const unsigned w = 8 * sizeof(unsigned);
         const unsigned s = w / 2;
         unsigned a = ix, b = iy;
@@ -28,7 +30,8 @@ namespace ray {
         return v;
     }
 
-    double dotGridGradient(int ix, int iy, double x, double y) {
+    double dotGridGradient(int ix, int iy, double x, double y)
+    {
         Math::Vector2D gradient = randomGradient(ix, iy);
 
         double dx = x - ix;
@@ -37,7 +40,8 @@ namespace ray {
         return (dx*gradient.first + dy*gradient.second);
     }
 
-    double perlin(double x, double y) {
+    double perlin(double x, double y)
+    {
         int x0 = static_cast<int>(std::floor(x));
         int x1 = x0 + 1;
         int y0 = static_cast<int>(std::floor(y));
@@ -124,6 +128,8 @@ namespace ray {
             color = _phong.calculateColor(scene, view, collisionPoint, normale, recursion);
         if (uv == Math::Vector2D{-1, -1})
             uv = getRandomCoordinates();
+        else
+            uv *= 100;
         perlinValue = perlinOctaves(uv.first, uv.second, _octaves, _persistence) * (_maxPerlin - _minPerlin) + _minPerlin;
         return {
             static_cast<unsigned int>(color.R * perlinValue),

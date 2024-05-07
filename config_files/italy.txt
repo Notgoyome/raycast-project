@@ -3,6 +3,7 @@ nodes : (
         id : "scene";
         type : "scenes_base.so";
         properties : {
+            background_color : "{ r : 0; g : 0; b : 0; }";
         };
     },
 	{
@@ -90,14 +91,14 @@ nodes : (
         id : "translate_plane_left";
         type : "transformations_translation.so";
         properties : {
-            translation : "{ x : -400; y : 0; z : 0; }";
+            translation : "{ x : -200; y : 0; z : 0; }";
         };
     },
     {
         id : "translate_plane_right";
         type : "transformations_translation.so";
         properties : {
-            translation : "{ x : 400; y : 0; z : 0; }";
+            translation : "{ x : 200; y : 0; z : 0; }";
         };
     },
     {
@@ -118,50 +119,51 @@ nodes : (
         id : "translate_sphere1";
         type : "transformations_translation.so";
         properties : {
-            translation : "{ x : 0; y : 0; z : 150; }";
+            translation : "{ x : 0; y : 0; z : 2000; }";
         };
     },
     {
         id : "scale_sphere1";
         type : "transformations_scale.so";
         properties : {
-            scale : "{ x : 60; y : 60; z : 60; }";
-        };
-    },
-    {
-        id : "green_material";
-        type : "materials_basic.so";
-        properties : {
-            color : "{ r : 0; g : 255; b : 0; }";
-            shadow_quality : "100";
-            ambiant_occlusion : "100";
+            scale : "{ x : 100; y : 100; z : 100; }";
         };
     },
     {
         id : "red_material";
         type : "materials_basic.so";
         properties : {
-            color : "{ r : 255; g : 0; b : 0; }";
-            shadow_quality : "100";
-            ambiant_occlusion : "100";
-        };
-    },
-    {
-        id : "white_material";
-        type : "materials_basic.so";
-        properties : {
-            color : "{ r : 255; g : 255; b : 255; }";
-            shadow_quality : "100";
-            ambiant_occlusion : "100";
+            color : "{ r : 255; g : 0; b : 255; }";
+            shadow_quality : "1";
+            ambiant_occlusion : "0";
+            roughness : "1";
         };
     },
     {
         id : "grey_material";
-        type : "materials_basic.so";
+        type : "materials_chessboard.so";
         properties : {
-            color : "{ r : 180; g : 180; b : 180; }";
+            color : "{ r : 255; g : 255; b : 255; }";
+            shadow_quality : "1";
+            ambiant_occlusion : "0";
+            roughness : "0";
+            chess_size : "60";
+            min_chess : "0";
+            max_chess : "1";
+        };
+    },
+    {
+        id : "white_material";
+        type : "materials_perlin.so";
+        properties : {
+            color : "{ r : 127; g : 127; b : 127; }";
             shadow_quality : "100";
-            ambiant_occlusion : "100";
+            ambiant_occlusion : "50";
+            roughness : "0";
+            octaves : "3";
+            persistence : "3";
+            min_perlin : "0.5";
+            max_perlin : "1";
         };
     }
 );
@@ -182,8 +184,19 @@ config : (
                 );
             },
             {
-                id : "red_material";
+                id : "white_material";
                 children : (
+                    {
+                        id : "translate_plane_left";
+                        children : (
+                            {
+                                id : "rotate_plane1";
+                                children : (
+                                    { id : "plane1"; }
+                                );
+                            }
+                        );
+                    },
                     {
                         id : "translate_plane_right";
                         children : (
@@ -198,35 +211,8 @@ config : (
                 );
             },
             {
-                id : "green_material";
+                id : "red_material";
                 children : (
-                    {
-                        id : "translate_plane_left";
-                        children : (
-                            {
-                                id : "rotate_plane1";
-                                children : (
-                                    { id : "plane1"; }
-                                );
-                            }
-                        );
-                    }
-                );
-            },
-            {
-                id : "white_material";
-                children : (
-                    {
-                        id : "translate_plane_back";
-                        children : (
-                            {
-                                id : "rotate_plane3";
-                                children : (
-                                    { id : "plane3"; }
-                                );
-                            }
-                        );
-                    },
                     {
                         id : "translate_sphere1";
                         children : (
@@ -245,7 +231,7 @@ config : (
                 children : (
                     {
                         id : "translate_plane_floor";
-                        children : (
+                            children : (
                             {
                                 id : "rotate_plane4";
                                 children : (
@@ -271,7 +257,7 @@ background : (
 image : (
     {
         file : "italy.ppm";
-        width : 500;
-        height : 500;
+        width : 1000;
+        height : 1000;
     }
 );

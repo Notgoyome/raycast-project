@@ -4,6 +4,24 @@
 
 #include "Plane.hpp"
 
+Math::Vector3D rotateVectorAlong(Math::Vector3D toRotate, Math::Vector3D axis, double angle)
+{
+    return toRotate * std::cos(angle) +
+        axis.product(toRotate) * std::sin(angle) +
+            axis * axis.dot(toRotate) * (1 - std::cos(angle));
+}
+
+Math::Vector3D getPerpendicularVector(Math::Vector3D vec)
+{
+    Math::Vector3D res = vec.product({0, 0, 1});
+    if (res != Math::Vector3D{0, 0, 0})
+        return res;
+    res = vec.product({0, 1, 0});
+    if (res != Math::Vector3D{0, 0, 0})
+        return res;
+    return vec.product({1, 0, 0});
+}
+
 Maybe<Math::Point3D> ray::Plane::hit(const ray::Ray& ray) const
 {
     Math::Vector3D vectorNormale = getNormale(Math::Point3D{0,0,0}, ray);
@@ -27,27 +45,39 @@ void ray::Plane::setPosition()
 
 void ray::Plane::initValues()
 {
+    Math::Matrix<4, 1> tempNormale;
     AShape::initValues();
     applyMatrix();
     setPosition();
-    _normale(0,0) = 0;
-    _normale(1,0) = 1;
-    _normale(2,0) = 0;
-    _normale(3,0) = 0;
-    _normale = _transformMatrix * _normale;
+    tempNormale(0,0) = 0;
+    tempNormale(1,0) = 1;
+    tempNormale(2,0) = 0;
+    tempNormale(3,0) = 0;
+    tempNormale = _transformMatrix * tempNormale;
+    _normale = { tempNormale(0,0), tempNormale(1,0), tempNormale(2,0) };
+    _u = getPerpendicularVector(_normale);
+    _v = rotateVectorAlong(_u, _normale, M_PI / 2);
 }
 
 Math::Vector3D ray::Plane::getNormale(__attribute__((unused))const Math::Point3D& point, const ray::Ray& camRay) const
 {
-    Math::Vector3D vectorNormale;
+    if (_normale.dot(camRay.direction) > 0)
+        return _normale * -1;
+    return _normale;
+}
 
-    vectorNormale.X = _normale(0,0);
-    vectorNormale.Y = _normale(1,0);
-    vectorNormale.Z = _normale(2,0);
+Math::Vector2D ray::Plane::getUVMapping(Math::Point3D coords) const
+{
+    Math::Vector2D res{0, 0};
+    Math::Vector3D w = {
+        coords.X - center.X,
+        coords.Y - center.Y,
+        coords.Z - center.Z
+    };
 
-    if (vectorNormale.dot(camRay.direction) > 0)
-        vectorNormale = vectorNormale * -1;
-    return vectorNormale / vectorNormale.length();
+    res.first = std::abs(w.dot(_u)) / 400;
+    res.second = std::abs(w.dot(_v)) / 400;
+    return res;
 }
 
 extern "C" ray::INode *create(__attribute__((unused))std::map<std::string, std::string>& properties)

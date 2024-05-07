@@ -101,12 +101,15 @@ nodes : (
     },
     {
         id : "blue_material";
-        type : "materials_basic.so";
+        type : "materials_chessboard.so";
         properties : {
             color : "{ r : 0; g : 255; b : 0; }";
             shadow_quality : "1";
             ambiant_occlusion : "0";
             roughness : "0.5";
+            chess_size : "60";
+            min_chess : "0";
+            max_chess : "1";
         };
     },
     {
@@ -117,8 +120,8 @@ nodes : (
             shadow_quality : "1";
             ambiant_occlusion : "0";
             roughness : "0";
-            octaves : "10";
-            persistence : "10";
+            octaves : "5";
+            persistence : "5";
             min_perlin : "0.75";
             max_perlin : "1";
         };
