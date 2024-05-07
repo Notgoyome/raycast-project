@@ -28,6 +28,7 @@ namespace ray {
 
         [[nodiscard]] RGB getColor(int recursive, Math::Point3D collisionPoint,
             Math::Vector3D normale, Math::Point3D camPos,
+            const std::shared_ptr<ray::IShape>& shape,
             const std::shared_ptr<ray::IScene>& scene) const override;
     };
 

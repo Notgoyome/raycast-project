@@ -183,6 +183,7 @@ RGB getReflection(const std::shared_ptr<ray::IScene>& scene,
             collision,
             reflectNormale,
             pos,
+            shape,
             scene
         ) * contribution;
     }
