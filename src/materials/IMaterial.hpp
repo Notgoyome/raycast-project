@@ -9,12 +9,15 @@
 #ifndef IMATERIAL_HPP_
 #define IMATERIAL_HPP_
 
+#define REFLECTION_RECURSION_LIMIT 4
+
 #include "INode.hpp"
 #include "RGB.hpp"
 #include "math/Point3D.hpp"
-#include "../scenes/IScene.hpp"
 
 namespace ray {
+
+    class IScene;
 
     class IMaterial : virtual public INode {
     public:
@@ -22,7 +25,7 @@ namespace ray {
 
         [[nodiscard]] virtual RGB getColor(int recursion, Math::Point3D collisionPoint,
             Math::Vector3D normale, Math::Point3D camPos,
-            const std::shared_ptr<IScene>& scene) const = 0;
+            const std::shared_ptr<ray::IScene>& scene) const = 0;
     };
 
 }

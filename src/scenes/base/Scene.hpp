@@ -34,7 +34,6 @@ namespace ray {
 
         // RUNTIME
         Maybe<PosShapePair> hit(const ray::Ray &ray) const override;
-
         void initValues() override;
 
         // GETTERS

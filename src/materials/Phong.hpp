@@ -32,6 +32,17 @@ namespace Phong {
         Math::Matrix<1, 3> _kd;
         Math::Matrix<1, 3> _ks;
 
+        [[nodiscard]] Math::Matrix<1, 3> getReflectionContribution(
+            const std::shared_ptr<ray::IScene>& scene,
+            Math::Point3D pos, Math::Vector3D normale,
+            Math::Vector3D view, int recursive) const;
+
+        [[nodiscard]] Math::Matrix<1, 3> getLightsContribution(
+            Math::Vector3D normale,
+            Math::Point3D pos,
+            Math::Vector3D view,
+            const std::shared_ptr<ray::IScene>& scene) const;
+
     public:
         // CONSTR DESTRUCT
         Model(
@@ -52,7 +63,8 @@ namespace Phong {
             const std::shared_ptr<ray::IScene>& scene,
             Math::Vector3D view,
             Math::Point3D pos,
-            Math::Vector3D normale) const;
+            Math::Vector3D normale,
+            int recursion) const;
 
         // SETTERS
         void setLights(ListLight lights) { _lights = lights; }

@@ -155,22 +155,70 @@ Math::Vector3D getLightReflection(Math::Vector3D lightDir, Math::Vector3D normal
     return res / res.length();
 }
 
-RGB Phong::Model::calculateColor(
-            const std::shared_ptr<ray::IScene>& scene,
-            Math::Vector3D view,
-            Math::Point3D pos,
-            Math::Vector3D normale) const
+RGB getReflection(const std::shared_ptr<ray::IScene>& scene,
+    Math::Point3D pos, Math::Vector3D normale,
+    Math::Vector3D view, int recursive)
 {
-    const std::vector<std::shared_ptr<ray::IShape>> objects = scene->getShapes();
-    const std::vector<std::shared_ptr<ray::ILight>> lights = scene->getLights();
+    Math::Vector3D reflect = view - normale * 2 * view.dot(normale);
+    ray::Ray ray = {pos + reflect * 0.001, reflect};
+    Maybe<PosShapePair> maybeHit = scene->hit(ray);
+    Math::Point3D collision;
+    std::shared_ptr<ray::IShape> shape;
+    Math::Vector3D reflectNormale;
+    Math::Vector3D reflectView;
+    double contribution;
+
+    if (maybeHit.has_value()) {
+        collision = maybeHit.value().first;
+        shape = maybeHit.value().second;
+        reflectNormale = shape->getNormale(collision, ray);
+        reflectView = {pos.X - collision.X, pos.Y - collision.Y, pos.Z - collision.Z};
+        reflectView /= reflectView.length();
+        contribution = reflectNormale.dot(reflectView);
+        contribution = contribution < 0 ? 0 : contribution;
+        contribution = contribution > 1 ? 1 : contribution;
+
+        return shape->getMaterial()->getColor(
+            recursive + 1,
+            collision,
+            reflectNormale,
+            pos,
+            scene
+        ) * contribution;
+    }
+    return {0, 0, 0};
+}
+
+Math::Matrix<1, 3> Phong::Model::getReflectionContribution(
+    const std::shared_ptr<ray::IScene> &scene, Math::Point3D pos,
+    Math::Vector3D normale, Math::Vector3D view, int recursive) const
+{
+    if (_ks(0, 0) == 0 && _ks(0, 1) == 0 && _ks(0, 2) == 0)
+        return Math::Matrix<1, 3>{{{0, 0, 0}}};
+    if (recursive >= REFLECTION_RECURSION_LIMIT)
+        return Math::Matrix<1, 3>{{{0, 0, 0}}};
+    RGB color = getReflection(scene, pos, normale, view * -1, recursive);
+
+    return Math::Matrix<1, 3>{{
+        {
+            color.R * _ks(0, 0) / 255,
+            color.G * _ks(0, 1) / 255,
+            color.B * _ks(0, 2) / 255
+        }}};
+}
+
+Math::Matrix<1, 3> Phong::Model::getLightsContribution(
+    Math::Vector3D normale,
+    Math::Point3D pos,
+    Math::Vector3D view,
+    const std::shared_ptr<ray::IScene>& scene) const
+{
     double sumR = 0;
     double sumG = 0;
     double sumB = 0;
 
-    unsigned int RRes;
-    unsigned int GRes;
-    unsigned int BRes;
-
+    const std::vector<std::shared_ptr<ray::IShape>> objects = scene->getShapes();
+    const std::vector<std::shared_ptr<ray::ILight>> lights = scene->getLights();
     double ambiantOcc = getAmbientOcclusion(normale, scene, pos, _ambOccQuality);
 
     for (const std::shared_ptr<ray::ILight>& light : lights) {
@@ -194,8 +242,40 @@ RGB Phong::Model::calculateColor(
         if (diff > 0.2)
             sumB += _ks(0, 2) * ref * getLightSpecularIntensity(lightColor)(0, 2);
     }
-    RRes = static_cast<unsigned int>(std::min(static_cast<float>(_ka(0, 0) * _ia + sumR) * 255.F, 255.F));
-    GRes = static_cast<unsigned int>(std::min(static_cast<float>(_ka(0, 1) * _ia + sumG) * 255.F, 255.F));
-    BRes = static_cast<unsigned int>(std::min(static_cast<float>(_ka(0, 2) * _ia + sumB) * 255.F, 255.F));
+    return Math::Matrix<1, 3>{{{sumR, sumG, sumB}}};
+}
+
+RGB Phong::Model::calculateColor(
+    const std::shared_ptr<ray::IScene>& scene,
+    Math::Vector3D view,
+    Math::Point3D pos,
+    Math::Vector3D normale,
+    int recursion) const
+{
+    unsigned int RRes;
+    unsigned int GRes;
+    unsigned int BRes;
+
+    Math::Matrix<1, 3> lightsContribution = getLightsContribution(normale, pos, view, scene);
+    Math::Matrix<1, 3> reflectionContribution = getReflectionContribution(scene, pos, normale, view, recursion);
+
+    RRes = static_cast<unsigned int>(
+        std::min(
+            static_cast<float>(_ka(0, 0) * _ia + lightsContribution(0, 0) + reflectionContribution(0, 0)) * 255.F,
+            255.F
+            )
+        );
+    GRes = static_cast<unsigned int>(
+        std::min(
+            static_cast<float>(_ka(0, 1) * _ia + lightsContribution(0, 1) + reflectionContribution(0, 1)) * 255.F,
+            255.F
+            )
+        );
+    BRes = static_cast<unsigned int>(
+        std::min(
+            static_cast<float>(_ka(0, 2) * _ia + lightsContribution(0, 2) + reflectionContribution(0, 2)) * 255.F,
+            255.F
+            )
+        );
     return RGB{RRes, GRes, BRes};
 }

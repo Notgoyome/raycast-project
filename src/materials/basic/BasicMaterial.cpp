@@ -36,14 +36,16 @@ ray::BasicMaterial::BasicMaterial(RGB color,
     _phong.setKd(Math::Matrix<1, 3>({{color.R / 255.f, color.G / 255.f, color.B / 255.f}}));
 }
 
-RGB ray::BasicMaterial::getColor(__attribute__((unused))int recursive, Math::Point3D collisionPoint,
+RGB ray::BasicMaterial::getColor(int recursive, Math::Point3D collisionPoint,
                                  Math::Vector3D normale, Math::Point3D camPos,
                                  const std::shared_ptr<ray::IScene> &scene) const
 {
     Math::Vector3D view = {camPos.X - collisionPoint.X, camPos.Y - collisionPoint.Y, camPos.Z - collisionPoint.Z};
     view /= view.length();
 
-    return _phong.calculateColor(scene, view, collisionPoint, normale);
+    if (recursive > REFLECTION_RECURSION_LIMIT)
+        return _color;
+    return _phong.calculateColor(scene, view, collisionPoint, normale, recursive);
 }
 
 extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)
