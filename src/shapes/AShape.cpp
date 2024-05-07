@@ -18,7 +18,7 @@ void ray::AShape::initValues()
     _material = Scene::getMaterial(*this);
 }
 
-Math::Vector2D ray::AShape::getUVMapping(Math::Vector3D coords) const
+Math::Vector2D ray::AShape::getUVMapping(__attribute__((unused))Math::Vector3D coords) const
 {
     return {-1, -1}; // Defaulted to -1. In this case, noise generators will use random positions
 }
