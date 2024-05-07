@@ -19,7 +19,7 @@ namespace ray {
 
         explicit ALight(RGB color) : ANode(type::LIGHT), _color(color) {}
 
-        public:
+    public:
         void setColor(RGB color) override;
 
         [[nodiscard]] RGB getColor() const override;

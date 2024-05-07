@@ -15,15 +15,15 @@ namespace ray {
     {
     }
 
-    ray::Ray DirectionalLight::getIncidentVector(Math::Point3D pos)
+    ray::Ray DirectionalLight::getIncidentVector(Math::Point3D pos) const
     {
         Math::Point3D pointAt = pos + _direction * -9999;
         return {pointAt, _direction * -1};
     }
 
-    Math::Point3D DirectionalLight::getPos()
+    Math::Point3D DirectionalLight::getPos() const
     {
-        return Math::Point3D(0, 0, 0);
+        return {0, 0, 0};
     }
 } // ray
 

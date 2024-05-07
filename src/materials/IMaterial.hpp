@@ -22,7 +22,7 @@ namespace ray {
 
         [[nodiscard]] virtual RGB getColor(int recursion, Math::Point3D collisionPoint,
             Math::Vector3D normale, Math::Point3D camPos,
-            const std::shared_ptr<IScene>& scene) = 0;
+            const std::shared_ptr<IScene>& scene) const = 0;
     };
 
 }

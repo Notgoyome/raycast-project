@@ -43,6 +43,10 @@ std::shared_ptr<ray::INode> ray::ANode::getShared()
     return shared_from_this();
 }
 
+void ray::ANode::initValues()
+{
+}
+
 std::shared_ptr<ray::INode> ray::ANode::getChild(int index) const
 {
     if (index < 0 || index >= static_cast<int>(children.size()))

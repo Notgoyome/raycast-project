@@ -17,13 +17,14 @@ namespace ray {
 
     class PointLight : public ray::ALight {
         Math::Point3D _myPos;
-        bool _gotPos = false;
     public:
         explicit PointLight(RGB color);
         ~PointLight() override = default;
 
-        [[nodiscard]] ray::Ray getIncidentVector(Math::Point3D pos) override;
-        [[nodiscard]] Math::Point3D getPos() override;
+        void initValues() override;
+
+        [[nodiscard]] ray::Ray getIncidentVector(Math::Point3D pos) const override;
+        [[nodiscard]] Math::Point3D getPos() const override;
     };
 
 }

@@ -93,6 +93,8 @@ int main(int argc, char** argv)
         }
 
         std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(getScene(nodes));
+        scene->initValues();
+
         std::shared_ptr<ray::ICamera> camera = getCamera(scene);
         Image img = render(imageData.width, imageData.height, scene, camera, backgroundColor);
         ray::Renderer renderer;

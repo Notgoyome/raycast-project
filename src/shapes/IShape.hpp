@@ -19,8 +19,8 @@ namespace ray {
     public:
         virtual ~IShape() = default;
 
-        virtual Maybe<Math::Point3D> hit(const ray::Ray& ray) = 0;
-        virtual Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) = 0;
+        virtual Maybe<Math::Point3D> hit(const ray::Ray& ray) const = 0;
+        virtual Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const = 0;
     };
 
 }

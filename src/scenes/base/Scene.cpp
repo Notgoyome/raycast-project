@@ -37,11 +37,17 @@ namespace ray {
         return res;
     }
 
-    Scene::Scene() : ANode(ray::type::SCENE)
+    void Scene::recursiveInitValues(std::shared_ptr<ray::INode> node)
     {
+        std::shared_ptr<ray::INode> actual;
+        node->initValues();
+
+        for (int i = 0; (actual = node->getChild(i)) != nullptr; i++) {
+            recursiveInitValues(actual);
+        }
     }
 
-    Maybe<PosShapePair> Scene::hit(const ray::Ray &ray)
+    Maybe<PosShapePair> Scene::hit(const ray::Ray &ray) const
     {
         std::vector<std::shared_ptr<ray::IShape>> objects = getShapes();
         Math::Point3D point = {0, 0, 0};
@@ -71,6 +77,18 @@ namespace ray {
         return Maybe{PosShapePair{point, closestObj}};
     }
 
+    void Scene::initValues()
+    {
+        std::shared_ptr<ray::INode> actual;
+
+        for (int i = 0; (actual = this->getChild(i)) != nullptr; i++) {
+            recursiveInitValues(actual);
+        }
+        _cameras = getNodesType<ray::ICamera>(ray::type::CAMERA);
+        _lights = getNodesType<ray::ILight>(ray::type::LIGHT);
+        _shapes = getNodesType<ray::IShape>(ray::type::SHAPE);
+    }
+
     template<typename T>
     std::vector<std::shared_ptr<T>> ray::Scene::getNodesType(ray::type type) const
     {
@@ -88,27 +106,18 @@ namespace ray {
         return res;
     }
 
-    std::vector<std::shared_ptr<ray::ILight>> Scene::getLights()
+    std::vector<std::shared_ptr<ray::ILight>> Scene::getLights() const
     {
-        if (_lights.empty()) {
-            _lights = getNodesType<ray::ILight>(ray::type::LIGHT);
-        }
         return _lights;
     }
 
-    std::vector<std::shared_ptr<ray::IShape>> Scene::getShapes()
+    std::vector<std::shared_ptr<ray::IShape>> Scene::getShapes() const
     {
-        if (_shapes.empty()) {
-            _shapes = getNodesType<ray::IShape>(ray::type::SHAPE);
-        }
         return _shapes;
     }
 
-    std::vector<std::shared_ptr<ray::ICamera>> Scene::getCameras()
+    std::vector<std::shared_ptr<ray::ICamera>> Scene::getCameras() const
     {
-        if (_cameras.empty()) {
-            _cameras = getNodesType<ray::ICamera>(ray::type::CAMERA);
-        }
         return _cameras;
     }
 

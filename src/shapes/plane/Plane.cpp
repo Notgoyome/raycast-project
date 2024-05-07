@@ -4,12 +4,8 @@
 
 #include "Plane.hpp"
 
-ray::Plane::Plane()
+Maybe<Math::Point3D> ray::Plane::hit(const ray::Ray& ray) const
 {
-    _transform = false;
-}
-
-Maybe<Math::Point3D> ray::Plane::hit(const ray::Ray& ray) {
     Math::Vector3D vectorNormale = getNormale(Math::Point3D{0,0,0}, ray);
 
     if (vectorNormale.dot(ray.direction) == 0) // perpendicular
@@ -29,18 +25,19 @@ void ray::Plane::setPosition()
     center = Scene::getPosition(*this);
 }
 
-Math::Vector3D ray::Plane::getNormale(__attribute__((unused))const Math::Point3D& point, const ray::Ray& camRay)
+void ray::Plane::initValues()
 {
-    if (_transform == false) {
-        applyMatrix();
-        setPosition();
-        _normale(0,0) = 0;
-        _normale(1,0) = 1;
-        _normale(2,0) = 0;
-        _normale(3,0) = 0;
-        _normale = _transformMatrix * _normale;
-        _transform = true;
-    }
+    applyMatrix();
+    setPosition();
+    _normale(0,0) = 0;
+    _normale(1,0) = 1;
+    _normale(2,0) = 0;
+    _normale(3,0) = 0;
+    _normale = _transformMatrix * _normale;
+}
+
+Math::Vector3D ray::Plane::getNormale(__attribute__((unused))const Math::Point3D& point, const ray::Ray& camRay) const
+{
     Math::Vector3D vectorNormale;
 
     vectorNormale.X = _normale(0,0);

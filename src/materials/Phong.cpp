@@ -112,7 +112,7 @@ RGB getLightColor(const std::shared_ptr<ray::ILight>& light,
     for (int angle = 0; angle < nbAngles; angle++) {
         actualRotation = rotateVectorAlong(perpendicular, lightRay.direction, 2 * M_PI * angle / nbAngles);
         for (int scale = 1; scale <= nbScales; scale++) {
-            ray.origin = lightRay.origin + actualRotation * scale;
+            ray.origin = lightRay.origin + actualRotation * (scale * 1.5);
             ray.direction = {ray.origin.X - pos.X, ray.origin.Y - pos.Y, ray.origin.Z - pos.Z};
             if (hitsBefore(scene, pos, ray) == false)
                 nbHits++;
@@ -151,9 +151,14 @@ Math::Vector3D getLightReflection(Math::Vector3D lightDir, Math::Vector3D normal
     return res / res.length();
 }
 
-RGB Phong::Model::calculateColor(const std::shared_ptr<ray::IScene>& scene)
+RGB Phong::Model::calculateColor(
+            const std::shared_ptr<ray::IScene>& scene,
+            Math::Vector3D view,
+            Math::Point3D pos,
+            Math::Vector3D normale) const
 {
     const std::vector<std::shared_ptr<ray::IShape>> objects = scene->getShapes();
+    const std::vector<std::shared_ptr<ray::ILight>> lights = scene->getLights();
     double sumR = 0;
     double sumG = 0;
     double sumB = 0;
@@ -162,16 +167,18 @@ RGB Phong::Model::calculateColor(const std::shared_ptr<ray::IScene>& scene)
     unsigned int GRes;
     unsigned int BRes;
 
-    double ambiantOcc = getAmbientOcclusion(_normale, scene, _pos, _ambOccQuality);
+    double ambiantOcc = getAmbientOcclusion(normale, scene, pos, _ambOccQuality);
 
-    for (const std::shared_ptr<ray::ILight>& light : _lights) {
-        Math::Vector3D lightDir = light->getIncidentVector(_pos).direction;
-        Math::Vector3D reflection = getLightReflection(lightDir, _normale);
-        RGB lightColor = getLightColor(light, objects, _pos, _shadowQuality);
+    for (const std::shared_ptr<ray::ILight>& light : lights) {
+        Math::Vector3D lightDir = light->getIncidentVector(pos).direction;
+        Math::Vector3D reflection = getLightReflection(lightDir, normale);
+        RGB lightColor = getLightColor(light, objects, pos, _shadowQuality);
         lightColor *= ambiantOcc;
 
-        double diff = std::max(lightDir.dot(_normale), 0.0);
-        double ref = std::max(pow(reflection.dot(_view), _alpha), 0.0);
+        if (lightColor == RGB{0, 0, 0})
+            continue;
+        double diff = std::max(lightDir.dot(normale), 0.0);
+        double ref = std::max(pow(reflection.dot(view), _alpha), 0.0);
 
         sumR += _kd(0, 0) * diff * getLightDiffuseIntensity(lightColor)(0, 0);
         if (diff > 0.2)

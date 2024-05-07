@@ -54,12 +54,16 @@ Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
     return pos2;
 }
 
-Maybe<Math::Point3D> ray::Sphere::hit(const ray::Ray &ray)
+void ray::Sphere::initValues()
+{
+    applyMatrix();
+    setPosition();
+    setRadius();
+}
+
+Maybe<Math::Point3D> ray::Sphere::hit(const ray::Ray &ray) const
 {
     if (radius == -1) {
-        applyMatrix();
-        setPosition();
-        setRadius();
     }
     double a = calcA(ray.direction);
     double b = calcB(ray.origin, ray.direction, center);
@@ -72,7 +76,7 @@ Maybe<Math::Point3D> ray::Sphere::hit(const ray::Ray &ray)
     return Maybe{getClosestRoot(a, b, det, ray)};
 }
 
-Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay)
+Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
 {
     Math::Vector3D normale = {point.X - center.X,
                               point.Y - center.Y,

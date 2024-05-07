@@ -15,17 +15,18 @@
 
 namespace ray {
     class Plane : public ray::AShape {
-    public:
         Math::Point3D center;
-        Plane();
-        ~Plane() override = default;
-        void setPosition();
-        Maybe<Math::Point3D> hit(const ray::Ray &ray) override;
-
-        Math::Vector3D getNormale(const Math::Point3D &point, const ray::Ray& camRay) override;
-    private:
-        bool _transform;
         Math::Matrix<4, 1> _normale;
+
+    public:
+        Plane() = default;
+        ~Plane() override = default;
+
+        void setPosition();
+        void initValues() override;
+
+        Maybe<Math::Point3D> hit(const ray::Ray &ray) const override;
+        Math::Vector3D getNormale(const Math::Point3D &point, const ray::Ray& camRay) const override;
     };
 }
 extern "C" ray::INode *create(std::map<std::string, std::string>& properties);

@@ -12,24 +12,21 @@ ray::PointLight::PointLight(RGB color) : ALight(color)
 {
 }
 
-ray::Ray ray::PointLight::getIncidentVector(Math::Point3D pos)
+void ray::PointLight::initValues()
 {
-    if (_gotPos == false) {
-        _myPos = Scene::getPosition(*this);
-        _gotPos = true;
-    }
+    _myPos = Scene::getPosition(*this);
+}
+
+ray::Ray ray::PointLight::getIncidentVector(Math::Point3D pos) const
+{
     Math::Vector3D res = {_myPos.X - pos.X, _myPos.Y - pos.Y, _myPos.Z - pos.Z};
 
     res /= res.length();
     return {_myPos, res};
 }
 
-Math::Point3D ray::PointLight::getPos()
+Math::Point3D ray::PointLight::getPos() const
 {
-    if (_gotPos == false) {
-        _myPos = Scene::getPosition(*this);
-        _gotPos = true;
-    }
     return _myPos;
 }
 

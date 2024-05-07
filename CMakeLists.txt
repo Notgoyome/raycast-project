@@ -42,6 +42,8 @@ set(MATH_SOURCES
 
 set(SCENE_SOURCES
         src/scenes/base/Scene.cpp
+        src/scenes/AScene.cpp
+        src/scenes/AScene.hpp
 )
 
 set(NODE_SOURCES

@@ -28,26 +28,19 @@ ray::BasicMaterial::BasicMaterial(RGB color, double shadowQuality, double ambian
         ambiantOccQuality,
         Math::Matrix<1, 3>({{1, 1, 1}}),
         Math::Matrix<1, 3>{{{0, 0, 0}}},
-        Math::Matrix<1, 3>{{{0.5, 0.5, 0.5}}},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0})
+        Math::Matrix<1, 3>{{{0.5, 0.5, 0.5}}})
 {
     _phong.setKd(Math::Matrix<1, 3>({{color.R / 255.f, color.G / 255.f, color.B / 255.f}}));
 }
 
 RGB ray::BasicMaterial::getColor(__attribute__((unused))int recursive, Math::Point3D collisionPoint,
-    Math::Vector3D normale, Math::Point3D camPos,
-    const std::shared_ptr<ray::IScene> &scene)
+                                 Math::Vector3D normale, Math::Point3D camPos,
+                                 const std::shared_ptr<ray::IScene> &scene) const
 {
     Math::Vector3D view = {camPos.X - collisionPoint.X, camPos.Y - collisionPoint.Y, camPos.Z - collisionPoint.Z};
     view /= view.length();
 
-    _phong.setLights(scene->getLights());
-    _phong.setView(view);
-    _phong.setNormale(normale);
-    _phong.setPos(collisionPoint);
-    return _phong.calculateColor(scene);
+    return _phong.calculateColor(scene, view, collisionPoint, normale);
 }
 
 extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)

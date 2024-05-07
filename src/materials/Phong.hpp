@@ -31,9 +31,6 @@ namespace Phong {
         Math::Matrix<1, 3> _ka;
         Math::Matrix<1, 3> _kd;
         Math::Matrix<1, 3> _ks;
-        Math::Point3D _pos;
-        Math::Vector3D _normale;
-        Math::Vector3D _view;
 
     public:
         // CONSTR DESTRUCT
@@ -45,17 +42,17 @@ namespace Phong {
             double ambOccQuality,
             Math::Matrix<1, 3> ka,
             Math::Matrix<1, 3> kd,
-            Math::Matrix<1, 3> ks,
-            Math::Point3D pos,
-            Math::Vector3D normale,
-            Math::Vector3D view)
+            Math::Matrix<1, 3> ks)
             : _lights(std::move(lights)), _ia(ia), _alpha(alpha), _shadowQuality(shadowQuality), _ambOccQuality(ambOccQuality),
-            _ka(ka), _kd(kd), _ks(ks), _pos(pos), _normale(normale),
-            _view(view) {}
+            _ka(ka), _kd(kd), _ks(ks) {}
         ~Model() = default;
 
         // RUNTIME
-        [[nodiscard]] RGB calculateColor(const std::shared_ptr<ray::IScene>& scene);
+        [[nodiscard]] RGB calculateColor(
+            const std::shared_ptr<ray::IScene>& scene,
+            Math::Vector3D view,
+            Math::Point3D pos,
+            Math::Vector3D normale) const;
 
         // SETTERS
         void setLights(ListLight lights) { _lights = lights; }
@@ -64,9 +61,6 @@ namespace Phong {
         void setKa(Math::Matrix<1, 3> ka) { _ka = ka; }
         void setKd(Math::Matrix<1, 3> kd) { _kd = kd; }
         void setKs(Math::Matrix<1, 3> ks) { _ks = ks; }
-        void setPos(Math::Point3D pos) { _pos = pos; }
-        void setNormale(Math::Vector3D normale) { _normale = normale; }
-        void setView(Math::Vector3D view) { _view = view; }
 
         // GETTERS
         [[nodiscard]] ListLight getLights() const { return _lights; }
@@ -75,9 +69,6 @@ namespace Phong {
         [[nodiscard]] Math::Matrix<1, 3> getKa() const { return _ka; }
         [[nodiscard]] Math::Matrix<1, 3> getKd() const { return _kd; }
         [[nodiscard]] Math::Matrix<1, 3> getKs() const { return _ks; }
-        [[nodiscard]] Math::Point3D getPos() const { return _pos; }
-        [[nodiscard]] Math::Vector3D getNormale() const { return _normale; }
-        [[nodiscard]] Math::Vector3D getView() const { return _view; }
     };
 
 }

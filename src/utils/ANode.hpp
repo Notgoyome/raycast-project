@@ -48,6 +48,8 @@ namespace ray {
 
         [[nodiscard]] std::shared_ptr<INode> getShared() override;
 
+        void initValues() override;
+
         // GETTERS
         [[nodiscard]] std::shared_ptr<ray::INode> getChild(int index) const override;
         [[nodiscard]] std::shared_ptr<ray::INode> getParent() const override;
