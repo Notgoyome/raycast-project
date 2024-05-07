@@ -9,6 +9,8 @@
 #ifndef ISHAPE_HPP_
 #define ISHAPE_HPP_
 
+#include <math/Vector2D.hpp>
+
 #include "INode.hpp"
 #include "Ray.hpp"
 #include "Maybe.hpp"
@@ -20,9 +22,11 @@ namespace ray {
     public:
         virtual ~IShape() = default;
 
-        virtual Maybe<Math::Point3D> hit(const ray::Ray& ray) const = 0;
-        virtual Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const = 0;
-        virtual std::shared_ptr<ray::IMaterial> getMaterial() const = 0;
+        [[nodiscard]] virtual Maybe<Math::Point3D> hit(const ray::Ray& ray) const = 0;
+        [[nodiscard]] virtual Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const = 0;
+        [[nodiscard]] virtual std::shared_ptr<ray::IMaterial> getMaterial() const = 0;
+
+        [[nodiscard]] virtual Math::Vector2D getUVMapping(Math::Vector3D coords) const = 0;
     };
 
 }

@@ -7,19 +7,6 @@
 
 #include "BasicMaterial.hpp"
 
-ray::Ray getReflectionRay(Math::Vector3D normale, ray::Ray ray)
-{
-    Math::Vector3D reflection = ray.direction - (normale * 2 * ray.direction.dot(normale));
-    Math::Point3D origin = {normale.X, normale.Y, normale.Z};
-
-    return {origin, reflection};
-}
-
-double getVectorAngle(Math::Vector3D vec1, Math::Vector3D vec2)
-{
-    return acos(vec1.dot(vec2) / (vec1.length() * vec2.length()));
-}
-
 ray::BasicMaterial::BasicMaterial(RGB color,
     double shadowQuality,
     double ambiantOccQuality,

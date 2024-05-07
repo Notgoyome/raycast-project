@@ -85,6 +85,16 @@ Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point, __attribute__
     return normale / normale.length();
 }
 
+Math::Vector2D ray::Sphere::getUVMapping(Math::Vector3D coords) const
+{
+    double theta = std::atan2(coords.X, coords.Y);
+    double phi = std::asin(coords.Z / radius);
+
+    double u = 0.5 + theta / (2 * M_PI);
+    double v = 0.5 + phi / M_PI;
+
+    return {u, v};
+}
 
 extern "C" ray::INode *create(__attribute__((unused))const std::map<std::string, std::string> &attributes)
 {

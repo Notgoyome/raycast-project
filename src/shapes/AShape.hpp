@@ -22,16 +22,19 @@ namespace ray {
         std::shared_ptr<ray::IMaterial> _material;
         AShape() : ANode(ray::type::SHAPE) {}
 
-    public:
-        virtual ~AShape() = default;
-
-        void initValues() override;
-
+        // INTERNAL FUNCTIONS
         Math::Point3D getPosition() const;
         Math::Vector3D getScale() const;
         Math::Matrix<3,3> getRotation() const;
         std::shared_ptr<ray::IMaterial> getMaterial() const override;
         void applyMatrix();
+
+    public:
+        virtual ~AShape() = default;
+
+        void initValues() override;
+
+        [[nodiscard]] Math::Vector2D getUVMapping(Math::Vector3D coords) const override;
     };
 }
 
