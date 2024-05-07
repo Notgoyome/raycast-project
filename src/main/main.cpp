@@ -17,16 +17,33 @@
 #include "Client.hpp"
 #include "utils/mainMethods.hpp"
 
+Image mergeImages(const std::vector<Image>& images)
+{
+    Image mergedImage;
+
+    for (const auto& img : images) {
+        for (const auto& pixel : img.getMap()) {
+            mergedImage.addPixel(pixel.first, pixel.second);
+        }
+    }
+    return mergedImage;
+}
+
 Image render(unsigned int width, unsigned int height,
     const std::shared_ptr<ray::IScene>& scene,
-    const std::shared_ptr<ray::ICamera>& cam, RGB backgroundColor)
+    const std::shared_ptr<ray::ICamera>& cam, RGB backgroundColor,
+    unsigned int startRow, unsigned int endRow)
 {
     Image img;
     auto biggest = static_cast<unsigned int>(std::max(width, height));
     unsigned int startI = biggest == width ? 0 : static_cast<unsigned int>(static_cast<float>(biggest - width) / 2.f);
     unsigned int startJ = biggest == height ? 0 : static_cast<unsigned int>(static_cast<float>(biggest - height) / 2.f);
 
+    startRow += startJ;
+    endRow += startJ;
     for (unsigned int i = startI; i < biggest - startI; i++) {
+        if (i < startRow || i >= endRow) continue;
+
         for (unsigned int j = startJ; j < biggest - startJ; j++) {
             double u = double(i) / biggest;
             double v = double(j) / biggest;
@@ -40,20 +57,42 @@ Image render(unsigned int width, unsigned int height,
 
 void handleSingleFile(const char *filename)
 {
-    ray::NodeBuilder builder(filename);
-    const auto& nodes = builder.getRootNodes();
-    RGB backgroundColor = builder.getBackgroundColor();
-    image_data_t imageData = builder.getImageData();
+    unsigned int numThreads = std::thread::hardware_concurrency();
+    std::vector<std::thread> threads(numThreads);
+    std::vector<Image> images(numThreads);
+    std::string outputFilename;
 
-    if (nodes.empty()) {
-        throw ray::CoreException("No root nodes found in the scene file.");
+    for (unsigned int i = 0; i < numThreads; ++i) {
+        threads[i] = std::thread([&, i]() {
+            ray::NodeBuilder builder(filename);
+            const auto& nodes = builder.getRootNodes();
+            RGB backgroundColor = builder.getBackgroundColor();
+            image_data_t imageData = builder.getImageData();
+
+            if (i == 0) {
+                outputFilename = imageData.filename;
+            }
+
+            if (nodes.empty()) {
+                throw ray::CoreException("No root nodes found in the scene file.");
+            }
+
+            std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
+            std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
+
+            unsigned int partHeight = imageData.height / numThreads;
+            unsigned int startRow = i * partHeight;
+            unsigned int endRow = (i == numThreads - 1) ? imageData.height : startRow + partHeight;
+
+            images[i] = render(imageData.width, imageData.height, scene, camera, backgroundColor, startRow, endRow);
+        });
     }
 
-    std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
-    std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
-    Image img = render(imageData.width, imageData.height, scene, camera, backgroundColor);
+    for (auto& t : threads)
+        t.join();
+    Image img = mergeImages(images);
     ray::Renderer renderer;
-    renderer.renderPpmImage(img, imageData.filename);
+    renderer.renderPpmImage(img, outputFilename);
     renderer.renderSfmlImage(img);
 }
 
