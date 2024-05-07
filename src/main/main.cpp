@@ -35,8 +35,54 @@ Image render(unsigned int width, unsigned int height,
         }
         std::cout << "Rendering: " << i - startI << "/" << width << std::endl;
     }
-
     return img;
+}
+
+void handleSingleFile(const char *filename)
+{
+    ray::NodeBuilder builder(filename);
+    const auto& nodes = builder.getRootNodes();
+    RGB backgroundColor = builder.getBackgroundColor();
+    image_data_t imageData = builder.getImageData();
+
+    if (nodes.empty()) {
+        throw ray::CoreException("No root nodes found in the scene file.");
+    }
+
+    std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
+    std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
+    Image img = render(imageData.width, imageData.height, scene, camera, backgroundColor);
+    ray::Renderer renderer;
+    renderer.renderPpmImage(img, imageData.filename);
+    renderer.renderSfmlImage(img);
+}
+
+void handleServer(const char *filename, int port, int nb_clients)
+{
+    ray::Server server(port, filename);
+    server.accept_connections(nb_clients);
+
+    ray::NodeBuilder builder(filename);
+    const auto& nodes = builder.getRootNodes();
+    RGB backgroundColor = builder.getBackgroundColor();
+    image_data_t imageData = builder.getImageData();
+
+    if (nodes.empty()) {
+        throw ray::CoreException("No root nodes found in the scene file.");
+    }
+
+    std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
+    std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
+    Image img = server.orchestrate_rendering(imageData.width, imageData.height, scene, camera, backgroundColor);
+    ray::Renderer renderer;
+    renderer.renderPpmImage(img, imageData.filename);
+    renderer.renderSfmlImage(img);
+}
+
+void handleClient(const std::string& ip, int port)
+{
+    ray::Client client(ip, port);
+    client.render();
 }
 
 int main(int argc, char** argv)
@@ -49,52 +95,15 @@ int main(int argc, char** argv)
 
     try {
         if (argc == 2) {
-            ray::NodeBuilder builder(argv[1]);
-            const auto& nodes = builder.getRootNodes();
-            RGB backgroundColor = builder.getBackgroundColor();
-            image_data_t imageData = builder.getImageData();
-
-            if (nodes.empty()) {
-                throw ray::CoreException("No root nodes found in the scene file.");
-            }
-
-            std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
-            std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
-            Image img = render(imageData.width, imageData.height, scene, camera, backgroundColor);
-            ray::Renderer renderer;
-            renderer.renderPpmImage(img, imageData.filename);
-            renderer.renderSfmlImage(img);
-
+            handleSingleFile(argv[1]);
         } else if (argc == 5 && std::string(argv[2]) == "-s") {
             int port = std::stoi(argv[3]);
             int nb_clients = std::stoi(argv[4]);
-            ray::Server server(port, argv[1]);
-            server.accept_connections(nb_clients);
-
-            ray::NodeBuilder builder(argv[1]);
-            const auto& nodes = builder.getRootNodes();
-            RGB backgroundColor = builder.getBackgroundColor();
-            image_data_t imageData = builder.getImageData();
-
-            if (nodes.empty()) {
-                throw ray::CoreException("No root nodes found in the scene file.");
-            }
-
-            std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
-            std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
-            Image img = server.orchestrate_rendering(imageData.width, imageData.height, scene, camera, backgroundColor);
-            ray::Renderer renderer;
-            renderer.renderPpmImage(img, imageData.filename);
-            renderer.renderSfmlImage(img);
-
+            handleServer(argv[1], port, nb_clients);
         } else if (argc == 4 && std::string(argv[1]) == "-c") {
             std::string ip = argv[2];
             int port = std::stoi(argv[3]);
-
-            ray::Client client(ip, port);
-
-            client.render();
-
+            handleClient(ip, port);
         } else {
             std::cerr << "Invalid arguments. Please check the usage." << std::endl;
             return 84;
