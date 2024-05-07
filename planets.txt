@@ -75,6 +75,7 @@ nodes : (
             color : "{ r : 255; g : 0; b : 0; }";
             shadow_quality : "50";
             ambiant_occlusion : "0";
+            roughness : "1";
         };
     },
     {
@@ -84,6 +85,7 @@ nodes : (
             color : "{ r : 0; g : 255; b : 0; }";
             shadow_quality : "50";
             ambiant_occlusion : "0";
+            roughness : "0";
         };
     }
 );

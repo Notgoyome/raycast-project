@@ -123,11 +123,13 @@ RGB getLightColor(const std::shared_ptr<ray::ILight>& light,
 
 Math::Matrix<1, 3> getLightDiffuseIntensity(RGB lightColor)
 {
+    float coef = 1.5;
+
     Math::Matrix<1, 3> res{{
         {
-            static_cast<float>(lightColor.R) / 255.f / 2.f,
-            static_cast<float>(lightColor.G) / 255.f / 2.f,
-            static_cast<float>(lightColor.B) / 255.f / 2.f
+            static_cast<float>(lightColor.R) / 255.f / coef,
+            static_cast<float>(lightColor.G) / 255.f / coef,
+            static_cast<float>(lightColor.B) / 255.f / coef
         }}};
 
     return res;
@@ -135,11 +137,13 @@ Math::Matrix<1, 3> getLightDiffuseIntensity(RGB lightColor)
 
 Math::Matrix<1, 3> getLightSpecularIntensity(RGB lightColor)
 {
+    float coef = 2;
+
     Math::Matrix<1, 3> res{{
         {
-            static_cast<float>(lightColor.R) / 255.f / 2.f,
-            static_cast<float>(lightColor.G) / 255.f / 2.f,
-            static_cast<float>(lightColor.B) / 255.f / 2.f
+            static_cast<float>(lightColor.R) / 255.f / coef,
+            static_cast<float>(lightColor.G) / 255.f / coef,
+            static_cast<float>(lightColor.B) / 255.f / coef
         }}};
 
     return res;
