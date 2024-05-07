@@ -78,6 +78,7 @@ void handleSingleFile(const char *filename)
             }
 
             std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
+            scene->initValues();
             std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
 
             unsigned int partHeight = imageData.height / numThreads;
