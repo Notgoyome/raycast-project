@@ -9,6 +9,7 @@
 
 void ray::Cylinder::initValues()
 {
+    AShape::initValues();
     setPosition();
     setRadius();
     setDirection();

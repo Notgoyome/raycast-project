@@ -38,7 +38,7 @@ namespace ray {
 
             static RGB getHitColor(const PosShapePair& hit, ray::Ray ray, const std::shared_ptr<ray::IScene>& scene)
             {
-                std::shared_ptr<ray::IMaterial> material = ray::Scene::getMaterial(hit.second);
+                std::shared_ptr<ray::IMaterial> material = hit.second->getMaterial();
 
                 return material->getColor(0, hit.first, hit.second->getNormale(hit.first, ray), ray.origin, scene);
             }

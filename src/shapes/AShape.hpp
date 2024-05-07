@@ -19,14 +19,18 @@ namespace ray {
     class AShape : public ray::ANode, public ray::IShape {
     protected:
         Math::Matrix<4, 4> _transformMatrix;
+        std::shared_ptr<ray::IMaterial> _material;
         AShape() : ANode(ray::type::SHAPE) {}
 
     public:
         virtual ~AShape() = default;
 
+        void initValues() override;
+
         Math::Point3D getPosition() const;
         Math::Vector3D getScale() const;
         Math::Matrix<3,3> getRotation() const;
+        std::shared_ptr<ray::IMaterial> getMaterial() const override;
         void applyMatrix();
     };
 }

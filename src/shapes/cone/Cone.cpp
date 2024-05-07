@@ -18,6 +18,7 @@ void ray::Cone::transform()
 
 void ray::Cone::initValues()
 {
+    AShape::initValues();
     applyMatrix();
     setPosition();
 }

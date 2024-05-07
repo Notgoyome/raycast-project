@@ -56,6 +56,7 @@ Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
 
 void ray::Sphere::initValues()
 {
+    AShape::initValues();
     applyMatrix();
     setPosition();
     setRadius();

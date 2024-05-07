@@ -12,6 +12,7 @@
 #include "INode.hpp"
 #include "Ray.hpp"
 #include "Maybe.hpp"
+#include "../materials/IMaterial.hpp"
 
 namespace ray {
 
@@ -21,6 +22,7 @@ namespace ray {
 
         virtual Maybe<Math::Point3D> hit(const ray::Ray& ray) const = 0;
         virtual Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const = 0;
+        virtual std::shared_ptr<ray::IMaterial> getMaterial() const = 0;
     };
 
 }

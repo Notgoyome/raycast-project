@@ -27,6 +27,7 @@ void ray::Plane::setPosition()
 
 void ray::Plane::initValues()
 {
+    AShape::initValues();
     applyMatrix();
     setPosition();
     _normale(0,0) = 0;

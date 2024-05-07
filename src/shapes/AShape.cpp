@@ -13,6 +13,11 @@ void ray::AShape::applyMatrix()
    _transformMatrix = Scene::getTransformationMatrix(*this);
 }
 
+void ray::AShape::initValues()
+{
+    _material = Scene::getMaterial(*this);
+}
+
 Math::Point3D ray::AShape::getPosition() const
 {
     Math::Point3D position = { _transformMatrix(0, 3),
@@ -38,4 +43,9 @@ Math::Matrix<3,3> ray::AShape::getRotation() const
 
     }
     return rotation;
+}
+
+std::shared_ptr<ray::IMaterial> ray::AShape::getMaterial() const
+{
+    return _material;
 }
