@@ -16,9 +16,10 @@ nodes : (
     },
     {
         id : "light";
-        type : "lights_point.so";
+        type : "lights_directional.so";
         properties : {
             color : "{ r : 255; g : 255; b : 255; }";
+            direction : "{ x : 0; y : 0; z : 1; }";
         };
     },
     {
@@ -35,54 +36,30 @@ nodes : (
         };
     },
     {
-        id : "sphere2";
-        type : "shapes_sphere.so";
+        id : "cone";
+        type : "shapes_cone.so";
         properties : {
-        };
-    },
-    {
-        id : "sphere3";
-        type : "shapes_sphere.so";
-        properties : {
+            height : "100";
+            radius : "100";
+            finite : "true";
         };
     },
     {
         id : "sphere1_translate";
         type : "transformations_translation.so";
         properties : {
-            translation : "{ x : 0; y : -30; z : 0; }";
+            translation : "{ x : 100; y : -30; z : 0; }";
         };
     },
     {
-        id : "sphere2_translate";
+        id : "cone_translate";
         type : "transformations_translation.so";
         properties : {
-            translation : "{ x : 30; y : 0; z : -15; }";
-        };
-    },
-    {
-        id : "sphere3_translate";
-        type : "transformations_translation.so";
-        properties : {
-            translation : "{ x : -30; y : 0; z : -15; }";
+            translation : "{ x : -100; y : 0; z : 0; }";
         };
     },
     {
         id : "sphere1_scale";
-        type : "transformations_scale.so";
-        properties : {
-            scale : "{ x : 40; y : 40; z : 40; }";
-        };
-    },
-    {
-        id : "sphere2_scale";
-        type : "transformations_scale.so";
-        properties : {
-            scale : "{ x : 40; y : 40; z : 40; }";
-        };
-    },
-    {
-        id : "sphere3_scale";
         type : "transformations_scale.so";
         properties : {
             scale : "{ x : 40; y : 40; z : 40; }";
@@ -104,22 +81,6 @@ nodes : (
             color : "{ r : 255; g : 0; b : 0; }";
             shadow_quality : "1";
             ambiant_occlusion : "1";
-        };
-    },
-    {
-        id : "blue_material";
-        type : "materials_basic.so";
-        properties : {
-            color : "{ r : 0; g : 255; b : 0; }";
-            shadow_quality : "1";
-            ambiant_occlusion : "1";
-        };
-    },
-    {
-        id : "rotate_everything";
-        type : "transformations_rotation.so";
-        properties : {
-            rotation : "{ x : 0; y : 0.8; z : 0; }";
         };
     }
 );
@@ -155,32 +116,11 @@ config : (
                 id : "red_material";
                 children : (
                     {
-                        id : "sphere2_translate";
+                        id : "cone_translate";
                         children : (
-                            {
-                                id : "sphere2_scale";
-                                children : (
-                                    { id : "sphere2"; }
-                                );
-                            }
+                            { id : "cone"; }
                         );
                     },
-                );
-            },
-            {
-                id : "blue_material";
-                children : (
-                    {
-                        id : "sphere3_translate";
-                        children : (
-                            {
-                                id : "sphere3_scale";
-                                children : (
-                                    { id : "sphere3"; }
-                                );
-                            }
-                        );
-                    }
                 );
             }
         );
@@ -197,7 +137,7 @@ background : (
 
 image : (
     {
-        file : "with_ambiant.ppm";
+        file : "cone_test.ppm";
         width : 500;
         height : 500;
     }
