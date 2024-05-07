@@ -134,7 +134,7 @@ nodes : (
         properties : {
             color : "{ r : 0; g : 255; b : 0; }";
             shadow_quality : "100";
-            ambiant_occlusion : "1";
+            ambiant_occlusion : "100";
         };
     },
     {
@@ -143,7 +143,7 @@ nodes : (
         properties : {
             color : "{ r : 255; g : 0; b : 0; }";
             shadow_quality : "100";
-            ambiant_occlusion : "1";
+            ambiant_occlusion : "100";
         };
     },
     {
@@ -152,7 +152,7 @@ nodes : (
         properties : {
             color : "{ r : 255; g : 255; b : 255; }";
             shadow_quality : "100";
-            ambiant_occlusion : "1";
+            ambiant_occlusion : "100";
         };
     },
     {
@@ -161,7 +161,7 @@ nodes : (
         properties : {
             color : "{ r : 180; g : 180; b : 180; }";
             shadow_quality : "100";
-            ambiant_occlusion : "1";
+            ambiant_occlusion : "100";
         };
     }
 );
