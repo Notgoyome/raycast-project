@@ -111,6 +111,7 @@ void handleServer(const char *filename, int port, int nb_clients)
     }
 
     std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
+    scene->initValues();
     std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
     Image img = server.orchestrate_rendering(imageData.width, imageData.height, scene, camera, backgroundColor);
     ray::Renderer renderer;

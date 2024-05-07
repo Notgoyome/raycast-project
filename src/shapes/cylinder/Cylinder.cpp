@@ -7,7 +7,7 @@
 
 #include "Cylinder.hpp"
 
-ray::Cylinder::Cylinder()
+void ray::Cylinder::initValues()
 {
     setPosition();
     setRadius();
@@ -101,7 +101,7 @@ Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
     return pos2;
 }
 
-Maybe<Math::Point3D> ray::Cylinder::hit(const ray::Ray &ray)
+Maybe<Math::Point3D> ray::Cylinder::hit(const ray::Ray &ray) const
 {
     double a = calcA(ray.direction, _direction);
     double b = calcB(ray.direction, _direction, ray.origin, _position);
@@ -112,9 +112,8 @@ Maybe<Math::Point3D> ray::Cylinder::hit(const ray::Ray &ray)
     return Maybe{getClosestRoot(a, b, det, ray)};
 }
 
-Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, const ray::Ray& camRay)
+Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
 {
-    (ray::Ray)camRay;
     Math::Vector3D normal = {point.X - _position.X, point.Y - _position.Y, point.Z - _position.Z};
     return normal / normal.length();
 }
