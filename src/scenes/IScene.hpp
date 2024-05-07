@@ -34,6 +34,7 @@ namespace ray {
         [[nodiscard]] virtual std::vector<std::shared_ptr<ray::ILight>> getLights() const = 0;
         [[nodiscard]] virtual std::vector<std::shared_ptr<ray::IShape>> getShapes() const = 0;
         [[nodiscard]] virtual std::vector<std::shared_ptr<ray::ICamera>> getCameras() const = 0;
+        [[nodiscard]] virtual RGB getBackgroundColor() const = 0;
     };
 
 }

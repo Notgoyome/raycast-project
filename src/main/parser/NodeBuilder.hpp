@@ -40,9 +40,6 @@ namespace ray {
     private:
         std::map<std::string, std::shared_ptr<INode>> nodeMap;
         std::vector<std::shared_ptr<INode>> rootNodes;
-        unsigned int background_r;
-        unsigned int background_g;
-        unsigned int background_b;
         image_data_t imageData;
 
         static std::shared_ptr<libconfig::Config> openFile(const std::string& filename);
@@ -50,7 +47,6 @@ namespace ray {
         void parseNodes(const std::shared_ptr<libconfig::Config>& cfg);
         void buildTree(const libconfig::Setting& setting, const std::shared_ptr<INode>& parent);
         void parseHierarchy(const std::shared_ptr<libconfig::Config>& cfg);
-        void parseBackgroundColor(const std::shared_ptr<libconfig::Config>& cfg);
         void parseImageData(const std::shared_ptr<libconfig::Config>& cfg);
 
     public:
@@ -58,7 +54,6 @@ namespace ray {
         explicit NodeBuilder(const std::string& content, bool isContent);
 
         [[nodiscard]] const std::vector<std::shared_ptr<INode>>& getRootNodes() const { return rootNodes; }
-        [[nodiscard]] RGB getBackgroundColor() const { return {background_r, background_g, background_b}; }
         [[nodiscard]] image_data_t getImageData() const { return imageData; }
     };
 }

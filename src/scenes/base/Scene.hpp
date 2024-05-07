@@ -24,11 +24,12 @@ namespace ray {
         std::vector<std::shared_ptr<ray::ILight>> _lights;
         std::vector<std::shared_ptr<ray::IShape>> _shapes;
         std::vector<std::shared_ptr<ray::ICamera>> _cameras;
+        RGB _backgroundColor;
 
         void recursiveInitValues(std::shared_ptr<ray::INode> node);
     public:
         // CONSTR DESTRUCT
-        Scene() = default;
+        explicit Scene(RGB backgroundColor) : _backgroundColor(backgroundColor) {}
         ~Scene() override = default;
 
         // RUNTIME
@@ -40,6 +41,7 @@ namespace ray {
         [[nodiscard]] std::vector<std::shared_ptr<ray::ILight>> getLights() const override;
         [[nodiscard]] std::vector<std::shared_ptr<ray::IShape>> getShapes() const override;
         [[nodiscard]] std::vector<std::shared_ptr<ray::ICamera>> getCameras() const override;
+        [[nodiscard]] RGB getBackgroundColor() const override;
 
         // STATIC
         [[nodiscard]] static std::shared_ptr<ray::IMaterial> getMaterial(const std::shared_ptr<ray::IShape>& shape);

@@ -120,6 +120,11 @@ namespace ray {
         return _cameras;
     }
 
+    RGB Scene::getBackgroundColor() const
+    {
+        return _backgroundColor;
+    }
+
     std::shared_ptr<ray::IMaterial> Scene::getMaterial(
         const std::shared_ptr<ray::IShape>& shape)
     {

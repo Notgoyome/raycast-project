@@ -112,27 +112,6 @@ namespace ray {
             buildTree(configs[i], nullptr);
     }
 
-    void NodeBuilder::parseBackgroundColor(const std::shared_ptr<libconfig::Config>& cfg)
-    {
-        try {
-            if (!cfg->exists("background"))
-                throw NodeBuilderException("Background block is missing in the configuration file.");
-
-            const libconfig::Setting& background = cfg->lookup("background");
-
-            if (background.getLength() == 0) {
-                throw NodeBuilderException("Background block is empty.");
-            }
-            background[0].lookupValue("r", background_r);
-            background[0].lookupValue("g", background_g);
-            background[0].lookupValue("b", background_b);
-
-        } catch (const libconfig::SettingNotFoundException &nfex) {
-            std::cerr << "Setting not found: " << nfex.getPath() << std::endl;
-            throw NodeBuilderException("Missing 'background' in configuration file.");
-        }
-    }
-
     void NodeBuilder::parseImageData(
         const std::shared_ptr<libconfig::Config> &cfg)
     {
@@ -148,17 +127,16 @@ namespace ray {
         image[0].lookupValue("height", imageData.height);
     }
 
-    NodeBuilder::NodeBuilder(const std::string &filename) : background_r(0), background_g(0), background_b(0)
+    NodeBuilder::NodeBuilder(const std::string &filename)
     {
         std::shared_ptr<libconfig::Config> cfg = openFile(filename);
 
         parseNodes(cfg);
         parseHierarchy(cfg);
-        parseBackgroundColor(cfg);
         parseImageData(cfg);
     }
 
-    NodeBuilder::NodeBuilder(const std::string &str, bool isContent) : background_r(0), background_g(0), background_b(0)
+    NodeBuilder::NodeBuilder(const std::string &str, bool isContent)
     {
         std::shared_ptr<libconfig::Config> cfg;
         if (isContent) {
@@ -169,7 +147,6 @@ namespace ray {
 
         parseNodes(cfg);
         parseHierarchy(cfg);
-        parseBackgroundColor(cfg);
         parseImageData(cfg);
     }
 }

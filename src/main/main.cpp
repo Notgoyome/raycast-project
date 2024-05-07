@@ -29,9 +29,10 @@ Image mergeImages(const std::vector<Image>& images)
 
 Image render(unsigned int width, unsigned int height,
     const std::shared_ptr<ray::IScene>& scene,
-    const std::shared_ptr<ray::ICamera>& cam, RGB backgroundColor,
+    const std::shared_ptr<ray::ICamera>& cam,
     unsigned int startRow, unsigned int endRow)
 {
+    RGB backgroundColor = scene->getBackgroundColor();
     Image img;
     auto biggest = static_cast<unsigned int>(std::max(width, height));
     unsigned int startI = biggest == width ? 0 : static_cast<unsigned int>(static_cast<float>(biggest - width) / 2.f);
@@ -64,7 +65,6 @@ void handleSingleFile(const char *filename)
         threads[i] = std::thread([&, i]() {
             ray::NodeBuilder builder(filename);
             const auto& nodes = builder.getRootNodes();
-            RGB backgroundColor = builder.getBackgroundColor();
             image_data_t imageData = builder.getImageData();
 
             if (i == 0) {
@@ -83,7 +83,7 @@ void handleSingleFile(const char *filename)
             unsigned int startRow = i * partHeight;
             unsigned int endRow = (i == numThreads - 1) ? imageData.height : startRow + partHeight;
 
-            images[i] = render(imageData.width, imageData.height, scene, camera, backgroundColor, startRow, endRow);
+            images[i] = render(imageData.width, imageData.height, scene, camera, startRow, endRow);
         });
     }
 
@@ -102,7 +102,6 @@ void handleServer(const char *filename, int port, int nb_clients)
 
     ray::NodeBuilder builder(filename);
     const auto& nodes = builder.getRootNodes();
-    RGB backgroundColor = builder.getBackgroundColor();
     image_data_t imageData = builder.getImageData();
 
     if (nodes.empty()) {
@@ -112,7 +111,7 @@ void handleServer(const char *filename, int port, int nb_clients)
     std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
     scene->initValues();
     std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
-    Image img = server.orchestrate_rendering(imageData.width, imageData.height, scene, camera, backgroundColor);
+    Image img = server.orchestrate_rendering(imageData.width, imageData.height, scene, camera);
     ray::Renderer renderer;
     renderer.renderPpmImage(img, imageData.filename);
     renderer.renderSfmlImage(img);

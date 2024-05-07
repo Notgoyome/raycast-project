@@ -155,11 +155,10 @@ namespace ray {
 
             Image orchestrate_rendering(unsigned int width, unsigned int height,
                 const std::shared_ptr<ray::IScene>& scene,
-                const std::shared_ptr<ray::ICamera>& cam, RGB backgroundColor)
+                const std::shared_ptr<ray::ICamera>& cam)
             {
                 (void)scene;
                 (void)cam;
-                (void)backgroundColor;
                 Image img;
                 std::deque<std::pair<int, int>> bands;
 
