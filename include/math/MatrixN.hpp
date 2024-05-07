@@ -44,6 +44,7 @@ namespace Math {
         [[nodiscard]] Matrix<COL, ROW> T() const;
 
         [[nodiscard]] static Matrix<ROW, COL> identity();
+        [[nodiscard]] Matrix<ROW, COL> inverse();
     };
 
     template<uint8_t ROW, uint8_t COL>
@@ -208,6 +209,58 @@ namespace Math {
         }
         return matRes;
     }
+
+    template<uint8_t ROW, uint8_t COL>
+    Matrix<ROW, COL> Matrix<ROW, COL>::inverse() {
+        if (ROW != COL) {
+            throw std::runtime_error("Inverse only defined for square matrices.");
+        }
+        Matrix<ROW, COL*2> augmented;
+        for (int i = 0; i < ROW; ++i) {
+            for (int j = 0; j < COL; ++j) {
+                augmented(i, j) = (*this)(i, j);
+            }
+            for (int j = COL; j < 2 * COL; ++j) {
+                augmented(i, j) = (i == (j - COL)) ? 1.0 : 0.0;
+            }
+        }
+
+        for (int col = 0; col < COL; ++col) {
+            if (augmented(col, col) == 0) {
+                int swap_row = col + 1;
+                while (swap_row < ROW && augmented(swap_row, col) == 0) {
+                    ++swap_row;
+                }
+                if (swap_row == ROW) {
+                    throw std::runtime_error("Matrix is singular and cannot be inverted.");
+                }
+                for (int j = 0; j < 2 * COL; ++j) {
+                    std::swap(augmented(col, j), augmented(swap_row, j));
+                }
+            }
+            double pivot = augmented(col, col);
+            for (int j = 0; j < 2 * COL; ++j) {
+                augmented(col, j) /= pivot;
+            }
+            for (int row = 0; row < ROW; ++row) {
+                if (row != col) {
+                    double factor = augmented(row, col);
+                    for (int j = 0; j < 2 * COL; ++j) {
+                        augmented(row, j) -= factor * augmented(col, j);
+                    }
+                }
+            }
+        }
+        Matrix<ROW, COL> inverse;
+        for (int i = 0; i < ROW; ++i) {
+            for (int j = 0; j < COL; ++j) {
+                inverse(i, j) = augmented(i, j + COL);
+            }
+        }
+
+        return inverse;
+    }
+
 
     template<uint8_t ROW, uint8_t COL>
     std::ostream& operator<<(std::ostream& os, const Matrix<ROW, COL>& matrix){

@@ -12,6 +12,9 @@ float toRadians(float angle)
 void ray::Cone::transform()
 {
     if (_transform == false) {
+        applyMatrix();
+        setPosition();
+        _inverseRotationMatrix = getRotation().inverse();
         _transform = true;
     }
 }
@@ -22,7 +25,6 @@ void ray::Cone::initValues()
     applyMatrix();
     setPosition();
 }
-
 Maybe<Math::Point3D> ray::Cone::hit(const ray::Ray& ray) const
 {
     Math::Vector3D rayDir = ray.direction;
@@ -49,7 +51,7 @@ Maybe<Math::Point3D> ray::Cone::hit(const ray::Ray& ray) const
     }
 
     float r = (rayOrigin.Y + t * rayDir.Y);
-    if (_finite && (r < center.Y - _height || r > center.Y + _height)) {
+    if (_finite && (r < center.Y - _height/2 || r > center.Y + _height)) { //|| r < center.Y + _height/2) {
         return Maybe<Math::Point3D>{};
     }
     return Maybe<Math::Point3D>{rayOrigin + rayDir * t};
@@ -57,6 +59,7 @@ Maybe<Math::Point3D> ray::Cone::hit(const ray::Ray& ray) const
 
 Math::Vector3D ray::Cone::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
 {
+    (ray::Ray)camRay;
     float r = sqrt(pow(point.X - center.X, 2) + pow(point.Z - center.Z, 2));
     Math::Vector3D normal = {point.X - center.X, r * tan(toRadians(_radius/_height)), point.Z - center.Z};
     return normal / normal.length();

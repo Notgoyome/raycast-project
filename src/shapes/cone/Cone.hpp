@@ -39,6 +39,7 @@ namespace ray {
         float _radius;
         Math::Vector3D _axis;
         bool _finite;
+        Math::Matrix<3, 3> _inverseRotationMatrix;
     };
 }
 
