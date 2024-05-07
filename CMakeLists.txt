@@ -80,6 +80,7 @@ set(CAMERA_SOURCES
 add_library(lights_point SHARED ${LIGHT_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/lights/point/PointLight.cpp)
 add_library(lights_directional SHARED ${LIGHT_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/lights/directional/DirectionalLight.cpp)
 add_library(materials_basic SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/basic/BasicMaterial.cpp)
+add_library(materials_perlin SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/perlin/PerlinMaterial.cpp)
 add_library(transformations_rotation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/rotation/Rotation.cpp)
 add_library(transformations_scale SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/scale/Scale.cpp)
 add_library(transformations_translation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/translation/Translation.cpp)
@@ -101,6 +102,10 @@ set_target_properties(lights_directional PROPERTIES
 set_target_properties(materials_basic PROPERTIES
         PREFIX ""
         OUTPUT_NAME "materials_basic"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(materials_perlin PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "materials_perlin"
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
 set_target_properties(transformations_rotation PROPERTIES
         PREFIX ""
@@ -143,6 +148,7 @@ add_dependencies(raytracer
         lights_point
         lights_directional
         materials_basic
+        materials_perlin
         transformations_rotation
         transformations_scale
         transformations_translation
