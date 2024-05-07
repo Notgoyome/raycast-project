@@ -49,11 +49,10 @@ namespace ray {
 
     Maybe<PosShapePair> Scene::hit(const ray::Ray &ray) const
     {
-        std::vector<std::shared_ptr<ray::IShape>> objects = getShapes();
         Math::Point3D point = {0, 0, 0};
         std::shared_ptr<ray::IShape> closestObj = nullptr;
 
-        for (const std::shared_ptr<ray::IShape>& obj : objects) {
+        for (const std::shared_ptr<ray::IShape>& obj : _shapes) {
             Maybe<Math::Point3D> hit = obj->hit(ray);
 
             if (hit.has_value() &&
