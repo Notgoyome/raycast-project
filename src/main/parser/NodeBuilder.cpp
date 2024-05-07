@@ -21,6 +21,25 @@ namespace ray {
         return cfg;
     }
 
+    std::shared_ptr<libconfig::Config> NodeBuilder::openContent(const std::string &content)
+    {
+        std::string tempFilename = "temp.cfg";
+        std::ofstream tempFile(tempFilename);
+        tempFile << content;
+        tempFile.close();
+
+        auto cfg = std::make_shared<libconfig::Config>();
+        try {
+            cfg->readFile(tempFilename.c_str());
+        } catch (const libconfig::ParseException& e) {
+            throw NodeBuilderException("Failed to parse configuration: " + std::string(e.what()));
+        }
+
+        std::remove(tempFilename.c_str());
+
+        return cfg;
+    }
+
     void NodeBuilder::parseNodes(const std::shared_ptr<libconfig::Config>& cfg)
     {
         const libconfig::Setting& nodes = cfg->lookup("nodes");
@@ -139,4 +158,18 @@ namespace ray {
         parseImageData(cfg);
     }
 
+    NodeBuilder::NodeBuilder(const std::string &str, bool isContent) : background_r(0), background_g(0), background_b(0)
+    {
+        std::shared_ptr<libconfig::Config> cfg;
+        if (isContent) {
+            cfg = openContent(str);
+        } else {
+            cfg = openFile(str);
+        }
+
+        parseNodes(cfg);
+        parseHierarchy(cfg);
+        parseBackgroundColor(cfg);
+        parseImageData(cfg);
+    }
 }

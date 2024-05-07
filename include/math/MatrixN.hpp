@@ -15,6 +15,7 @@
 #include <exception>
 #include <cmath>
 #include <cstdint>
+#include <string>
 
 namespace Math {
 

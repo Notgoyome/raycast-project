@@ -1,10 +1,15 @@
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.20)
 project(raytracer)
 
 set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -Wall -Wextra -Werror -pedantic -Wmissing-include-dirs -g3 -O0")
+
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -Wall -Wextra -Werror -pedantic -Wmissing-include-dirs -g3 -O0")
+endif()
 
 include_directories(include)
 
@@ -83,6 +88,7 @@ add_library(shapes_plane SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCE
 add_library(cameras_base SHARED ${CAMERA_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/cameras/base/Camera.cpp)
 add_library(scenes_base SHARED ${SCENE_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/scenes/base/sceneCreate.cpp)
 add_library(shapes_cone SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/cone/Cone.cpp)
+add_library(shapes_cylinder SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/cylinder/Cylinder.cpp)
 
 set_target_properties(lights_point PROPERTIES
         PREFIX ""
@@ -128,6 +134,10 @@ set_target_properties(scenes_base PROPERTIES
         PREFIX ""
         OUTPUT_NAME "scenes_base"
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(shapes_cylinder PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "shapes_cylinder"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
 
 add_dependencies(raytracer
         lights_point
@@ -141,4 +151,5 @@ add_dependencies(raytracer
         cameras_base
         scenes_base
         shapes_cone
+        shapes_cylinder
 )
