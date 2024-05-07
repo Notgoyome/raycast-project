@@ -64,8 +64,6 @@ void ray::Sphere::initValues()
 
 Maybe<Math::Point3D> ray::Sphere::hit(const ray::Ray &ray) const
 {
-    if (radius == -1) {
-    }
     double a = calcA(ray.direction);
     double b = calcB(ray.origin, ray.direction, center);
     double c = calcC(ray.origin, center, radius);
@@ -87,8 +85,8 @@ Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point, __attribute__
 
 Math::Vector2D ray::Sphere::getUVMapping(Math::Point3D coords) const
 {
-    double theta = std::atan2(coords.X, coords.Y);
-    double phi = std::asin(coords.Z / radius);
+    double theta = std::atan2(coords.X - center.X, coords.Y - center.Y);
+    double phi = std::asin((coords.Z - center.Z) / radius);
 
     double u = 0.5 + theta / (2 * M_PI);
     double v = 0.5 + phi / M_PI;
