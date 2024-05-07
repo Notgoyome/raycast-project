@@ -85,7 +85,7 @@ Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point, __attribute__
     return normale / normale.length();
 }
 
-Math::Vector2D ray::Sphere::getUVMapping(Math::Vector3D coords) const
+Math::Vector2D ray::Sphere::getUVMapping(Math::Point3D coords) const
 {
     double theta = std::atan2(coords.X, coords.Y);
     double phi = std::asin(coords.Z / radius);

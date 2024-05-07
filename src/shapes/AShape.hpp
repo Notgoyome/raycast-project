@@ -34,7 +34,7 @@ namespace ray {
 
         void initValues() override;
 
-        [[nodiscard]] Math::Vector2D getUVMapping(Math::Vector3D coords) const override;
+        [[nodiscard]] Math::Vector2D getUVMapping(Math::Point3D coords) const override;
     };
 }
 

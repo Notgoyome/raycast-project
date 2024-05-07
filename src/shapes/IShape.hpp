@@ -26,7 +26,7 @@ namespace ray {
         [[nodiscard]] virtual Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const = 0;
         [[nodiscard]] virtual std::shared_ptr<ray::IMaterial> getMaterial() const = 0;
 
-        [[nodiscard]] virtual Math::Vector2D getUVMapping(Math::Vector3D coords) const = 0;
+        [[nodiscard]] virtual Math::Vector2D getUVMapping(Math::Point3D coords) const = 0;
     };
 
 }
