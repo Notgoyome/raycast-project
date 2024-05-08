@@ -68,9 +68,6 @@ namespace ray {
 
             void accept_connections(int nb_clients)
             {
-                if (nb_clients > std::thread::hardware_concurrency()) {
-                    nb_clients = std::thread::hardware_concurrency();
-                }
                 for (int i = 0; i < nb_clients; ++i) {
                     struct sockaddr_in client_addr;
 #ifdef _WIN32
