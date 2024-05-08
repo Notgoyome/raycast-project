@@ -111,7 +111,7 @@ void handleServer(const char *filename, int port, int nb_clients)
 void handleClient(const std::string& ip, int port)
 {
     ray::Client client(ip, port);
-    client.render();
+    client.monitor();
 }
 
 int main(int argc, char** argv)

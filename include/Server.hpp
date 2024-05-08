@@ -179,7 +179,8 @@ namespace ray {
                             bands.pop_front();
                             bands_mutex.unlock();
 
-                            send_data(client_sockfd, {"RENDER", std::to_string(band.first) + "," + std::to_string(band.second)});
+                            send_data(client_sockfd, {"RENDER:", std::to_string(band.first) + "," + std::to_string(band.second)});
+                            std::cout << "Sent band " << band.first << " " << band.second << std::endl;
                         }
                     }));
 
@@ -188,6 +189,7 @@ namespace ray {
                             std::deque<std::pair<std::string, std::string>> data = get_client_data(client_sockfd);
                             for (const auto& d : data) {
                                 if (d.first == "RENDERED") {
+                                    std::cout << "Received pixel " << d.second << std::endl;
                                     std::vector<std::string> xy = RayTracerUtils::renderTokenSpliter(d.second, ',');
                                     int x = std::stoi(xy[0]);
                                     int y = std::stoi(xy[1]);
