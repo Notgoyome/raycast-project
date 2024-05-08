@@ -108,14 +108,20 @@ Maybe<Math::Point3D> ray::Cylinder::hit(const ray::Ray &ray) const
     double b = calcB(ray.direction, _direction, ray.origin, _position);
     double c = calcC(ray.origin, _position, _direction, _radius);
     double det = b * b - 4 * (a * c);
-    if (det < 0)
+    if (det < 0 || std::fabs(det) < 0.001)
         return {};
     return Maybe{getClosestRoot(a, b, det, ray)};
 }
 
 Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
 {
-    Math::Vector3D normal = {point.X - _position.X, point.Y - _position.Y, point.Z - _position.Z};
+    Math::Vector3D normal {0, 0, 0};
+    if (_direction.X == 0)
+        normal.X = point.X - _position.X;
+    if (_direction.Y == 0)
+        normal.Y = point.Y - _position.Y;
+    if (_direction.Z == 0)
+        normal.Z = point.Z - _position.Z;
     return normal / normal.length();
 }
 
