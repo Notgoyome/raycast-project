@@ -108,7 +108,7 @@ Maybe<Math::Point3D> ray::Cylinder::hit(const ray::Ray &ray) const
     double b = calcB(ray.direction, _direction, ray.origin, _position);
     double c = calcC(ray.origin, _position, _direction, _radius);
     double det = b * b - 4 * (a * c);
-    if (det < 0)
+    if (det < 0 || std::fabs(det) < 0.001)
         return {};
     return Maybe{getClosestRoot(a, b, det, ray)};
 }
