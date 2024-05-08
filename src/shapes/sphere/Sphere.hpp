@@ -31,7 +31,7 @@ namespace ray {
         void initValues() override;
 
         // RUNTIME
-        Maybe<Math::Point3D> hit(const ray::Ray& ray) const override;
+        Maybe<PosShapePair> hit(const ray::Ray& ray) const override;
         Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const override;
         Math::Vector2D getUVMapping(Math::Point3D coords) const override;
     };

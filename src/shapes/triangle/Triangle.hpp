@@ -21,7 +21,7 @@ public:
     ~Triangle() override = default;
 
     void initValues() override;
-    Maybe<Math::Point3D> hit(const ray::Ray &ray) const override;
+    Maybe<PosShapePair> hit(const ray::Ray &ray) const override;
     Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const override;
     void setPoint(Math::Point3D p1, Math::Point3D p2, Math::Point3D p3);
     void setp1(Math::Point3D p1);

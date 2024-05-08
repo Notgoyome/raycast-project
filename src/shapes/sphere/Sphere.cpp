@@ -62,7 +62,7 @@ void ray::Sphere::initValues()
     setRadius();
 }
 
-Maybe<Math::Point3D> ray::Sphere::hit(const ray::Ray &ray) const
+Maybe<PosShapePair> ray::Sphere::hit(const ray::Ray &ray) const
 {
     double a = calcA(ray.direction);
     double b = calcB(ray.origin, ray.direction, center);
@@ -72,7 +72,7 @@ Maybe<Math::Point3D> ray::Sphere::hit(const ray::Ray &ray) const
     if (det < 0) {
         return {};
     }
-    return Maybe{getClosestRoot(a, b, det, ray)};
+    return Maybe<PosShapePair>{std::make_pair(getClosestRoot(a, b, det, ray), nullptr)};
 }
 
 Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const

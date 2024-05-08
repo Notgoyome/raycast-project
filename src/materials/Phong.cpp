@@ -51,10 +51,10 @@ bool hitsBefore(const std::vector<std::shared_ptr<ray::IShape>>& objects, Math::
     std::vector hits = {pos};
 
     for (const std::shared_ptr<ray::IShape>& object : objects) {
-        Maybe<Math::Point3D> maybePos = object->hit(ray);
+        Maybe<PosShapePair> maybePos = object->hit(ray);
 
-        if (maybePos.has_value() && isBehind(maybePos.value(), ray.origin, ray.direction * -1) == false)
-            hits.push_back(maybePos.value());
+        if (maybePos.has_value() && isBehind(maybePos.value().first, ray.origin, ray.direction * -1) == false)
+            hits.push_back(maybePos.value().first);
     }
     Math::Point3D closest = roundPoint(getClosest(hits, ray.origin));
     Math::Point3D actual = roundPoint(pos);

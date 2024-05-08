@@ -24,10 +24,11 @@ namespace ray {
     public:
         void initValues() override;
         void parse(std::string objPath);
-        Maybe<Math::Point3D> hit(const ray::Ray &ray) const override;
+
+        Maybe<PosShapePair> hit(const ray::Ray &ray) const override;
         Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const override;
+
         void setPath(std::string path) { _objPath = path; }
-        Maybe<std::pair<Math::Point3D, std::shared_ptr<ray::IShape>>> OBJhit(const ray::Ray &ray) const;
 
     private:
         std::vector<Math::Point3D> _points;

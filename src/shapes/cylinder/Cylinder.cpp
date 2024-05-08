@@ -102,7 +102,7 @@ Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
     return pos2;
 }
 
-Maybe<Math::Point3D> ray::Cylinder::hit(const ray::Ray &ray) const
+Maybe<PosShapePair> ray::Cylinder::hit(const ray::Ray &ray) const
 {
     double a = calcA(ray.direction, _direction);
     double b = calcB(ray.direction, _direction, ray.origin, _position);
@@ -110,7 +110,7 @@ Maybe<Math::Point3D> ray::Cylinder::hit(const ray::Ray &ray) const
     double det = b * b - 4 * (a * c);
     if (det < 0 || std::fabs(det) < 0.001)
         return {};
-    return Maybe{getClosestRoot(a, b, det, ray)};
+    return Maybe<PosShapePair>{std::make_pair(getClosestRoot(a, b, det, ray), nullptr)};
 }
 
 Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const

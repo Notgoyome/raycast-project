@@ -18,6 +18,11 @@ void ray::AShape::initValues()
     _material = Scene::getMaterial(*this);
 }
 
+void ray::AShape::setMaterial(std::shared_ptr<ray::IMaterial> material)
+{
+    _material = material;
+}
+
 Math::Vector2D ray::AShape::getUVMapping(__attribute__((unused))Math::Point3D coords) const
 {
     return {-1, -1}; // Defaulted to -1. In this case, noise generators will use random positions

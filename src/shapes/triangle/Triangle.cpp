@@ -10,17 +10,17 @@ void ray::Triangle::initValues()
     _direction = Math::Vector3D(0, 1, 0);
 }
 
-Maybe<Math::Point3D> ray::Triangle::hit(const ray::Ray &ray) const {
+Maybe<PosShapePair> ray::Triangle::hit(const ray::Ray &ray) const {
     const double epsilon = 0.0001;
     Math::Vector3D edge1 = {_p2.X - _p1.X, _p2.Y - _p1.Y, _p2.Z - _p1.Z};
     Math::Vector3D edge2 = {_p3.X - _p1.X, _p3.Y - _p1.Y, _p3.Z - _p1.Z};
     Math::Vector3D h = ray.direction.product(edge2);
     if (edge1.dot(h) > -epsilon)
-        return Maybe<Math::Point3D>();
+        return {};
     double a = edge1.dot(h);
 
     if (a > -epsilon && a < epsilon)
-        return Maybe<Math::Point3D>();
+        return {};
 
     double f = 1.0 / a;
     Math::Vector3D s = {ray.origin.X - _p1.X,
@@ -28,18 +28,18 @@ Maybe<Math::Point3D> ray::Triangle::hit(const ray::Ray &ray) const {
                         ray.origin.Z - _p1.Z};
     double u = f * s.dot(h);
     if (u < 0.0 || u > 1.0)
-        return Maybe<Math::Point3D>();
+        return {};
 
     Math::Vector3D q = s.product(edge1);
     double v = f * ray.direction.dot(q);
 
     if (v < 0.0 || u + v > 1.0)
-        return Maybe<Math::Point3D>();
+        return {};
     double t = f * edge2.dot(q);
 
     if (t > epsilon)
-        return Maybe<Math::Point3D>(ray.origin + ray.direction * t);
-    return Maybe<Math::Point3D>();
+        return Maybe<PosShapePair>(std::make_pair(ray.origin + ray.direction * t, nullptr));
+    return {};
 }
 
 

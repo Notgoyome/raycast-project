@@ -10,6 +10,8 @@ void ray::Object::initValues()
     AShape::initValues();
     applyMatrix();
     parse(_objPath);
+    for (const auto& triangle : _triangles)
+        triangle->setMaterial(_material);
 }
 
 Math::Point3D createPoint(std::istringstream &ss)
@@ -49,13 +51,7 @@ void ray::Object::parse(std::string objPath)
             int p1, p2, p3;
             ss >> p1 >> p2 >> p3;
             std::shared_ptr<Triangle> triangle = std::make_shared<Triangle>();
-            std::cout << "start" << std::endl;
-            std::cout << "p1: " << p1 << " p2: " << p2 << " p3: " << p3 << std::endl;
             triangle->setPoint(_points[p1 - 1], _points[p2 - 1], _points[p3 - 1]);
-            std::cout << _points[p1 - 1].X << " " << _points[p1 - 1].Y << " " << _points[p1 - 1].Z << std::endl;
-            std::cout << _points[p2 - 1].X << " " << _points[p2 - 1].Y << " " << _points[p2 - 1].Z << std::endl;
-            std::cout << _points[p3 - 1].X << " " << _points[p3 - 1].Y << " " << _points[p3 - 1].Z << std::endl;
-            std::cout << "end" << std::endl;
 
             _triangles.push_back(triangle);
         }
@@ -65,44 +61,26 @@ void ray::Object::parse(std::string objPath)
             _normals.push_back(normal);
         }
     }
-//    for (auto &triangle : _triangles) {
-//        std::cout << "Triangle:" << std::endl;
-//        std::cout << triangle.getp1().X << " " << triangle.getp1().Y << " " << triangle.getp1().Z << std::endl;
-//        std::cout << triangle.getp2().X << " " << triangle.getp2().Y << " " << triangle.getp2().Z << std::endl;
-//        std::cout << triangle.getp3().X << " " << triangle.getp3().Y << " " << triangle.getp3().Z << std::endl;
-//    }
-   // exit(0);
 }
 
-Maybe<Math::Point3D> ray::Object::hit(const ray::Ray &ray) const
+Maybe<PosShapePair> ray::Object::hit(const ray::Ray &ray) const
 {
-    Maybe<Math::Point3D> hit;
-
-    for (auto &triangle : _triangles) {
-        auto maybeHit = triangle->hit(ray);
-        if (maybeHit.has_value()) {
-            hit = maybeHit;
-        }
-    }
-    return hit;
-}
-
-Maybe<std::pair<Math::Point3D, std::shared_ptr<ray::IShape>>> ray::Object::OBJhit(const ray::Ray &ray) const
-{
-    Maybe<Math::Point3D> hit;
+    bool found = false;
+    Math::Point3D hit;
     int index = 0;
     int current = 0;
     for (auto &triangle : _triangles) {
         auto maybeHit = triangle->hit(ray);
         if (maybeHit.has_value()) {
-            hit = maybeHit;
+            hit = maybeHit.value().first;
             current = index;
+            found = true;
         }
         index++;
     }
-    if (hit.has_value())
+    if (found)
         return Maybe<std::pair<Math::Point3D,std::shared_ptr<ray::IShape>>>{
-            std::make_pair(hit.value(), _triangles[current])};
+            std::make_pair(hit, _triangles[current])};
     return Maybe<std::pair<Math::Point3D, std::shared_ptr<ray::IShape>>>{};
 }
 
