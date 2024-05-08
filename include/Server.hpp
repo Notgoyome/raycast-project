@@ -164,13 +164,16 @@ namespace ray {
                 std::mutex bands_mutex;
                 std::vector<std::thread> send_threads;
                 std::vector<std::thread> receive_threads;
-                std::vector<std::atomic<bool>> can_send_band(client_sockets.size(), true);
+                std::vector<std::shared_ptr<std::atomic_bool>> state;
+                for (size_t i = 0; i < client_sockets.size(); ++i) {
+                    state.push_back(std::make_shared<std::atomic_bool>(true));
+                }
 
                 int client_index = 0;
                 for (int client_sockfd : client_sockets) {
-                    send_threads.push_back(std::thread([&]() {
+                    send_threads.push_back(std::thread([&, client_index]() {
                         while (true) {
-                            if (can_send_band[client_index]) {
+                            if (*state[client_index]) {
                                 bands_mutex.lock();
                                 if (bands.empty()) {
                                     bands_mutex.unlock();
@@ -181,12 +184,12 @@ namespace ray {
                                 bands_mutex.unlock();
 
                                 send_data(client_sockfd, {"RENDER:", std::to_string(band.first) + "," + std::to_string(band.second)});
-                                can_send_band[client_index] = false;
+                                *state[client_index] = false;
                             }
                         }
                     }));
 
-                    receive_threads.push_back(std::thread([&]() {
+                    receive_threads.push_back(std::thread([&, client_index]() {
                         while (true) {
                             std::deque<std::pair<std::string, std::string>> data = get_client_data(client_sockfd);
                             for (const auto& d : data) {
@@ -200,7 +203,7 @@ namespace ray {
                                     color.B = std::stoi(xy[4]);
 
                                     images[client_index].addPixel(Math::Vector2D{static_cast<double>(x), static_cast<double>(y)}, color);
-                                    can_send_band[client_index] = true;
+                                    *state[client_index] = true;
                                 }
                             }
                             if (images[client_index].getMap().size() == width * height) {
