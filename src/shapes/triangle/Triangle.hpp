@@ -27,17 +27,29 @@ public:
     void setp1(Math::Point3D p1);
     void setp2(Math::Point3D p2);
     void setp3(Math::Point3D p3);
+    Math::Point3D getp1() const { return _p1;}
+    Math::Point3D getp2() const { return _p2;}
+    Math::Point3D getp3() const { return _p3;}
 private:
     Math::Point3D _p1;
     Math::Point3D _p2;
     Math::Point3D _p3;
+
     Math::Vector3D _normal;
     Math::Vector3D _direction;
 };
 
 }
 
+Math::Point3D StringToPoint3D(std::string str);
 extern "C" ray::INode *create(std::map<std::string, std::string>& properties);
 
+//std::ostream& operator<<(std::ostream& os, const ray::Triangle& triangle) {
+//    os << "Triangle:" << std::endl;
+//    os << "p1: " << triangle.getp1().X << " " << triangle.getp1().Y << " " << triangle.getp1().Z << std::endl;
+//    os << "p2: " << triangle.getp2().X << " " << triangle.getp2().Y << " " << triangle.getp2().Z << std::endl;
+//    os << "p3: " << triangle.getp3().X << " " << triangle.getp3().Y << " " << triangle.getp3().Z << std::endl;
+//    return os;
+//}
 
 #endif //RAYTRACER_TRIANGLE_HPP

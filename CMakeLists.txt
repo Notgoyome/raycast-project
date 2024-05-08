@@ -92,6 +92,8 @@ add_library(cameras_base SHARED ${CAMERA_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCE
 add_library(scenes_base SHARED ${SCENE_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/scenes/base/sceneCreate.cpp)
 add_library(shapes_cone SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/cone/Cone.cpp)
 add_library(shapes_cylinder SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/cylinder/Cylinder.cpp)
+add_library(shapes_triangle SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/triangle/Triangle.cpp src/shapes/triangle/TriangleCreate.cpp)
+add_library(shapes_object SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/object/Object.cpp src/shapes/triangle/Triangle.cpp)
 
 set_target_properties(lights_point PROPERTIES
         PREFIX ""
@@ -153,6 +155,14 @@ set_target_properties(shapes_cylinder PROPERTIES
         PREFIX ""
         OUTPUT_NAME "shapes_cylinder"
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(shapes_triangle PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "shapes_triangle"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(shapes_object PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "shapes_object"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
 
 add_dependencies(raytracer
         lights_point
@@ -170,4 +180,6 @@ add_dependencies(raytracer
         scenes_base
         shapes_cone
         shapes_cylinder
+        shapes_triangle
+        shapes_object
 )

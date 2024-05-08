@@ -3,7 +3,7 @@ nodes : (
         id : "scene";
         type : "scenes_base.so";
         properties : {
-            background_color : "{ r : 0; g : 0; b : 0; }";
+            background_color : "{ r : 150; g : 150; b : 150; }";
         };
     },
     {
@@ -58,7 +58,7 @@ nodes : (
         id : "sphere2_translate";
         type : "transformations_translation.so";
         properties : {
-            translation : "{ x : 100; y : 0; z : -50; }";
+            translation : "{ x : 100; y : 0; z : 200; }";
         };
     },
     {
@@ -125,6 +125,36 @@ nodes : (
             min_perlin : "0.75";
             max_perlin : "1";
         };
+    },
+    {
+        id: "triangle1",
+        type: "shapes_triangle.so",
+        properties: {
+            p1: "-200,1,0";
+            p2: "200,0,0";
+            p3: "50,20,-100";
+        }
+    },
+    {
+        id: "object1",
+        type: "shapes_object.so",
+        properties: {
+            path: "config_files/obj.obj";
+        }
+    },
+    {
+        id: "object2",
+        type: "shapes_object.so",
+        properties: {
+            path: "config_files/obj2.obj";
+        }
+    },
+    {
+        id: "rotation",
+        type: "transformations_rotation.so",
+        properties: {
+            rotation: "{ x : 0; y : 1; z : 1 }";
+        }
     }
 );
 
@@ -148,11 +178,17 @@ config : (
                             {
                                 id : "sphere2_scale";
                                 children : (
-                                    { id : "sphere2"; }
+                                    {
+                                        id: "rotation";
+                                        children: (
+                                            { id : "object1";}
+                                        );
+                                    }
                                 );
                             }
                         );
-                    }
+                    },
+                    { id : "triangle1"; }
                 );
             },
             {
@@ -164,6 +200,7 @@ config : (
                             {
                                 id : "sphere1_scale";
                                 children : (
+
                                     { id : "sphere1"; }
                                 );
                             }
@@ -180,7 +217,7 @@ config : (
                             {
                                 id : "sphere3_scale";
                                 children : (
-                                    { id : "sphere3"; }
+                                    { id : "object2"; }
                                 );
                             }
                         );
