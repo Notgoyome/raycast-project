@@ -59,26 +59,17 @@ void handleSingleFile(const char *filename)
     unsigned int numThreads = std::thread::hardware_concurrency();
     std::vector<std::thread> threads(numThreads);
     std::vector<Image> images(numThreads);
-    std::string outputFilename;
+    ray::NodeBuilder builder(filename);
+    const auto& nodes = builder.getRootNodes();
+    if (nodes.empty())
+        throw ray::CoreException("No root nodes found in the scene file.");
+    image_data_t imageData = builder.getImageData();
+    std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
+    scene->initValues();
+    std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
 
     for (unsigned int i = 0; i < numThreads; ++i) {
         threads[i] = std::thread([&, i]() {
-            ray::NodeBuilder builder(filename);
-            const auto& nodes = builder.getRootNodes();
-            image_data_t imageData = builder.getImageData();
-
-            if (i == 0) {
-                outputFilename = imageData.filename;
-            }
-
-            if (nodes.empty()) {
-                throw ray::CoreException("No root nodes found in the scene file.");
-            }
-
-            std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
-            scene->initValues();
-            std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
-
             unsigned int partHeight = imageData.height / numThreads;
             unsigned int startRow = i * partHeight;
             unsigned int endRow = (i == numThreads - 1) ? imageData.height : startRow + partHeight;
@@ -91,7 +82,7 @@ void handleSingleFile(const char *filename)
         t.join();
     Image img = mergeImages(images);
     ray::Renderer renderer;
-    renderer.renderPpmImage(img, outputFilename);
+    renderer.renderPpmImage(img, imageData.filename);
     renderer.renderSfmlImage(img);
 }
 
