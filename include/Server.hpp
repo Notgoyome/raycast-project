@@ -220,16 +220,12 @@ namespace ray {
                     t.join();
                 }
 
-                // Merge the images
                 Image mergedImage;
                 for (const auto& img : images) {
                     for (const auto& pixel : img.getMap()) {
                         mergedImage.addPixel(pixel.first, pixel.second);
                     }
                 }
-
-                return mergedImage;
-            }
 
                 return mergedImage;
             }
