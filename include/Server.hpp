@@ -162,25 +162,27 @@ namespace ray {
                 }
 
                 std::mutex bands_mutex;
-
                 std::vector<std::thread> send_threads;
                 std::vector<std::thread> receive_threads;
+                std::vector<std::atomic<bool>> can_send_band(client_sockets.size(), true);
 
                 int client_index = 0;
                 for (int client_sockfd : client_sockets) {
                     send_threads.push_back(std::thread([&]() {
                         while (true) {
-                            bands_mutex.lock();
-                            if (bands.empty()) {
+                            if (can_send_band[client_index]) {
+                                bands_mutex.lock();
+                                if (bands.empty()) {
+                                    bands_mutex.unlock();
+                                    break;
+                                }
+                                std::pair<int, int> band = bands.front();
+                                bands.pop_front();
                                 bands_mutex.unlock();
-                                break;
-                            }
-                            std::pair<int, int> band = bands.front();
-                            bands.pop_front();
-                            bands_mutex.unlock();
 
-                            send_data(client_sockfd, {"RENDER:", std::to_string(band.first) + "," + std::to_string(band.second)});
-                            std::cout << "Sent band " << band.first << " " << band.second << std::endl;
+                                send_data(client_sockfd, {"RENDER:", std::to_string(band.first) + "," + std::to_string(band.second)});
+                                can_send_band[client_index] = false;
+                            }
                         }
                     }));
 
@@ -189,7 +191,6 @@ namespace ray {
                             std::deque<std::pair<std::string, std::string>> data = get_client_data(client_sockfd);
                             for (const auto& d : data) {
                                 if (d.first == "RENDERED") {
-                                    std::cout << "Received pixel " << d.second << std::endl;
                                     std::vector<std::string> xy = RayTracerUtils::renderTokenSpliter(d.second, ',');
                                     int x = std::stoi(xy[0]);
                                     int y = std::stoi(xy[1]);
@@ -199,6 +200,7 @@ namespace ray {
                                     color.B = std::stoi(xy[4]);
 
                                     images[client_index].addPixel(Math::Vector2D{static_cast<double>(x), static_cast<double>(y)}, color);
+                                    can_send_band[client_index] = true;
                                 }
                             }
                             if (images[client_index].getMap().size() == width * height) {
@@ -218,12 +220,16 @@ namespace ray {
                     t.join();
                 }
 
+                // Merge the images
                 Image mergedImage;
                 for (const auto& img : images) {
                     for (const auto& pixel : img.getMap()) {
                         mergedImage.addPixel(pixel.first, pixel.second);
                     }
                 }
+
+                return mergedImage;
+            }
 
                 return mergedImage;
             }

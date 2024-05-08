@@ -92,8 +92,10 @@ namespace ray {
                     }
                     data += buffer;
                     if (data.size() >= 2 && data.substr(data.size() - 2) == "\r\n") {
+                        std::cout << "Received data" << data << std::endl;
                         break;
                     }
+                    std::cout << "Received partial data" << buffer << std::endl;
                 }
                 size_t pos = data.find(':');
                 if (pos == std::string::npos) {
@@ -105,8 +107,8 @@ namespace ray {
             void render()
             {
                 std::pair<std::string, std::string> data = get_next_data();
+                std::cout << "Received " << data.first << ":" << data.second << std::endl;
                 if (data.first == "RENDER") {
-                    std::cout << "Received " << data.first << " " << data.second << std::endl;
                     std::string coordinates = data.second;
                     std::string response = "";
                     std::vector<std::string> coords = RayTracerUtils::renderTokenSpliter(coordinates, ';');
@@ -118,7 +120,7 @@ namespace ray {
                         response += std::to_string(x) + "," + std::to_string(y) + ":" + std::to_string(color.R) + "," + std::to_string(color.G) + "," + std::to_string(color.B) + ";";
                     }
                     send_data({"RENDERED", response});
-                    std::cout << "Sent RENDERED" << response << std::endl;
+                    std::cout << "Sent RENDERED:" << response << std::endl;
                 }
             }
 
