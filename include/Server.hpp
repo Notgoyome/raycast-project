@@ -95,12 +95,6 @@ namespace ray {
                 return content;
             }
 
-            std::deque<std::pair<std::string, std::string>> get_client_data(int client_sockfd)
-            {
-                std::lock_guard<std::mutex> lock(data_mutex);
-                return client_data[client_sockfd];
-            }
-
             void close_client(int client_sockfd)
             {
                 client_sockets.erase(std::remove(client_sockets.begin(), client_sockets.end(), client_sockfd), client_sockets.end());
@@ -117,6 +111,7 @@ namespace ray {
                 if (send(client_sockfd, to_send.c_str(), to_send.size(), 0) < 0) {
                     throw ServerException("Failed to send data");
                 }
+                std::cout << "Sent " << to_send << std::endl;
             }
 
             std::pair<std::string, std::string> receive_data(int client_sockfd)
@@ -139,6 +134,7 @@ namespace ray {
                 if (pos == std::string::npos) {
                     throw ServerException("Invalid data format");
                 }
+                std::cout << "Received " << data << std::endl;
                 return {data.substr(0, pos), data.substr(pos + 1)};
             }
 
@@ -183,7 +179,7 @@ namespace ray {
                                 bands.pop_front();
                                 bands_mutex.unlock();
 
-                                send_data(client_sockfd, {"RENDER:", std::to_string(band.first) + "," + std::to_string(band.second)});
+                                send_data(client_sockfd, {"RENDER", std::to_string(band.first) + "," + std::to_string(band.second)});
                                 *state[client_index] = false;
                             }
                         }
@@ -191,20 +187,24 @@ namespace ray {
 
                     receive_threads.push_back(std::thread([&, client_index]() {
                         while (true) {
-                            std::deque<std::pair<std::string, std::string>> data = get_client_data(client_sockfd);
-                            for (const auto& d : data) {
-                                if (d.first == "RENDERED") {
-                                    std::vector<std::string> xy = RayTracerUtils::renderTokenSpliter(d.second, ',');
-                                    int x = std::stoi(xy[0]);
-                                    int y = std::stoi(xy[1]);
+                            std::pair<std::string, std::string> data = client_data[client_sockfd];
+                            if (data.first == "RENDERED") {
+                                std::cout << "Received \"" << data.first << "\" \"" << data.second << "\"" << std::endl;
+                                std::vector<std::string> datas = RayTracerUtils::renderTokenSpliter(data.second, ';');
+                                for (const auto& d : datas) {
+                                    std::vector<std::string> args = RayTracerUtils::renderTokenSpliter(d, ':');
+                                    std::vector<std::string> coords = RayTracerUtils::renderTokenSpliter(args[0], ',');
+                                    std::vector<std::string> colors = RayTracerUtils::renderTokenSpliter(args[1], ',');
+                                    int x = std::stoi(coords[0]);
+                                    int y = std::stoi(coords[1]);
                                     RGB color;
-                                    color.R = std::stoi(xy[2]);
-                                    color.G = std::stoi(xy[3]);
-                                    color.B = std::stoi(xy[4]);
+                                    color.R = std::stoi(colors[0]);
+                                    color.G = std::stoi(colors[1]);
+                                    color.B = std::stoi(colors[2]);
 
                                     images[client_index].addPixel(Math::Vector2D{static_cast<double>(x), static_cast<double>(y)}, color);
-                                    *state[client_index] = true;
                                 }
+                                *state[client_index] = true;
                             }
                             if (images[client_index].getMap().size() == width * height) {
                                 break;
@@ -294,8 +294,7 @@ namespace ray {
                     for (int client_sockfd : client_sockets) {
                         if (FD_ISSET(client_sockfd, &read_fds)) {
                             std::pair<std::string, std::string> data = receive_data(client_sockfd);
-                            std::lock_guard<std::mutex> lock(data_mutex);
-                            client_data[client_sockfd].push_back(data);
+                            client_data[client_sockfd] = data;
                         }
                     }
                 }
@@ -306,7 +305,7 @@ namespace ray {
             int queue_size;
             struct sockaddr_in addr;
             std::vector<int> client_sockets;
-            std::map<int, std::deque<std::pair<std::string, std::string>>> client_data;
+            std::map<int, std::pair<std::string, std::string>> client_data;
             std::mutex data_mutex;
             std::string cfg;
     };

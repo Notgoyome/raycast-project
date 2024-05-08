@@ -92,23 +92,23 @@ namespace ray {
                     }
                     data += buffer;
                     if (data.size() >= 2 && data.substr(data.size() - 2) == "\r\n") {
-                        std::cout << "Received data" << data << std::endl;
                         break;
                     }
-                    std::cout << "Received partial data" << buffer << std::endl;
+                    std::cout << "Received partial data" << std::endl;
                 }
                 size_t pos = data.find(':');
                 if (pos == std::string::npos) {
                     throw ClientException("Invalid data format");
                 }
+                std::cout << "Received " << data << std::endl;
                 return {data.substr(0, pos), data.substr(pos + 1, data.size() - pos - 3)};
             }
 
-            void render()
+            void render(std::pair<std::string, std::string> data)
             {
-                std::pair<std::string, std::string> data = get_next_data();
-                std::cout << "Received " << data.first << ":" << data.second << std::endl;
+                std::cout << "New command : \"" << data.first << "\" \""<< data.second << "\"" << std::endl;
                 if (data.first == "RENDER") {
+                    std::cout << "Rendering" << std::endl;
                     std::string coordinates = data.second;
                     std::string response = "";
                     std::vector<std::string> coords = RayTracerUtils::renderTokenSpliter(coordinates, ';');
@@ -140,9 +140,7 @@ namespace ray {
                     if (FD_ISSET(sockfd, &read_fds)) {
                         std::cout << "Data received" << std::endl;
                         std::pair<std::string, std::string> data = receive_data();
-                        std::lock_guard<std::mutex> lock(data_mutex);
-                        data_queue.push_back(data);
-                        render();
+                        render(data);
                     }
                 }
             }
@@ -187,7 +185,6 @@ namespace ray {
                     throw ClientException("Connection to server failed");
                 }
                 std::pair<std::string, std::string> data = receive_data();
-                std::cout << data.second << std::endl;
                 if (data.first == "CFG") {
                     NodeBuilder builder(data.second, true);
                     rootNodes = builder.getRootNodes();
@@ -195,6 +192,7 @@ namespace ray {
                     scene = std::dynamic_pointer_cast<IScene>(RayTracerUtils::getScene(rootNodes));
                     scene->initValues();
                     camera = RayTracerUtils::getCamera(scene);
+                    
                 }
             }
 
