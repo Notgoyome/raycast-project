@@ -26,13 +26,13 @@ namespace ray {
         void parse(std::string objPath);
         Maybe<Math::Point3D> hit(const ray::Ray &ray) const override;
         Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const override;
-        void applyCurrentTriangleIndex(int index) { _currentTriangleIndex = index; }
         void setPath(std::string path) { _objPath = path; }
+        Maybe<std::pair<Math::Point3D, std::shared_ptr<ray::IShape>>> OBJhit(const ray::Ray &ray) const;
+
     private:
         std::vector<Math::Point3D> _points;
-        std::vector<Triangle> _triangles;
+        std::vector<std::shared_ptr<Triangle>> _triangles;
         std::vector<Math::Vector3D> _normals;
-        mutable int _currentTriangleIndex;
         std::string _objPath;
     };
 

@@ -48,10 +48,10 @@ void ray::Object::parse(std::string objPath)
         if (type == "f") {
             int p1, p2, p3;
             ss >> p1 >> p2 >> p3;
-            Triangle triangle;
+            std::shared_ptr<Triangle> triangle = std::make_shared<Triangle>();
             std::cout << "start" << std::endl;
             std::cout << "p1: " << p1 << " p2: " << p2 << " p3: " << p3 << std::endl;
-            triangle.setPoint(_points[p1 - 1], _points[p2 - 1], _points[p3 - 1]);
+            triangle->setPoint(_points[p1 - 1], _points[p2 - 1], _points[p3 - 1]);
             std::cout << _points[p1 - 1].X << " " << _points[p1 - 1].Y << " " << _points[p1 - 1].Z << std::endl;
             std::cout << _points[p2 - 1].X << " " << _points[p2 - 1].Y << " " << _points[p2 - 1].Z << std::endl;
             std::cout << _points[p3 - 1].X << " " << _points[p3 - 1].Y << " " << _points[p3 - 1].Z << std::endl;
@@ -77,27 +77,41 @@ void ray::Object::parse(std::string objPath)
 Maybe<Math::Point3D> ray::Object::hit(const ray::Ray &ray) const
 {
     Maybe<Math::Point3D> hit;
-    int i = 0;
 
     for (auto &triangle : _triangles) {
-        auto maybeHit = triangle.hit(ray);
+        auto maybeHit = triangle->hit(ray);
         if (maybeHit.has_value()) {
             hit = maybeHit;
-            _currentTriangleIndex = i;
         }
-        i++;
     }
     return hit;
+}
+
+Maybe<std::pair<Math::Point3D, std::shared_ptr<ray::IShape>>> ray::Object::OBJhit(const ray::Ray &ray) const
+{
+    Maybe<Math::Point3D> hit;
+    int index = 0;
+    int current = 0;
+    for (auto &triangle : _triangles) {
+        auto maybeHit = triangle->hit(ray);
+        if (maybeHit.has_value()) {
+            hit = maybeHit;
+            current = index;
+        }
+        index++;
+    }
+    if (hit.has_value())
+        return Maybe<std::pair<Math::Point3D,std::shared_ptr<ray::IShape>>>{
+            std::make_pair(hit.value(), _triangles[current])};
+    return Maybe<std::pair<Math::Point3D, std::shared_ptr<ray::IShape>>>{};
 }
 
 Math::Vector3D ray::Object::getNormale(const Math::Point3D& point, const ray::Ray& camRay) const
 {
 //    if ((int)_normals.size() > _currentTriangleIndex )
 //        return _normals[_currentTriangleIndex];
-    return _triangles[_currentTriangleIndex].getNormale(point, camRay);
-    (void) point;
-    (void) camRay;
-    return Math::Vector3D();
+    Maybe<Math::Point3D> hit;
+    return _triangles[0]->getNormale(point, camRay);
 }
 
 extern "C" ray::INode *create(std::map<std::string, std::string> &attributes)
