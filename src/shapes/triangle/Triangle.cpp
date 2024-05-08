@@ -8,52 +8,61 @@ void ray::Triangle::initValues()
 {
     AShape::initValues();
     _direction = Math::Vector3D(0, 1, 0);
+    initNormale();
 }
 
-Maybe<PosShapePair> ray::Triangle::hit(const ray::Ray &ray) const {
-    const double epsilon = 0.0001;
-    Math::Vector3D edge1 = {_p2.X - _p1.X, _p2.Y - _p1.Y, _p2.Z - _p1.Z};
-    Math::Vector3D edge2 = {_p3.X - _p1.X, _p3.Y - _p1.Y, _p3.Z - _p1.Z};
-    Math::Vector3D h = ray.direction.product(edge2);
-    if (edge1.dot(h) > -epsilon)
-        return {};
-    double a = edge1.dot(h);
+Maybe<PosShapePair> ray::Triangle::hit(const ray::Ray &ray) const
+{
+    Math::Vector3D v0v1 = {_p2.X - _p1.X, _p2.Y - _p1.Y, _p2.Z - _p1.Z};
+    Math::Vector3D v0v2 = {_p3.X - _p1.X, _p3.Y - _p1.Y, _p3.Z - _p1.Z};
 
-    if (a > -epsilon && a < epsilon)
-        return {};
+    double nDotRayDirection = _normal.dot(ray.direction);
+    if (std::abs(nDotRayDirection) < 0.0000001)
+        return Maybe<PosShapePair>{};
+    double D = -_normal.dot({_p1.X, _p1.Y, _p1.Z});
+    double t = -(_normal.dot({ray.origin.X, ray.origin.Y, ray.origin.Z}) + D) / _normal.dot(ray.direction);
 
-    double f = 1.0 / a;
-    Math::Vector3D s = {ray.origin.X - _p1.X,
-                        ray.origin.Y - _p1.Y,
-                        ray.origin.Z - _p1.Z};
-    double u = f * s.dot(h);
-    if (u < 0.0 || u > 1.0)
-        return {};
+    if (t < 0)
+        return Maybe<PosShapePair>{};
+    Math::Point3D P = ray.origin + ray.direction * t;
+    Math::Vector3D C;
+    Math::Vector3D vp0 = {P.X - _p1.X, P.Y - _p1.Y, P.Z - _p1.Z};
+    C = v0v1.product(vp0);
 
-    Math::Vector3D q = s.product(edge1);
-    double v = f * ray.direction.dot(q);
+    if (_normal.dot(C) < 0)
+        return Maybe<PosShapePair>{};
 
-    if (v < 0.0 || u + v > 1.0)
-        return {};
-    double t = f * edge2.dot(q);
+    Math::Vector3D v1v2 = {_p3.X - _p2.X, _p3.Y - _p2.Y, _p3.Z - _p2.Z};
+    Math::Vector3D vp1 = {P.X - _p2.X, P.Y - _p2.Y, P.Z - _p2.Z};
+    C = v1v2.product(vp1);
 
-    if (t > epsilon)
-        return Maybe<PosShapePair>(std::make_pair(ray.origin + ray.direction * t, nullptr));
-    return {};
+    if (_normal.dot(C) < 0)
+        return Maybe<PosShapePair>{};
+
+    Math::Vector3D v2v0 = {_p1.X - _p3.X, _p1.Y - _p3.Y, _p1.Z - _p3.Z};
+    Math::Vector3D vp2 = {P.X - _p3.X, P.Y - _p3.Y, P.Z - _p3.Z};
+    C = v2v0.product(vp2);
+
+    if (_normal.dot(C) < 0)
+        return Maybe<PosShapePair>{};
+    return Maybe<PosShapePair>{std::make_pair(P, std::make_shared<Triangle>(*this))};
 }
-
 
 Math::Vector3D ray::Triangle::getNormale(const Math::Point3D& point, const ray::Ray& camRay) const
 {
     (void)point;
-    (void)camRay;
+    Math::Vector3D camDir = camRay.direction;
+    if (_normal.dot(camDir) > 0)
+        return _normal * -1;
+    return _normal;
+}
+
+void ray::Triangle::initNormale()
+{
     Math::Vector3D edge1 = {_p2.X - _p1.X, _p2.Y - _p1.Y, _p2.Z - _p1.Z};
     Math::Vector3D edge2 = {_p3.X - _p1.X, _p3.Y - _p1.Y, _p3.Z - _p1.Z};
-    Math::Vector3D normal = edge1.product(edge2);
-    Math::Vector3D camDir = camRay.direction;
-    if (normal.dot(camDir) > 0)
-        normal = normal * -1;
-    return normal / normal.length();
+    _normal = edge1.product(edge2);
+    _normal = _normal / _normal.length();
 }
 
 void ray::Triangle::setPoint(Math::Point3D p1, Math::Point3D p2, Math::Point3D p3)

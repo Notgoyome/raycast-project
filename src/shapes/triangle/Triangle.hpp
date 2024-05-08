@@ -23,10 +23,13 @@ public:
     void initValues() override;
     Maybe<PosShapePair> hit(const ray::Ray &ray) const override;
     Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const override;
+
+    void initNormale();
     void setPoint(Math::Point3D p1, Math::Point3D p2, Math::Point3D p3);
     void setp1(Math::Point3D p1);
     void setp2(Math::Point3D p2);
     void setp3(Math::Point3D p3);
+
     Math::Point3D getp1() const { return _p1;}
     Math::Point3D getp2() const { return _p2;}
     Math::Point3D getp3() const { return _p3;}
