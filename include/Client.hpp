@@ -174,7 +174,7 @@ namespace ray {
                     rootNodes = builder.getRootNodes();
                     imageData = builder.getImageData();
                     scene = std::dynamic_pointer_cast<IScene>(RayTracerUtils::getScene(rootNodes));
-                    backgroundColor = scene->getBackgroundColor();
+                    scene->initValues();
                     camera = RayTracerUtils::getCamera(scene);
                 }
             }
