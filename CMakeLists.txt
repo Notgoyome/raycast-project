@@ -85,6 +85,7 @@ add_library(materials_chessboard SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SC
 add_library(transformations_rotation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/rotation/Rotation.cpp)
 add_library(transformations_scale SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/scale/Scale.cpp)
 add_library(transformations_translation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/translation/Translation.cpp)
+add_library(transformations_shear SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/shear/Shear.cpp)
 add_library(shapes_sphere SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/sphere/Sphere.cpp)
 add_library(shapes_plane SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/plane/Plane.cpp)
 add_library(cameras_base SHARED ${CAMERA_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/cameras/base/Camera.cpp)
@@ -124,6 +125,10 @@ set_target_properties(transformations_translation PROPERTIES
         PREFIX ""
         OUTPUT_NAME "transformations_translation"
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(transformations_shear PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "transformations_shear"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
 set_target_properties(shapes_sphere PROPERTIES
         PREFIX ""
         OUTPUT_NAME "shapes_sphere"
@@ -158,6 +163,7 @@ add_dependencies(raytracer
         transformations_rotation
         transformations_scale
         transformations_translation
+        transformations_shear
         shapes_sphere
         shapes_plane
         cameras_base

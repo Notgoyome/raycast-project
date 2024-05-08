@@ -19,6 +19,7 @@ namespace ray {
     class Rotation : public ATransform {
     public:
         explicit Rotation(Math::Vector3D rotation);
+        ~Rotation() override = default;
     };
 
 } // ray
