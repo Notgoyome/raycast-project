@@ -18,6 +18,7 @@ namespace ray {
     class Scale : public ATransform {
     public:
         explicit Scale(Math::Vector3D scale);
+        ~Scale() override = default;
     };
 
 } // ray

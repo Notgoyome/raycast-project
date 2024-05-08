@@ -18,6 +18,7 @@ namespace ray {
     class Translation : public ATransform {
     public:
         explicit Translation(Math::Vector3D translation);
+        ~Translation() override = default;
     };
 
 }
