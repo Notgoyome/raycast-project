@@ -62,17 +62,7 @@ namespace ray {
                 }
 
                 for (int client_sockfd : client_sockets) {
-#ifdef _WIN32
-                    closesocket(client_sockfd);
-#else
-                    close(client_sockfd);
-#endif
-                }
-
-                for (auto& pair : client_threads) {
-                    if (pair.second.joinable()) {
-                        pair.second.join();
-                    }
+                    close_client(client_sockfd);
                 }
             }
 
