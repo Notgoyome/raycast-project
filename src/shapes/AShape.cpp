@@ -16,6 +16,7 @@ void ray::AShape::applyMatrix()
 void ray::AShape::initValues()
 {
     _material = Scene::getMaterial(*this);
+    applyMatrix();
 }
 
 void ray::AShape::setMaterial(std::shared_ptr<ray::IMaterial> material)
