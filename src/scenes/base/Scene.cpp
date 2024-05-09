@@ -7,16 +7,9 @@
 
 #include "Scene.hpp"
 #include "utils/getClosest.h"
+#include "utils/isBehind.h"
 
 namespace ray {
-
-    bool isBehind(Math::Point3D pos, Math::Point3D lightPos, Math::Vector3D lightDir)
-    {
-        Math::Vector3D lightToPos = {pos.X - lightPos.X, pos.Y - lightPos.Y, pos.Z - lightPos.Z};
-        double angle = lightToPos.dot(lightDir);
-
-        return angle < 0;
-    }
 
     template<typename T>
     std::vector<std::shared_ptr<T>> recursiveGetType(const std::shared_ptr<ray::INode> node, ray::type type)
@@ -51,21 +44,29 @@ namespace ray {
     {
         Math::Point3D point = {0, 0, 0};
         std::shared_ptr<ray::IShape> closestObj = nullptr;
+        std::shared_ptr<ray::IShape> actualObj = nullptr;
 
         for (const std::shared_ptr<ray::IShape>& obj : _shapes) {
-            Maybe<Math::Point3D> hit = obj->hit(ray);
+            Maybe<PosShapePair> hit = obj->hit(ray);
 
-            if (hit.has_value() &&
-                isBehind(hit.value(), ray.origin, ray.direction) == false) {
+            if (hit.has_value() == false)
+                continue;
+            if (hit.value().second == nullptr)
+                actualObj = obj;
+            else
+                actualObj = hit.value().second;
+
+            if (isBehind(hit.value().first, ray.origin, ray.direction) == false) {
+
                 if (closestObj == nullptr) {
-                    point = hit.value();
-                    closestObj = obj;
+                    point = hit.value().first;
+                    closestObj = actualObj;
                 } else {
-                    Math::Point3D closest = getClosest({point, hit.value()}, ray.origin);
+                    Math::Point3D closest = getClosest({point, hit.value().first}, ray.origin);
 
-                    if (closest == hit.value()) {
-                        point = hit.value();
-                        closestObj = obj;
+                    if (closest == hit.value().first) {
+                        point = hit.value().first;
+                        closestObj = actualObj;
                     }
                 }
             }

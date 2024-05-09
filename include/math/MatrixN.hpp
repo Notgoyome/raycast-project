@@ -211,7 +211,8 @@ namespace Math {
     }
 
     template<uint8_t ROW, uint8_t COL>
-    Matrix<ROW, COL> Matrix<ROW, COL>::inverse() {
+    Matrix<ROW, COL> Matrix<ROW, COL>::inverse()
+    {
         if (ROW != COL) {
             throw std::runtime_error("Inverse only defined for square matrices.");
         }

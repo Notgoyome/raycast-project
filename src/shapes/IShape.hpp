@@ -16,17 +16,22 @@
 #include "Maybe.hpp"
 #include "../materials/IMaterial.hpp"
 
+using PosShapePair = std::pair<Math::Point3D, std::shared_ptr<ray::IShape>>;
+
 namespace ray {
 
     class IShape : virtual public INode {
     public:
         virtual ~IShape() = default;
 
-        [[nodiscard]] virtual Maybe<Math::Point3D> hit(const ray::Ray& ray) const = 0;
+        [[nodiscard]] virtual Maybe<PosShapePair> hit(const ray::Ray& ray) const = 0;
         [[nodiscard]] virtual Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const = 0;
         [[nodiscard]] virtual std::shared_ptr<ray::IMaterial> getMaterial() const = 0;
 
         [[nodiscard]] virtual Math::Vector2D getUVMapping(Math::Point3D coords) const = 0;
+        [[nodiscard]] virtual ray::Ray getRefraction(
+                                const std::shared_ptr<ray::IScene>& scene,
+                                Math::Point3D pos, Math::Vector3D dir) const = 0;
     };
 
 }

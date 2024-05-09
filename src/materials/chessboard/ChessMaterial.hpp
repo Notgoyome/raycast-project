@@ -25,6 +25,7 @@ namespace ray {
     public:
         // CONSTR DESTRUCT
         ChessMaterial(RGB color,
+            double refractionIndex,
             double shadowQuality,
             double ambiantOccQuality,
             double roughness,

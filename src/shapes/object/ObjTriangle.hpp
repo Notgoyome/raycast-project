@@ -1,6 +1,9 @@
-//
-// Created by Guillaume Tran on 07/05/2024.
-//
+/*
+** EPITECH PROJECT, 2024
+** raytracer
+** File description:
+** ObjTriangle.hpp
+*/
 
 #ifndef RAYTRACER_TRIANGLE_HPP
 #define RAYTRACER_TRIANGLE_HPP
@@ -14,11 +17,11 @@
 #include "../../../include/math/Vector3D.hpp"
 
 namespace ray {
-    class Triangle : public ray::AShape {
+    class ObjTriangle : public ray::AShape {
 
     public:
-        Triangle() = default;
-        ~Triangle() override = default;
+        ObjTriangle() = default;
+        ~ObjTriangle() override = default;
 
         void initValues() override;
 
@@ -28,8 +31,16 @@ namespace ray {
             const std::shared_ptr<ray::IScene>& scene,
             Math::Point3D pos, Math::Vector3D dir) const override;
 
+        void initNormale();
         void setPoint(Math::Point3D p1, Math::Point3D p2, Math::Point3D p3);
+        void setp1(Math::Point3D p1);
+        void setp2(Math::Point3D p2);
+        void setp3(Math::Point3D p3);
+        void setMaterial(std::shared_ptr<ray::IMaterial> material);
 
+        Math::Point3D getp1() const { return _p1;}
+        Math::Point3D getp2() const { return _p2;}
+        Math::Point3D getp3() const { return _p3;}
     private:
         Math::Point3D _p1;
         Math::Point3D _p2;

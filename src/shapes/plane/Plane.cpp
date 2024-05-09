@@ -22,20 +22,20 @@ Math::Vector3D getPerpendicularVector(Math::Vector3D vec)
     return vec.product({1, 0, 0});
 }
 
-Maybe<Math::Point3D> ray::Plane::hit(const ray::Ray& ray) const
+Maybe<PosShapePair> ray::Plane::hit(const ray::Ray& ray) const
 {
     Math::Vector3D vectorNormale = getNormale(Math::Point3D{0,0,0}, ray);
 
     if (vectorNormale.dot(ray.direction) == 0) // perpendicular
-        return Maybe<Math::Point3D>{};
+        return {};
     Math::Point3D point = getPosition();
     double t = 0;
     double denom = vectorNormale.dot({point.X, point.Y, point.Z});
     t = (denom - (vectorNormale.X * ray.origin.X + vectorNormale.Y * ray.origin.Y + vectorNormale.Z * ray.origin.Z)) / vectorNormale.dot(ray.direction);
     if (t < 0) {
-        return Maybe<Math::Point3D>{};
+        return {};
     }
-    return Maybe{ray.origin + ray.direction * t};
+    return Maybe<PosShapePair>{std::make_pair(ray.origin + ray.direction * t, nullptr)};
 }
 
 void ray::Plane::setPosition()
@@ -80,6 +80,12 @@ Math::Vector2D ray::Plane::getUVMapping(Math::Point3D coords) const
     return res;
 }
 
+ray::Ray ray::Plane::getRefraction(
+   __attribute__((unused))const std::shared_ptr<ray::IScene>& scene,
+   Math::Point3D pos, Math::Vector3D dir) const
+{
+   return {pos + dir * 0.0001, dir};
+}
 extern "C" ray::INode *create(__attribute__((unused))std::map<std::string, std::string>& properties)
 {
     return new ray::Plane();

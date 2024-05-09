@@ -2,11 +2,11 @@
 ** EPITECH PROJECT, 2024
 ** raytracer
 ** File description:
-** RedBasicMaterial.hpp
+** SuperMaterial.hpp
 */
 
-#ifndef REDBASICMATERIAL_HPP
-#define REDBASICMATERIAL_HPP
+#ifndef SUPERMATERIAL_HPP
+#define SUPERMATERIAL_HPP
 
 #include "../IMaterial.hpp"
 #include "INode.hpp"
@@ -18,14 +18,21 @@
 
 namespace ray {
 
-    class BasicMaterial : public ray::AMaterial {
+    class SuperMaterial : public ray::AMaterial {
         RGB _color;
         Phong::Model _phong;
     public:
-        BasicMaterial(RGB color,
-            double refractionIndex, double shadowQuality,
-            double ambiantOccQuality, double roughness);
-        ~BasicMaterial() override = default;
+        SuperMaterial(
+            double specularExponent,
+            Math::Matrix<1, 3> ka,
+            Math::Matrix<1, 3> kd,
+            Math::Matrix<1, 3> ks,
+            Math::Matrix<1, 3> ke,
+            double refractionIndex,
+            double transparency,
+            double shadowQuality,
+            double ambiantOccQuality);
+        ~SuperMaterial() override = default;
 
         [[nodiscard]] RGB getColor(int recursive, Math::Point3D collisionPoint,
             Math::Vector3D normale, Math::Point3D camPos,
@@ -35,4 +42,4 @@ namespace ray {
 
 }
 
-#endif //REDBASICMATERIAL_HPP
+#endif //SUPERMATERIAL_HPP

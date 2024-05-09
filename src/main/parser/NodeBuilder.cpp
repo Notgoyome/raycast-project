@@ -25,7 +25,11 @@ namespace ray {
     {
         std::string tempFilename = "temp.cfg";
         std::ofstream tempFile(tempFilename);
-        tempFile << content;
+
+        size_t lastChar = content.find_last_not_of('\n');
+        std::string trimmedContent = content.substr(0, lastChar + 1);
+
+        tempFile << trimmedContent;
         tempFile.close();
 
         auto cfg = std::make_shared<libconfig::Config>();

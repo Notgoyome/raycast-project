@@ -16,6 +16,7 @@ void ray::AShape::applyMatrix()
 void ray::AShape::initValues()
 {
     _material = Scene::getMaterial(*this);
+    applyMatrix();
 }
 
 Math::Vector2D ray::AShape::getUVMapping(__attribute__((unused))Math::Point3D coords) const
@@ -45,7 +46,6 @@ Math::Matrix<3,3> ray::AShape::getRotation() const
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++)
             rotation(i, j) = _transformMatrix(i, j);
-
     }
     return rotation;
 }

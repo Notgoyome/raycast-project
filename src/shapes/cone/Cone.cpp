@@ -25,7 +25,7 @@ void ray::Cone::initValues()
     applyMatrix();
     setPosition();
 }
-Maybe<Math::Point3D> ray::Cone::hit(const ray::Ray& ray) const
+Maybe<PosShapePair> ray::Cone::hit(const ray::Ray& ray) const
 {
     Math::Vector3D rayDir = ray.direction;
     Math::Point3D rayOrigin = ray.origin;
@@ -39,7 +39,7 @@ Maybe<Math::Point3D> ray::Cone::hit(const ray::Ray& ray) const
     float delta = b * b - 4 * a * c;
 
     if (delta < 0) {
-        return Maybe<Math::Point3D>{};
+        return {};
     }
     float t1 = (-b - sqrt(delta)) / (2 * a);
     float t2 = (-b + sqrt(delta)) / (2 * a);
@@ -52,9 +52,9 @@ Maybe<Math::Point3D> ray::Cone::hit(const ray::Ray& ray) const
 
     float r = (rayOrigin.Y + t * rayDir.Y);
     if (_finite && (r < center.Y - _height/2 || r > center.Y + _height)) { //|| r < center.Y + _height/2) {
-        return Maybe<Math::Point3D>{};
+        return {};
     }
-    return Maybe<Math::Point3D>{rayOrigin + rayDir * t};
+    return Maybe<PosShapePair>{std::make_pair(rayOrigin + rayDir * t, nullptr)};
 }
 
 Math::Vector3D ray::Cone::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
@@ -63,6 +63,13 @@ Math::Vector3D ray::Cone::getNormale(const Math::Point3D& point, __attribute__((
     float r = sqrt(pow(point.X - center.X, 2) + pow(point.Z - center.Z, 2));
     Math::Vector3D normal = {point.X - center.X, r * tan(toRadians(_radius/_height)), point.Z - center.Z};
     return normal / normal.length();
+}
+
+ray::Ray ray::Cone::getRefraction(
+    __attribute__((unused))const std::shared_ptr<ray::IScene>& scene,
+    Math::Point3D pos, Math::Vector3D dir) const
+{
+    return {pos + dir * 0.0001, dir};
 }
 
 void ray::Cone::setPosition()

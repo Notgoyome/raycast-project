@@ -109,6 +109,18 @@ namespace Math {
         return Vector3D{Y * other.Z - Z * other.Y, Z * other.X - X * other.Z, X * other.Y - Y * other.X};
     }
 
+    Vector3D Vector3D::refract(const Vector3D &normale, double n1,
+        double n2) const
+    {
+        const double n = n1 / n2;
+        const double cosI = -normale.dot(*this);
+        const double sinT2 = n * n * (1.0 - cosI * cosI);
+        if (sinT2 > 1.0) return {0, 0, 0};
+
+        const double cosT = sqrt(1.0 - sinT2);
+        return *this * n + normale * (n * cosI - cosT);
+    }
+
     double Vector3D::length() const
     {
         return std::sqrt(X * X + Y * Y + Z * Z);

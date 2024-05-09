@@ -28,6 +28,7 @@ namespace Phong {
         double _alpha;
         double _shadowQuality;
         double _ambOccQuality;
+        double _transparency;
         Math::Matrix<1, 3> _ka;
         Math::Matrix<1, 3> _kd;
         Math::Matrix<1, 3> _ks;
@@ -35,13 +36,20 @@ namespace Phong {
         [[nodiscard]] Math::Matrix<1, 3> getReflectionContribution(
             const std::shared_ptr<ray::IScene>& scene,
             Math::Point3D pos, Math::Vector3D normale,
-            Math::Vector3D view, int recursive) const;
+            Math::Vector3D view, int recursion) const;
 
-        [[nodiscard]] Math::Matrix<1, 3> getLightsContribution(
+        [[nodiscard]] Math::Matrix<2, 3> getLightsContribution(
             Math::Vector3D normale,
             Math::Point3D pos,
             Math::Vector3D view,
             const std::shared_ptr<ray::IScene>& scene) const;
+
+        [[nodiscard]] Math::Matrix<1, 3> getTransparencyContribution(
+            const std::shared_ptr<ray::IShape>& shape,
+            Math::Point3D pos,
+            Math::Vector3D view,
+            const std::shared_ptr<ray::IScene>& scene,
+            int recursion) const;
 
     public:
         // CONSTR DESTRUCT
@@ -51,16 +59,18 @@ namespace Phong {
             double alpha,
             double shadowQuality,
             double ambOccQuality,
+            double transparency,
             Math::Matrix<1, 3> ka,
             Math::Matrix<1, 3> kd,
             Math::Matrix<1, 3> ks)
             : _lights(std::move(lights)), _ia(ia), _alpha(alpha), _shadowQuality(shadowQuality), _ambOccQuality(ambOccQuality),
-            _ka(ka), _kd(kd), _ks(ks) {}
+            _transparency(transparency), _ka(ka), _kd(kd), _ks(ks) {}
         ~Model() = default;
 
         // RUNTIME
         [[nodiscard]] RGB calculateColor(
             const std::shared_ptr<ray::IScene>& scene,
+            const std::shared_ptr<ray::IShape>& shape,
             Math::Vector3D view,
             Math::Point3D pos,
             Math::Vector3D normale,
