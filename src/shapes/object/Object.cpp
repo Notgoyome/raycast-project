@@ -75,6 +75,7 @@ void ray::Object::parse(std::string objPath)
             _normals.push_back(normal);
         }
     }
+    std::cout << "Loaded file: " + objPath << ". Number of polygons: " << _triangles.size() << std::endl;
 }
 
 Maybe<PosShapePair> ray::Object::hit(const ray::Ray &ray) const

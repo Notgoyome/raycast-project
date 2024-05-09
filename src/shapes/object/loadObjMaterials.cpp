@@ -14,7 +14,7 @@
 #include "math/MatrixN.hpp"
 #include "loadObjMaterials.h"
 
-#include "../../materials/basic/BasicMaterial.hpp"
+#include "../../materials/super/SuperMaterial.hpp"
 
 // struct Material {
 //     std::string name;
@@ -29,12 +29,17 @@
 
 std::shared_ptr<ray::IMaterial> materialToRayMaterial(Material mtl)
 {
-    RGB color = RGB(mtl.Kd(0,0) * 255,
-        mtl.Kd(0,1) * 255,
-        mtl.Kd(0,2) * 255);
-    double ksMean = (mtl.Ks(0,0) + mtl.Ks(0,1) + mtl.Ks(0,2)) / 3;
-
-    return std::make_shared<ray::BasicMaterial>(color, 1, 1, 0, ksMean);
+    return std::make_shared<ray::SuperMaterial>(
+            mtl.Ns,
+            mtl.Ka,
+            mtl.Kd,
+            mtl.Ks,
+            mtl.Ke,
+            mtl.Ni,
+            1 - mtl.d,
+            1,
+            0
+        );
 }
 
 std::map<std::string, std::shared_ptr<ray::IMaterial>> loadObjMaterials(const std::string& filename)
@@ -60,7 +65,7 @@ std::map<std::string, std::shared_ptr<ray::IMaterial>> loadObjMaterials(const st
                 currentMaterial = Material();
             }
             iss >> currentMaterial.name;
-        } else if (key == "Ka" || key == "Kd" || key == "Ks") {
+        } else if (key == "Ka" || key == "Kd" || key == "Ks" || key == "ke") {
             Math::Matrix<1, 3> color;
             iss >> color(0,0) >> color(0,1) >> color(0,2);
             if (key == "Ka") {
@@ -69,6 +74,8 @@ std::map<std::string, std::shared_ptr<ray::IMaterial>> loadObjMaterials(const st
                 currentMaterial.Kd = color;
             } else if (key == "Ks") {
                 currentMaterial.Ks = color;
+            } else if (key == "Ke") {
+                currentMaterial.Ke = color;
             }
         } else if (key == "Ns") {
             iss >> currentMaterial.Ns;

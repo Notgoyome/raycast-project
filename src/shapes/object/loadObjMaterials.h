@@ -15,6 +15,7 @@ struct Material {
     Math::Matrix<1, 3> Ka; // Ambient color
     Math::Matrix<1, 3> Kd; // Diffuse color
     Math::Matrix<1, 3> Ks; // Specular color
+    Math::Matrix<1, 3> Ke; // Emissive color
     float Ns = 0.0f; // Specular exponent
     float d = 1.0f;  // Dissolve or transparency
     int illum = 0;   // Illumination model
