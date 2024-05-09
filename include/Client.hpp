@@ -10,6 +10,8 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <algorithm>
 #include <exception>
 #include <deque>
 #include <thread>
@@ -88,39 +90,62 @@ namespace ray {
 #else
                         close(sockfd);
 #endif
-                        throw ClientException("Failed to receive data");
+                        throw ClientException("Failed to receive data or the Server disconnected");
                     }
                     data += buffer;
                     if (data.size() >= 2 && data.substr(data.size() - 2) == "\r\n") {
                         break;
                     }
-                    std::cout << "Received partial data" << std::endl;
+                    // std::cout << "Received partial data" << std::endl;
                 }
                 size_t pos = data.find(':');
                 if (pos == std::string::npos) {
                     throw ClientException("Invalid data format");
                 }
-                std::cout << "Received " << data << std::endl;
-                return {data.substr(0, pos), data.substr(pos + 1, data.size() - pos - 3)};
+                std::string firstPart = data.substr(0, pos);
+                std::string secondPart = data.substr(pos + 1, data.size() - pos - 3);
+
+                size_t index = 0;
+                std::string from = "\r\n";
+                std::string to = ";";
+                while (true) {
+                    index = secondPart.find(from, index);
+                    if (index == std::string::npos) break;
+
+                    secondPart.replace(index, from.length(), to);
+
+                    index += to.length();
+                }
+
+                std::string toErase = "RENDER:";
+                pos = std::string::npos;
+                while ((pos = secondPart.find(toErase)) != std::string::npos) {
+                    secondPart.erase(pos, toErase.length());
+                }
+                return {firstPart, secondPart};
             }
 
             void render(std::pair<std::string, std::string> data)
             {
-                std::cout << "New command : \"" << data.first << "\" \""<< data.second << "\"" << std::endl;
+                // std::cout << "New command : \"" << data.first << "\" \""<< data.second << "\"" << std::endl;
                 if (data.first == "RENDER") {
-                    std::cout << "Rendering" << std::endl;
+                    // std::cout << "Rendering" << std::endl;
                     std::string coordinates = data.second;
                     std::string response = "";
                     std::vector<std::string> coords = RayTracerUtils::renderTokenSpliter(coordinates, ';');
                     for (const std::string& coord : coords) {
                         std::vector<std::string> xy = RayTracerUtils::renderTokenSpliter(coord, ',');
+                        if (xy.size() < 2) {
+                            std::cerr << "Invalid coordinate: " << coord << std::endl;
+                            continue;
+                        }
                         int x = std::stoi(xy[0]);
                         int y = std::stoi(xy[1]);
                         RGB color = RayTracerUtils::renderPixel(scene, camera, x, y, backgroundColor);
                         response += std::to_string(x) + "," + std::to_string(y) + ":" + std::to_string(color.R) + "," + std::to_string(color.G) + "," + std::to_string(color.B) + ";";
                     }
                     send_data({"RENDERED", response});
-                    std::cout << "Sent RENDERED:" << response << std::endl;
+                    // std::cout << "Sent RENDERED:" << response << std::endl;
                 }
             }
 
@@ -138,8 +163,9 @@ namespace ray {
                     }
 
                     if (FD_ISSET(sockfd, &read_fds)) {
-                        std::cout << "Data received" << std::endl;
+                        // std::cout << "Data received" << std::endl;
                         std::pair<std::string, std::string> data = receive_data();
+                        if (data.first == "RENDER")
                         render(data);
                     }
                 }
