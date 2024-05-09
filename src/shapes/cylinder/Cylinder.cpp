@@ -32,12 +32,12 @@ void ray::Cylinder::setPosition()
 
 void ray::Cylinder::setDirection()
 {
-    // Math::Matrix rotation = getRotation();
-    // std::vector<std::vector<double>> values = {{0, 1, 0}};
-    // Math::Matrix<3, 1> iniDirection(values);
-    // Math::Matrix rotation2 = getRotation();
-    // Math::Matrix<3, 3> result = rotation * iniDirection;
-    _direction = Math::Vector3D(0, 1, 0); 
+    _direction = {0, 1, 0};
+    Math::Matrix rotation = getRotation();
+    std::vector<std::vector<double>> values = {{0}, {1}, {0}};
+    Math::Matrix<3, 1> iniDirection(values);
+    Math::Matrix result = rotation * iniDirection;
+    _direction = Math::Vector3D(result(0, 0), result(1, 0), result(2, 0));
 }
 
 Math::Vector3D pointTimesVector(Math::Point3D P, Math::Vector3D V)
