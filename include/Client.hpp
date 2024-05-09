@@ -17,6 +17,7 @@
 #include <thread>
 #include <mutex>
 #include <cstring>
+#include <future>
 #include "utils/mainMethods.hpp"
 
 #ifdef _WIN32
@@ -45,6 +46,7 @@ namespace ray {
                 init_client();
                 create_client_socket();
                 connect_to_server();
+                monitor(cfg);
             }
 
             ~Client()
@@ -98,6 +100,7 @@ namespace ray {
                     }
                     // std::cout << "Received partial data" << std::endl;
                 }
+                // std::cout << "Received data: \"" << data << "\"" << std::endl;
                 size_t pos = data.find(':');
                 if (pos == std::string::npos) {
                     throw ClientException("Invalid data format");
@@ -122,35 +125,72 @@ namespace ray {
                 while ((pos = secondPart.find(toErase)) != std::string::npos) {
                     secondPart.erase(pos, toErase.length());
                 }
+                while ((pos = secondPart.find(";;")) != std::string::npos) {
+                    secondPart.erase(pos, 1);
+                }
                 return {firstPart, secondPart};
             }
 
-            void render(std::pair<std::string, std::string> data)
+            void render(std::pair<std::string, std::string> data, const std::shared_ptr<ray::IScene>& scene, const std::shared_ptr<ray::ICamera>& camera, unsigned int imageWidth, unsigned int imageHeight)
             {
+                RGB backgroundColor = scene->getBackgroundColor();
                 // std::cout << "New command : \"" << data.first << "\" \""<< data.second << "\"" << std::endl;
                 if (data.first == "RENDER") {
                     // std::cout << "Rendering" << std::endl;
                     std::string coordinates = data.second;
                     std::string response = "";
                     std::vector<std::string> coords = RayTracerUtils::renderTokenSpliter(coordinates, ';');
-                    for (const std::string& coord : coords) {
-                        std::vector<std::string> xy = RayTracerUtils::renderTokenSpliter(coord, ',');
-                        if (xy.size() < 2) {
-                            std::cerr << "Invalid coordinate: " << coord << std::endl;
-                            continue;
-                        }
-                        int x = std::stoi(xy[0]);
-                        int y = std::stoi(xy[1]);
-                        RGB color = RayTracerUtils::renderPixel(scene, camera, x, y, backgroundColor);
-                        response += std::to_string(x) + "," + std::to_string(y) + ":" + std::to_string(color.R) + "," + std::to_string(color.G) + "," + std::to_string(color.B) + ";";
+                    unsigned int numThreads = std::thread::hardware_concurrency();
+
+                    std::vector<std::future<std::string>> futures;
+
+                    size_t coordsPerThread = coords.size() / numThreads;
+
+                    for (unsigned int i = 0; i < numThreads; ++i) {
+                        size_t start = i * coordsPerThread;
+                        size_t end = (i == numThreads - 1) ? coords.size() : (start + coordsPerThread);
+
+                        futures.push_back(std::async(std::launch::async, [&, start, end] {
+                            std::string localResponse;
+
+                            for (size_t j = start; j < end; ++j) {
+                                const std::string& coord = coords[j];
+                                std::vector<std::string> xy = RayTracerUtils::renderTokenSpliter(coord, ',');
+                                if (xy.size() < 2) {
+                                    std::cerr << "Invalid coordinate: " << coord << std::endl;
+                                    continue;
+                                }
+                                int x = std::stoi(xy[0]);
+                                int y = std::stoi(xy[1]);
+                                double u = static_cast<double>(x) / imageWidth;
+                                double v = static_cast<double>(y) / imageHeight;
+                                RGB color = RayTracerUtils::renderPixel(scene, camera, u, v, backgroundColor);
+                                localResponse += std::to_string(x) + "," + std::to_string(y) + ":" + std::to_string(color.R) + "," + std::to_string(color.G) + "," + std::to_string(color.B) + ";";
+                            }
+
+                            return localResponse;
+                        }));
+                    }
+
+                    for (auto& future : futures) {
+                        response += future.get();
                     }
                     send_data({"RENDERED", response});
                     // std::cout << "Sent RENDERED:" << response << std::endl;
                 }
             }
 
-            void monitor()
+            void monitor(std::pair<std::string, std::string> cfg)
             {
+                NodeBuilder builder(cfg.second, true);
+                const auto& nodes = builder.getRootNodes();
+                if (nodes.empty())
+                    throw CoreException("No root nodes found in the scene file.");
+                image_data_t imageData = builder.getImageData();
+                std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<IScene>(RayTracerUtils::getScene(nodes));
+                scene->initValues();
+                std::shared_ptr<ray::ICamera> camera = RayTracerUtils::getCamera(scene);
+
                 while (true) {
                     fd_set read_fds;
                     FD_ZERO(&read_fds);
@@ -166,7 +206,7 @@ namespace ray {
                         // std::cout << "Data received" << std::endl;
                         std::pair<std::string, std::string> data = receive_data();
                         if (data.first == "RENDER")
-                        render(data);
+                            render(data, scene, camera, imageData.width, imageData.height);
                     }
                 }
             }
@@ -210,15 +250,31 @@ namespace ray {
                 if (connect(sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
                     throw ClientException("Connection to server failed");
                 }
-                std::pair<std::string, std::string> data = receive_data();
-                if (data.first == "CFG") {
-                    NodeBuilder builder(data.second, true);
-                    rootNodes = builder.getRootNodes();
-                    imageData = builder.getImageData();
-                    scene = std::dynamic_pointer_cast<IScene>(RayTracerUtils::getScene(rootNodes));
-                    scene->initValues();
-                    camera = RayTracerUtils::getCamera(scene);
-                    
+
+                char buffer[1024];
+                std::string data;
+
+                while (true) {
+                    memset(buffer, 0, sizeof(buffer));
+                    ssize_t n = read(sockfd, buffer, sizeof(buffer) - 1);
+
+                    if (n < 0) {
+                        throw ClientException("Failed to receive data");
+                    } else if (n == 0) {
+                        break;
+                    }
+
+                    data += buffer;
+
+                    if (data.find("\r\n") != std::string::npos) {
+                        break;
+                    }
+                }
+
+                if (data.substr(0, 3) == "CFG") {
+                    cfg = { "CFG", data.substr(4) };
+                    std::cout << "Received CFG" << std::endl;
+                    send_data({"CFG", "OK"});
                 }
             }
 
@@ -227,13 +283,9 @@ namespace ray {
             std::string ip;
             struct sockaddr_in addr;
             std::deque<std::pair<std::string, std::string>> data_queue;
+            std::pair<std::string, std::string> cfg;
             std::mutex data_mutex;
             std::thread monitor_thread;
-            image_data_t imageData;
-            RGB backgroundColor;
-            std::vector<std::shared_ptr<INode>> rootNodes;
-            std::shared_ptr<IScene> scene;
-            std::shared_ptr<ICamera> camera;
     };
 }
 

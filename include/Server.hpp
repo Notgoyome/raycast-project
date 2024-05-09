@@ -83,6 +83,11 @@ namespace ray {
                     std::cout << "Client " << i << " connected" << std::endl;
                     client_sockets.push_back(client_sockfd);
                     send_data(client_sockfd, {"CFG", cfg});
+
+                    std::pair<std::string, std::string> check = receive_data(client_sockfd);
+                    if (check.first != "CFG" || check.second != "OK") {
+                        throw ServerException("Client not ready");
+                    }
                 }
             }
 
@@ -153,6 +158,8 @@ namespace ray {
 
                 std::vector<Image> images(client_sockets.size(), Image());
                 std::deque<std::pair<int, int>> bands;
+                std::atomic<int> processed_bands(0);
+                int total_bands = width * height;
 
                 for (unsigned int i = 0; i < width; i++) {
                     for (unsigned int j = 0; j < height; j++) {
@@ -171,9 +178,11 @@ namespace ray {
 
                 int client_index = 0;
                 for (int client_sockfd : client_sockets) {
-                    send_threads.push_back(std::thread([&, client_index]() {
+                    int current_client_index = client_index;
+                    int current_client_sockfd = client_sockfd;
+                    send_threads.push_back(std::thread([&, current_client_index, current_client_sockfd]() {
                         while (true) {
-                            if (*state[client_index]) {
+                            if (*state[current_client_index]) {
                                 bands_mutex.lock();
                                 if (bands.empty()) {
                                     bands_mutex.unlock();
@@ -191,36 +200,37 @@ namespace ray {
 
                                 bands_mutex.unlock();
 
-                                send_data(client_sockfd, {"RENDER", band_data});
-                                *state[client_index] = false;
+                                send_data(current_client_sockfd, {"RENDER", band_data});
+                                *state[current_client_index] = false;
                             }
                         }
                     }));
 
-                    receive_threads.push_back(std::thread([&, client_index]() {
+                    receive_threads.push_back(std::thread([&, current_client_index, current_client_sockfd]() {
                         while (true) {
-                            std::string data = client_data[client_sockfd];
-                            if (data.empty()) {
-                                continue;
-                            }
-                            std::cerr << "Received \"" << data << "\"" << std::endl;
-                            std::vector<std::string> datas = RayTracerUtils::renderTokenSpliter(data, ';');
-                            for (const auto& d : datas) {
-                                std::vector<std::string> args = RayTracerUtils::renderTokenSpliter(d, ':');
-                                std::vector<std::string> coords = RayTracerUtils::renderTokenSpliter(args[0], ',');
-                                std::vector<std::string> colors = RayTracerUtils::renderTokenSpliter(args[1], ',');
-                                int x = std::stoi(coords[0]);
-                                int y = std::stoi(coords[1]);
-                                RGB color;
-                                color.R = std::stoi(colors[0]);
-                                color.G = std::stoi(colors[1]);
-                                color.B = std::stoi(colors[2]);
+                            std::string data = client_data[current_client_sockfd];
+                            if (!data.empty()) {
+                                std::cerr << "Received \"" << data << "\"" << std::endl;
+                                std::vector<std::string> datas = RayTracerUtils::renderTokenSpliter(data, ';');
+                                for (const auto& d : datas) {
+                                    std::vector<std::string> args = RayTracerUtils::renderTokenSpliter(d, ':');
+                                    std::vector<std::string> coords = RayTracerUtils::renderTokenSpliter(args[0], ',');
+                                    std::vector<std::string> colors = RayTracerUtils::renderTokenSpliter(args[1], ',');
+                                    int x = std::stoi(coords[0]);
+                                    int y = std::stoi(coords[1]);
+                                    RGB color;
+                                    color.R = std::stoi(colors[0]);
+                                    color.G = std::stoi(colors[1]);
+                                    color.B = std::stoi(colors[2]);
 
-                                images[client_index].addPixel(Math::Vector2D{static_cast<double>(x), static_cast<double>(y)}, color);
+                                    images[current_client_index].addPixel(Math::Vector2D{static_cast<double>(x), static_cast<double>(y)}, color);
+                                    processed_bands++;
+                                }
+                                *state[current_client_index] = true;
+                                client_data[current_client_sockfd] = "";
                             }
-                            *state[client_index] = true;
-                            client_data[client_sockfd] = "";
-                            if (images[client_index].getMap().size() == width * height) {
+                            std::cout << "Processed " << processed_bands << " bands vs total bands to process : " << total_bands << std::endl;
+                            if (processed_bands >= total_bands) {
                                 break;
                             }
                         }
