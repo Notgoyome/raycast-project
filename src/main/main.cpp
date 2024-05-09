@@ -59,6 +59,7 @@ void handleSingleFile(const char *filename)
     unsigned int numThreads = std::thread::hardware_concurrency();
     std::vector<std::thread> threads(numThreads);
     std::vector<Image> images(numThreads);
+
     ray::NodeBuilder builder(filename);
     const auto& nodes = builder.getRootNodes();
     if (nodes.empty())
@@ -111,7 +112,6 @@ void handleServer(const char *filename, int port, int nb_clients)
 void handleClient(const std::string& ip, int port)
 {
     ray::Client client(ip, port);
-    client.monitor();
 }
 
 int main(int argc, char** argv)
