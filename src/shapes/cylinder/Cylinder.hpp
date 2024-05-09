@@ -34,9 +34,9 @@ namespace ray {
         Math::Point3D _position;
         Math::Vector3D _direction;
 
-        void setRadius();
         void setPosition();
         void setDirection();
+        void setDimensions();
     };
 }
 

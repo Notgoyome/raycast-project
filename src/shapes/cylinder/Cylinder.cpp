@@ -13,15 +13,16 @@ void ray::Cylinder::initValues()
 {
     AShape::initValues();
     setPosition();
-    setRadius();
+    setDimensions();
     setDirection();
 }
 
-void ray::Cylinder::setRadius()
+void ray::Cylinder::setDimensions()
 {
     Math::Vector3D scale = getScale();
 
     _radius = scale.X;
+    _height = scale.Y;
 }
 
 void ray::Cylinder::setPosition()
