@@ -29,6 +29,7 @@ public:
     void setp1(Math::Point3D p1);
     void setp2(Math::Point3D p2);
     void setp3(Math::Point3D p3);
+    void setMaterial(std::shared_ptr<ray::IMaterial> material);
 
     Math::Point3D getp1() const { return _p1;}
     Math::Point3D getp2() const { return _p2;}

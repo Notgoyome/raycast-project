@@ -33,7 +33,6 @@ namespace ray {
         virtual ~AShape() = default;
 
         void initValues() override;
-        void setMaterial(std::shared_ptr<ray::IMaterial> material) override;
 
         [[nodiscard]] Math::Vector2D getUVMapping(Math::Point3D coords) const override;
     };

@@ -87,6 +87,10 @@ void ray::Triangle::setp3(Math::Point3D p3)
     _p3 = p3;
 }
 
+void ray::Triangle::setMaterial(std::shared_ptr<ray::IMaterial> material)
+{
+    _material = material;
+}
 
 Math::Point3D StringToPoint3D(std::string str)
 {

@@ -29,8 +29,6 @@ namespace ray {
         [[nodiscard]] virtual std::shared_ptr<ray::IMaterial> getMaterial() const = 0;
 
         [[nodiscard]] virtual Math::Vector2D getUVMapping(Math::Point3D coords) const = 0;
-
-        virtual void setMaterial(std::shared_ptr<ray::IMaterial> material) = 0;
     };
 
 }
