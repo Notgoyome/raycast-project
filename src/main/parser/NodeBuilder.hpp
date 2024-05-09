@@ -23,6 +23,7 @@ typedef struct image_data_s {
     std::string filename;
     unsigned int width = 0;
     unsigned int height = 0;
+    std::string pallet = "none";
 } image_data_t;
 
 namespace ray {
