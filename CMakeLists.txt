@@ -86,6 +86,7 @@ add_library(materials_basic SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_S
 add_library(materials_perlin SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/perlin/PerlinMaterial.cpp)
 add_library(materials_chessboard SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/chessboard/ChessMaterial.cpp)
 add_library(materials_glass SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/glass/GlassMaterial.cpp)
+add_library(materials_super SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/super/SuperMaterial.cpp)
 add_library(transformations_rotation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/rotation/Rotation.cpp)
 add_library(transformations_scale SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/scale/Scale.cpp)
 add_library(transformations_translation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/translation/Translation.cpp)
@@ -98,7 +99,7 @@ add_library(shapes_cone SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES
 add_library(shapes_cylinder SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/cylinder/Cylinder.cpp)
 add_library(shapes_triangle SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/triangle/Triangle.cpp src/shapes/triangle/TriangleCreate.cpp)
 add_library(shapes_object SHARED ${SHAPES_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/shapes/object/Object.cpp src/shapes/triangle/Triangle.cpp
-        src/shapes/object/loadObjMaterials.cpp ${MATERIAL_SOURCES} src/materials/basic/BasicMaterial.cpp
+        src/shapes/object/loadObjMaterials.cpp ${MATERIAL_SOURCES} src/materials/super/SuperMaterial.cpp
         src/shapes/object/ObjTriangle.cpp
         src/shapes/object/ObjTriangle.hpp)
 
@@ -125,6 +126,10 @@ set_target_properties(materials_chessboard PROPERTIES
 set_target_properties(materials_glass PROPERTIES
         PREFIX ""
         OUTPUT_NAME "materials_glass"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(materials_super PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "materials_super"
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
 set_target_properties(transformations_rotation PROPERTIES
         PREFIX ""
@@ -182,6 +187,7 @@ add_dependencies(raytracer
         materials_perlin
         materials_chessboard
         materials_glass
+        materials_super
         transformations_rotation
         transformations_scale
         transformations_translation
