@@ -23,6 +23,7 @@ namespace ray {
 
         Maybe<PosShapePair> hit(const ray::Ray &ray) const override;
         Math::Vector3D getNormale(const Math::Point3D& point, const ray::Ray& camRay) const override;
+        ray::Ray getRefraction(const std::shared_ptr<ray::IScene> &scene, Math::Point3D pos, Math::Vector3D dir) const override;
 
         void setPosition();
         void setRadius(float radius);

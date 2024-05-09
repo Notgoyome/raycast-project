@@ -14,9 +14,12 @@
 namespace ray {
     class AMaterial : public ray::IMaterial, public ray::ANode {
     protected:
-        AMaterial();
+        double _refractionIndex;
+        explicit AMaterial(double refractionIndex);
     public:
         virtual ~AMaterial() = default;
+
+        [[nodiscard]] double getRefractionIndex() const override;
     };
 }
 

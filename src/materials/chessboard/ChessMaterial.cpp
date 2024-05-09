@@ -29,14 +29,16 @@ namespace ray {
         return {dist(rng), dist(rng)};
     }
 
-    ChessMaterial::ChessMaterial(RGB color, double shadowQuality,
+    ChessMaterial::ChessMaterial(RGB color,
+        double refractionIndex, double shadowQuality,
         double ambiantOccQuality, double roughness, double chessSize,
-        double minChess, double maxChess) : _color(color), _chessSize(chessSize), _minChess(minChess), _maxChess(maxChess),
+        double minChess, double maxChess) : AMaterial(refractionIndex), _color(color), _chessSize(chessSize), _minChess(minChess), _maxChess(maxChess),
         _phong({},
             0.05,
             50,
             shadowQuality,
             ambiantOccQuality,
+            0,
             Math::Matrix<1, 3>({{1, 1, 1}}),
             Math::Matrix<1, 3>{{{0, 0, 0}}},
             Math::Matrix<1, 3>{{{roughness, roughness, roughness}}})
@@ -59,7 +61,7 @@ namespace ray {
         if (recursion > REFLECTION_RECURSION_LIMIT)
             color = _color;
         else
-            color = _phong.calculateColor(scene, view, collisionPoint, normale, recursion);
+            color = _phong.calculateColor(scene, shape, view, collisionPoint, normale, recursion);
         if (pos == Math::Vector2D{-1, -1})
             pos = getRandomCoordinates();
         else
@@ -119,9 +121,9 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
     if (chessSize < 0)
         throw ray::NodeError("IMaterial: chess_size must be a number between 0 and 1", "ChessMaterial.cpp");
     if (minChess < 0 || minChess > 1)
-        throw ray::NodeError("IMaterial: min_perlin must be a number between 0 and 1", "ChessMaterial.cpp");
+        throw ray::NodeError("IMaterial: min_chess must be a number between 0 and 1", "ChessMaterial.cpp");
     if (maxChess < 0 || maxChess > 1)
-        throw ray::NodeError("IMaterial: max_perlin must be a number between 0 and 1", "ChessMaterial.cpp");
+        throw ray::NodeError("IMaterial: max_chess must be a number between 0 and 1", "ChessMaterial.cpp");
 
-    return new ray::ChessMaterial(color.value(), shadowQuality, ambiantOcclusion, roughness, chessSize, minChess, maxChess);
+    return new ray::ChessMaterial(color.value(), 1, shadowQuality, ambiantOcclusion, roughness, chessSize, minChess, maxChess);
 }

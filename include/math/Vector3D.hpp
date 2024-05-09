@@ -50,6 +50,7 @@ namespace Math {
 
         [[nodiscard]] double dot(const Vector3D& other) const;
         [[nodiscard]] Vector3D product(const Vector3D& other) const;
+        [[nodiscard]] Vector3D refract(const Vector3D& normale, double n1, double n2) const;
 
         // GETTERS
         [[nodiscard]] double length() const;

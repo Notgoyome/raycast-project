@@ -8,7 +8,12 @@ void ray::Triangle::initValues()
 {
     AShape::initValues();
     _direction = Math::Vector3D(0, 1, 0);
-    initNormale();
+
+    // Calculate Normale
+    Math::Vector3D edge1 = {_p2.X - _p1.X, _p2.Y - _p1.Y, _p2.Z - _p1.Z};
+    Math::Vector3D edge2 = {_p3.X - _p1.X, _p3.Y - _p1.Y, _p3.Z - _p1.Z};
+    _normal = edge1.product(edge2);
+    _normal = _normal / _normal.length();
 }
 
 Maybe<PosShapePair> ray::Triangle::hit(const ray::Ray &ray) const
@@ -57,12 +62,11 @@ Math::Vector3D ray::Triangle::getNormale(const Math::Point3D& point, const ray::
     return _normal;
 }
 
-void ray::Triangle::initNormale()
+ray::Ray ray::Triangle::getRefraction(
+    __attribute__((unused))const std::shared_ptr<ray::IScene>& scene,
+    Math::Point3D pos, Math::Vector3D dir) const
 {
-    Math::Vector3D edge1 = {_p2.X - _p1.X, _p2.Y - _p1.Y, _p2.Z - _p1.Z};
-    Math::Vector3D edge2 = {_p3.X - _p1.X, _p3.Y - _p1.Y, _p3.Z - _p1.Z};
-    _normal = edge1.product(edge2);
-    _normal = _normal / _normal.length();
+    return {pos + dir * 0.0001, dir};
 }
 
 void ray::Triangle::setPoint(Math::Point3D p1, Math::Point3D p2, Math::Point3D p3)
@@ -72,30 +76,10 @@ void ray::Triangle::setPoint(Math::Point3D p1, Math::Point3D p2, Math::Point3D p
     _p3 = p3;
 }
 
-void ray::Triangle::setp1(Math::Point3D p1)
-{
-    _p1 = p1;
-}
-
-void ray::Triangle::setp2(Math::Point3D p2)
-{
-    _p2 = p2;
-}
-
-void ray::Triangle::setp3(Math::Point3D p3)
-{
-    _p3 = p3;
-}
-
-void ray::Triangle::setMaterial(std::shared_ptr<ray::IMaterial> material)
-{
-    _material = material;
-}
-
 Math::Point3D StringToPoint3D(std::string str)
 {
     Math::Point3D point;
-// get the 3 values from the string
+    // get the 3 values from the string
     std::vector<std::string> values;
     std::string delimiter = ",";
     size_t pos = 0;

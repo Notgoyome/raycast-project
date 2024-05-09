@@ -22,8 +22,9 @@ namespace ray {
         RGB _color;
         Phong::Model _phong;
     public:
-        BasicMaterial(RGB color, double shadowQuality, double ambiantOccQuality,
-            double roughness);
+        BasicMaterial(RGB color,
+            double refractionIndex, double shadowQuality,
+            double ambiantOccQuality, double roughness);
         ~BasicMaterial() override = default;
 
         [[nodiscard]] RGB getColor(int recursive, Math::Point3D collisionPoint,

@@ -34,7 +34,7 @@ std::shared_ptr<ray::IMaterial> materialToRayMaterial(Material mtl)
         mtl.Kd(0,2) * 255);
     double ksMean = (mtl.Ks(0,0) + mtl.Ks(0,1) + mtl.Ks(0,2)) / 3;
 
-    return std::make_shared<ray::BasicMaterial>(color, 1, 0, ksMean);
+    return std::make_shared<ray::BasicMaterial>(color, 1, 1, 0, ksMean);
 }
 
 std::map<std::string, std::shared_ptr<ray::IMaterial>> loadObjMaterials(const std::string& filename)

@@ -4,6 +4,8 @@
 
 #include "Sphere.hpp"
 
+#include <utils/isBehind.h>
+
 #include "../../scenes/base/Scene.hpp"
 
 void ray::Sphere::setRadius()
@@ -46,6 +48,10 @@ Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
     Math::Point3D pos1 = {(ray.origin.X + ray.direction.X * root1), (ray.origin.Y + ray.direction.Y * root1), (ray.origin.Z + ray.direction.Z * root1)};
     Math::Point3D pos2 = {(ray.origin.X + ray.direction.X * root2), (ray.origin.Y + ray.direction.Y * root2), (ray.origin.Z + ray.direction.Z * root2)};
 
+    if (isBehind(pos1, ray.origin, ray.direction))
+        return pos2;
+    if (isBehind(pos2, ray.origin, ray.direction))
+        return pos1;
     Math::Vector3D vect1 = {pos1.X - ray.origin.X, pos1.Y - ray.origin.Y, pos1.Z - ray.origin.Z};
     Math::Vector3D vect2 = {pos2.X - ray.origin.X, pos2.Y - ray.origin.Y, pos2.Z - ray.origin.Z};
 
@@ -92,6 +98,23 @@ Math::Vector2D ray::Sphere::getUVMapping(Math::Point3D coords) const
     double v = 0.5 + phi / M_PI;
 
     return {u, v};
+}
+
+ray::Ray ray::Sphere::getRefraction(
+    __attribute__((unused))const std::shared_ptr<ray::IScene>& scene,
+    Math::Point3D pos, Math::Vector3D dir) const
+{
+    // WARNING: this only works when the Object is not a plane
+    Math::Vector3D refracted = dir.refract(getNormale(pos, {}), 1, _material->getRefractionIndex());
+    Ray refractedRay = {pos + refracted * 0.0001, refracted};
+    Maybe<PosShapePair> hitSelf = hit(refractedRay);
+
+    // return {hitSelf.value().first + refracted * 0.0001, refracted};
+    if (hitSelf.has_value() == false) // What?
+        return {pos + dir * 0.0001, dir};
+    Math::Vector3D hitNormale = getNormale(hitSelf.value().first, refractedRay);
+    Math::Vector3D refracted2 = refracted.refract(hitNormale * -1, _material->getRefractionIndex(), 1);
+    return {hitSelf.value().first + hitNormale * 0.0001, refracted2};
 }
 
 extern "C" ray::INode *create(__attribute__((unused))const std::map<std::string, std::string> &attributes)
