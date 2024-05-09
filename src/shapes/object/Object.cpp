@@ -3,15 +3,13 @@
 //
 
 #include "Object.hpp"
-
+#include <utils/getClosest.h>
 
 void ray::Object::initValues()
 {
     AShape::initValues();
     applyMatrix();
     parse(_objPath);
-    for (const auto& triangle : _triangles)
-        triangle->setMaterial(_material);
 }
 
 Math::Point3D createPoint(std::istringstream &ss)
@@ -36,6 +34,7 @@ void ray::Object::parse(std::string objPath)
 {
     std::ifstream file(objPath);
     std::string line;
+    std::shared_ptr<ray::IMaterial> currentMaterial = _material;
     // get max scale between x, y and z
     if (!file.is_open())
         throw std::runtime_error("Can't open file " + objPath + "\n");
@@ -43,17 +42,32 @@ void ray::Object::parse(std::string objPath)
         std::istringstream ss(line);
         std::string type;
         ss >> type;
+        if (type == "mtllib") {
+            ss >> type;
+            _materials = loadObjMaterials("config_files/" + type);
+        }
+        if (type == "usemtl") {
+            ss >> type;
+            if (_materials.find(type) != _materials.end())
+                currentMaterial = _materials[type];
+        }
         if (type == "v") {
-            _points.push_back(createPoint(ss));
-            _points.back() = PointMatrix(_points.back(), _transformMatrix);
+            _points.push_back(PointMatrix(createPoint(ss), _transformMatrix));
         }
         if (type == "f") {
-            int p1, p2, p3;
-            ss >> p1 >> p2 >> p3;
-            std::shared_ptr<Triangle> triangle = std::make_shared<Triangle>();
-            triangle->setPoint(_points[p1 - 1], _points[p2 - 1], _points[p3 - 1]);
-
-            _triangles.push_back(triangle);
+            std::string temp;
+            std::vector<int> indices;
+            while (ss >> temp) {
+                indices.push_back(std::stoi(temp) - 1);
+                ss.ignore(1);
+            }
+            for (int i = 0; i < static_cast<int>(indices.size()) - 2; i++) {
+                std::shared_ptr<Triangle> triangle = std::make_shared<Triangle>();
+                triangle->setPoint(_points[indices[0]], _points[indices[i + 1]], _points[indices[i + 2]]);
+                triangle->initNormale();
+                triangle->setMaterial(currentMaterial);
+                _triangles.push_back(triangle);
+            }
         }
         if (type == "vn") {
             Math::Vector3D normal;
@@ -66,15 +80,25 @@ void ray::Object::parse(std::string objPath)
 Maybe<PosShapePair> ray::Object::hit(const ray::Ray &ray) const
 {
     bool found = false;
-    Math::Point3D hit;
     int index = 0;
     int current = 0;
+    Math::Point3D hit;
+
     for (auto &triangle : _triangles) {
         auto maybeHit = triangle->hit(ray);
         if (maybeHit.has_value()) {
-            hit = maybeHit.value().first;
-            current = index;
-            found = true;
+            if (found == false) {
+                hit = maybeHit.value().first;
+                current = index;
+                found = true;
+            } else {
+                Math::Point3D closest = getClosest({hit, maybeHit.value().first}, ray.origin);
+
+                if (closest == maybeHit.value().first) {
+                    hit = maybeHit.value().first;
+                    current = index;
+                }
+            }
         }
         index++;
     }
@@ -86,9 +110,6 @@ Maybe<PosShapePair> ray::Object::hit(const ray::Ray &ray) const
 
 Math::Vector3D ray::Object::getNormale(const Math::Point3D& point, const ray::Ray& camRay) const
 {
-//    if ((int)_normals.size() > _currentTriangleIndex )
-//        return _normals[_currentTriangleIndex];
-    Maybe<Math::Point3D> hit;
     return _triangles[0]->getNormale(point, camRay);
 }
 

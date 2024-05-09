@@ -34,6 +34,4 @@ namespace ray {
 
 }
 
-extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes);
-
 #endif //REDBASICMATERIAL_HPP

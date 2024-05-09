@@ -17,7 +17,7 @@ double pointsDistance(Math::Point3D point1, Math::Point3D point2)
 
 Math::Point3D roundPoint(Math::Point3D point)
 {
-    return {round(point.X * 10000) / 10000, round(point.Y * 10000) / 10000, round(point.Z * 10000) / 10000};
+    return {round(point.X * 1000000) / 1000000, round(point.Y * 1000000) / 1000000, round(point.Z * 1000000) / 1000000};
 }
 
 Math::Vector3D rotateVectorAlong(Math::Vector3D toRotate, Math::Vector3D axis, double angle)

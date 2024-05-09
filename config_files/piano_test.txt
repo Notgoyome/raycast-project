@@ -1,0 +1,131 @@
+nodes : (
+    {
+        id : "scene";
+        type : "scenes_base.so";
+        properties : {
+            background_color : "{ r : 120; g : 120; b : 120; }";
+        };
+    },
+    {
+        id : "camera";
+        type : "cameras_base.so";
+        properties : {
+            fieldOfView : "100";
+            width : "600";
+            height : "600";
+        };
+    },
+    {
+        id : "light";
+        type : "lights_directional.so";
+        properties : {
+            color : "{ r : 255; g : 255; b : 255; }";
+            direction : "{ x : 0.3; y : 0; z : 1; }";
+        };
+    },
+    {
+        id : "scale";
+        type : "transformations_scale.so";
+        properties : {
+            scale : "{ x : 100; y : 100; z : 100; }";
+        };
+    },
+    {
+        id : "rotateZ";
+        type : "transformations_rotation.so";
+        properties : {
+            rotation : "{ x : 0; y : 0; z : 3.14; }";
+        };
+    },
+    {
+        id : "rotateY";
+        type : "transformations_rotation.so";
+        properties : {
+            rotation : "{ x : 0; y : -1.7; z : 0; }";
+        };
+    },
+    {
+        id : "rotateX";
+        type : "transformations_rotation.so";
+        properties : {
+            rotation : "{ x : -0.3; y : 0; z : 0; }";
+        };
+    },
+    {
+        id : "light_translate";
+        type : "transformations_translation.so";
+        properties : {
+            translation : "{ x : 50; y : -600; z : -400; }";
+        };
+    },
+    {
+        id : "white_material";
+        type : "materials_perlin.so";
+        properties : {
+            color : "{ r : 255; g : 255; b : 255; }";
+            shadow_quality : "1";
+            ambiant_occlusion : "0";
+            roughness : "0";
+            octaves : "5";
+            persistence : "5";
+            min_perlin : "0.5";
+            max_perlin : "0.75";
+        };
+    },
+    {
+        id: "piano",
+        type: "shapes_object.so",
+        properties: {
+            path: "config_files/piano.obj";
+        }
+    }
+);
+
+config : (
+    {
+        id : "scene";
+        children : (
+            { id : "camera"; },
+            {
+                id : "light_translate";
+                children : (
+                    { id : "light"; }
+                );
+            },
+            {
+                id : "white_material";
+                children : (
+                    {
+                        id : "rotateX";
+                        children : (
+                            {
+                                id : "rotateZ";
+                                children : (
+                                    {
+                                        id : "rotateY";
+                                        children : (
+                                            {
+                                                id : "scale";
+                                                children : (
+                                                    { id : "piano"; }
+                                                );
+                                            }
+                                        );
+                                    }
+                                );
+                            }
+                        );
+                    }
+                );
+            }
+        );
+    }
+);
+
+image : (
+    {
+        file : "piano.ppm";
+        width : 1000;
+        height : 1000;
+    }
+);

@@ -12,6 +12,7 @@
 #include "../../../src/shapes/AShape.hpp"
 #include "../../../include/math/Vector3D.hpp"
 #include "../triangle/Triangle.hpp"
+#include "loadObjMaterials.h"
 #include <vector>
 #include <vector>
 #include <string>
@@ -20,6 +21,7 @@
 #include <iostream>
 
 namespace ray {
+
     class Object : public ray::AShape {
     public:
         void initValues() override;
@@ -34,7 +36,10 @@ namespace ray {
         std::vector<Math::Point3D> _points;
         std::vector<std::shared_ptr<Triangle>> _triangles;
         std::vector<Math::Vector3D> _normals;
+        std::map<std::string, std::shared_ptr<ray::IMaterial>> _materials;
         std::string _objPath;
+
+        void parseFace(std::istringstream &ss);
     };
 
 }
