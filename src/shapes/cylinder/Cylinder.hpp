@@ -18,9 +18,6 @@
 
 namespace ray {
     class Cylinder : public ray::AShape {
-        void setRadius();
-        void setPosition();
-        void setDirection();
     public:
         Cylinder() = default;
         ~Cylinder() override = default;
@@ -32,8 +29,13 @@ namespace ray {
 
     private:
         double _radius = -1;
+        double _height = -1;
         Math::Point3D _position;
         Math::Vector3D _direction;
+
+        void setRadius();
+        void setPosition();
+        void setDirection();
     };
 }
 
