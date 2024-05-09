@@ -65,6 +65,13 @@ Math::Vector3D ray::Cone::getNormale(const Math::Point3D& point, __attribute__((
     return normal / normal.length();
 }
 
+ray::Ray ray::Cone::getRefraction(
+    __attribute__((unused))const std::shared_ptr<ray::IScene>& scene,
+    Math::Point3D pos, Math::Vector3D dir) const
+{
+    return {pos + dir * 0.0001, dir};
+}
+
 void ray::Cone::setPosition()
 {
     center = Scene::getPosition(*this);

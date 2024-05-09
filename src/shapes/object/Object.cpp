@@ -62,7 +62,7 @@ void ray::Object::parse(std::string objPath)
                 ss.ignore(1);
             }
             for (int i = 0; i < static_cast<int>(indices.size()) - 2; i++) {
-                std::shared_ptr<Triangle> triangle = std::make_shared<Triangle>();
+                std::shared_ptr<ObjTriangle> triangle = std::make_shared<ObjTriangle>();
                 triangle->setPoint(_points[indices[0]], _points[indices[i + 1]], _points[indices[i + 2]]);
                 triangle->initNormale();
                 triangle->setMaterial(currentMaterial);
@@ -111,6 +111,13 @@ Maybe<PosShapePair> ray::Object::hit(const ray::Ray &ray) const
 Math::Vector3D ray::Object::getNormale(const Math::Point3D& point, const ray::Ray& camRay) const
 {
     return _triangles[0]->getNormale(point, camRay);
+}
+
+ray::Ray ray::Object::getRefraction(
+    __attribute__((unused))const std::shared_ptr<ray::IScene>& scene,
+    Math::Point3D pos, Math::Vector3D dir) const
+{
+    return {pos + dir * 0.0001, dir};
 }
 
 extern "C" ray::INode *create(std::map<std::string, std::string> &attributes)

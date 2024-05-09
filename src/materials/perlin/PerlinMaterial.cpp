@@ -91,18 +91,20 @@ namespace ray {
     }
 
     PerlinMaterial::PerlinMaterial(RGB color,
+        double refractionIndex,
         double shadowQuality,
         double ambiantOccQuality,
         double roughness,
         int octaves,
         double persistence,
         double minPerlin,
-        double maxPerlin) : _color(color), _octaves(octaves), _persistence(persistence), _minPerlin(minPerlin), _maxPerlin(maxPerlin),
+        double maxPerlin) : AMaterial(refractionIndex), _color(color), _octaves(octaves), _persistence(persistence), _minPerlin(minPerlin), _maxPerlin(maxPerlin),
         _phong({},
             0.05,
             50,
             shadowQuality,
             ambiantOccQuality,
+            0,
             Math::Matrix<1, 3>({{1, 1, 1}}),
             Math::Matrix<1, 3>{{{0, 0, 0}}},
             Math::Matrix<1, 3>{{{roughness, roughness, roughness}}})
@@ -125,7 +127,7 @@ namespace ray {
         if (recursion > REFLECTION_RECURSION_LIMIT)
             color = _color;
         else
-            color = _phong.calculateColor(scene, view, collisionPoint, normale, recursion);
+            color = _phong.calculateColor(scene, shape, view, collisionPoint, normale, recursion);
         if (uv == Math::Vector2D{-1, -1})
             uv = getRandomCoordinates();
         else
@@ -185,5 +187,5 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
     if (maxPerlin < 0 || maxPerlin > 1)
         throw ray::NodeError("IMaterial: max_perlin must be a number between 0 and 1", "PerlinMaterial.cpp");
 
-    return new ray::PerlinMaterial(color.value(), shadowQuality, ambiantOcclusion, roughness, octaves, persistence, minPerlin, maxPerlin);
+    return new ray::PerlinMaterial(color.value(), 1, shadowQuality, ambiantOcclusion, roughness, octaves, persistence, minPerlin, maxPerlin);
 }

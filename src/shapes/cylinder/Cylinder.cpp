@@ -7,6 +7,8 @@
 
 #include "Cylinder.hpp"
 
+#include <utils/isBehind.h>
+
 void ray::Cylinder::initValues()
 {
     AShape::initValues();
@@ -94,6 +96,11 @@ Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
     Math::Point3D pos1 = {(ray.origin.X + ray.direction.X * root1), (ray.origin.Y + ray.direction.Y * root1), (ray.origin.Z + ray.direction.Z * root1)};
     Math::Point3D pos2 = {(ray.origin.X + ray.direction.X * root2), (ray.origin.Y + ray.direction.Y * root2), (ray.origin.Z + ray.direction.Z * root2)};
 
+    if (isBehind(pos1, ray.origin, ray.direction))
+        return pos2;
+    if (isBehind(pos2, ray.origin, ray.direction))
+        return pos1;
+
     Math::Vector3D vect1 = {pos1.X - ray.origin.X, pos1.Y - ray.origin.Y, pos1.Z - ray.origin.Z};
     Math::Vector3D vect2 = {pos2.X - ray.origin.X, pos2.Y - ray.origin.Y, pos2.Z - ray.origin.Z};
 
@@ -123,6 +130,13 @@ Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute
     if (_direction.Z == 0)
         normal.Z = point.Z - _position.Z;
     return normal / normal.length();
+}
+
+ray::Ray ray::Cylinder::getRefraction(
+    __attribute__((unused))const std::shared_ptr<ray::IScene>& scene,
+    Math::Point3D pos, Math::Vector3D dir) const
+{
+    return {pos + dir * 0.0001, dir};
 }
 
 extern "C" ray::INode *create(__attribute__((unused))const std::map<std::string, std::string> &attributes)

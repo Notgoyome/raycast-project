@@ -32,5 +32,5 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
     if (roughness < 0 || roughness > 1)
         throw ray::NodeError("IMaterial: roughness must be a number between 0 and 1", "BasicMaterial.cpp");
 
-    return new ray::BasicMaterial(color.value(), shadowQuality, ambiantOcclusion, roughness);
+    return new ray::BasicMaterial(color.value(), 1, shadowQuality, ambiantOcclusion, roughness);
 }

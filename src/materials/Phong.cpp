@@ -8,6 +8,7 @@
 #include "Phong.hpp"
 #include "../scenes/base/Scene.hpp"
 #include "utils/getClosest.h"
+#include "utils/isBehind.h"
 
 double pointsDistance(Math::Point3D point1, Math::Point3D point2)
 {
@@ -36,14 +37,6 @@ Math::Vector3D getPerpendicularVector(Math::Vector3D vec)
     if (res != Math::Vector3D{0, 0, 0})
         return res;
     return vec.product({1, 0, 0});
-}
-
-bool isBehind(Math::Point3D pos, Math::Point3D lightPos, Math::Vector3D lightDir)
-{
-    Math::Vector3D lightToPos = {pos.X - lightPos.X, pos.Y - lightPos.Y, pos.Z - lightPos.Z};
-    double angle = lightToPos.dot(lightDir);
-
-    return angle < 0;
 }
 
 bool hitsBefore(const std::vector<std::shared_ptr<ray::IShape>>& objects, Math::Point3D pos, ray::Ray ray)
@@ -178,7 +171,7 @@ RGB getReflection(const std::shared_ptr<ray::IScene>& scene,
         contribution = contribution < 0 ? 0 : contribution;
         contribution = contribution > 1 ? 1 : contribution;
 
-        return shape->getMaterial()->getColor(
+        return shape->getMaterial()->getColor( // TODO: DISREGARD TRANSPARENCY?
             recursive + 1,
             collision,
             reflectNormale,
@@ -192,13 +185,13 @@ RGB getReflection(const std::shared_ptr<ray::IScene>& scene,
 
 Math::Matrix<1, 3> Phong::Model::getReflectionContribution(
     const std::shared_ptr<ray::IScene> &scene, Math::Point3D pos,
-    Math::Vector3D normale, Math::Vector3D view, int recursive) const
+    Math::Vector3D normale, Math::Vector3D view, int recursion) const
 {
     if (_ks(0, 0) == 0 && _ks(0, 1) == 0 && _ks(0, 2) == 0)
         return Math::Matrix<1, 3>{{{0, 0, 0}}};
-    if (recursive >= REFLECTION_RECURSION_LIMIT)
+    if (recursion >= REFLECTION_RECURSION_LIMIT)
         return Math::Matrix<1, 3>{{{0, 0, 0}}};
-    RGB color = getReflection(scene, pos, normale, view * -1, recursive);
+    RGB color = getReflection(scene, pos, normale, view * -1, recursion);
 
     return Math::Matrix<1, 3>{{
         {
@@ -208,15 +201,18 @@ Math::Matrix<1, 3> Phong::Model::getReflectionContribution(
         }}};
 }
 
-Math::Matrix<1, 3> Phong::Model::getLightsContribution(
+Math::Matrix<2, 3> Phong::Model::getLightsContribution(
     Math::Vector3D normale,
     Math::Point3D pos,
     Math::Vector3D view,
     const std::shared_ptr<ray::IScene>& scene) const
 {
-    double sumR = 0;
-    double sumG = 0;
-    double sumB = 0;
+    double sumRDiff = 0;
+    double sumRSpec = 0;
+    double sumGDiff = 0;
+    double sumGSpec = 0;
+    double sumBDiff = 0;
+    double sumBSpec = 0;
 
     const std::vector<std::shared_ptr<ray::IShape>> objects = scene->getShapes();
     const std::vector<std::shared_ptr<ray::ILight>> lights = scene->getLights();
@@ -233,21 +229,58 @@ Math::Matrix<1, 3> Phong::Model::getLightsContribution(
         double diff = std::max(lightDir.dot(normale), 0.0);
         double ref = std::max(pow(reflection.dot(view), _alpha), 0.0);
 
-        sumR += _kd(0, 0) * diff * getLightDiffuseIntensity(lightColor)(0, 0);
+        sumRDiff += _kd(0, 0) * diff * getLightDiffuseIntensity(lightColor)(0, 0);
         if (diff > 0.2)
-            sumR += _ks(0, 0) * ref * getLightSpecularIntensity(lightColor)(0, 0);
-        sumG += _kd(0, 1) * diff * getLightDiffuseIntensity(lightColor)(0, 1);
+            sumRSpec += _ks(0, 0) * ref * getLightSpecularIntensity(lightColor)(0, 0);
+        sumGDiff += _kd(0, 1) * diff * getLightDiffuseIntensity(lightColor)(0, 1);
         if (diff > 0.2)
-            sumG += _ks(0, 1) * ref * getLightSpecularIntensity(lightColor)(0, 1);
-        sumB += _kd(0, 2) * diff * getLightDiffuseIntensity(lightColor)(0, 2);
+            sumGSpec += _ks(0, 1) * ref * getLightSpecularIntensity(lightColor)(0, 1);
+        sumBDiff += _kd(0, 2) * diff * getLightDiffuseIntensity(lightColor)(0, 2);
         if (diff > 0.2)
-            sumB += _ks(0, 2) * ref * getLightSpecularIntensity(lightColor)(0, 2);
+            sumBSpec += _ks(0, 2) * ref * getLightSpecularIntensity(lightColor)(0, 2);
     }
-    return Math::Matrix<1, 3>{{{sumR, sumG, sumB}}};
+    return Math::Matrix<2, 3>{{{sumRDiff, sumGDiff, sumBDiff}, {sumRSpec, sumGSpec, sumBSpec}}};
+}
+
+Math::Matrix<1, 3> Phong::Model::getTransparencyContribution(
+    const std::shared_ptr<ray::IShape> &shape, Math::Point3D pos,
+    Math::Vector3D view, const std::shared_ptr<ray::IScene> &scene,
+    int recursion) const
+{
+    if (recursion >= REFLECTION_RECURSION_LIMIT)
+        return Math::Matrix<1, 3>{{{0, 0, 0}}};
+    if (_transparency == 0)
+        return Math::Matrix<1, 3>{{{0, 0, 0}}};
+    ray::Ray refracted = shape->getRefraction(scene, pos, view);
+    Maybe<PosShapePair> maybeHit = scene->hit(refracted);
+    RGB backgroundColor = scene->getBackgroundColor();
+
+    if (maybeHit.has_value() == false)
+        return Math::Matrix<1, 3>{{
+            {
+                static_cast<double>(backgroundColor.R) / 255,
+                static_cast<double>(backgroundColor.G) / 255,
+                static_cast<double>(backgroundColor.B) / 255
+            }}};
+    RGB color = maybeHit.value().second->getMaterial()->getColor(
+        recursion + 1,
+        maybeHit.value().first,
+        maybeHit.value().second->getNormale(maybeHit.value().first, refracted),
+        pos,
+        maybeHit.value().second,
+        scene
+    );
+    return Math::Matrix<1, 3>{{
+        {
+            static_cast<double>(color.R) / 255,
+            static_cast<double>(color.G) / 255,
+            static_cast<double>(color.B) / 255
+        }}};
 }
 
 RGB Phong::Model::calculateColor(
     const std::shared_ptr<ray::IScene>& scene,
+    const std::shared_ptr<ray::IShape>& shape,
     Math::Vector3D view,
     Math::Point3D pos,
     Math::Vector3D normale,
@@ -257,24 +290,37 @@ RGB Phong::Model::calculateColor(
     unsigned int GRes;
     unsigned int BRes;
 
-    Math::Matrix<1, 3> lightsContribution = getLightsContribution(normale, pos, view, scene);
+    Math::Matrix<2, 3> lightsContribution = getLightsContribution(normale, pos, view, scene);
     Math::Matrix<1, 3> reflectionContribution = getReflectionContribution(scene, pos, normale, view, recursion);
+    Math::Matrix<1, 3> transparencyContribution = getTransparencyContribution(shape, pos, view, scene, recursion);
 
     RRes = static_cast<unsigned int>(
         std::min(
-            static_cast<float>(_ka(0, 0) * _ia + lightsContribution(0, 0) + reflectionContribution(0, 0)) * 255.F,
+            static_cast<float>(
+                _ka(0, 0) * _ia + (1 - _transparency) * lightsContribution(0, 0) + reflectionContribution(0, 0)
+                + lightsContribution(1, 0)
+                + ((_transparency >= 0.5) ? (0.5 - _transparency + 0.5) * _kd(0, 0) : _transparency * _kd(0, 0))
+                + _transparency * transparencyContribution(0, 0)) * 255.F,
             255.F
             )
         );
     GRes = static_cast<unsigned int>(
         std::min(
-            static_cast<float>(_ka(0, 1) * _ia + lightsContribution(0, 1) + reflectionContribution(0, 1)) * 255.F,
+            static_cast<float>(
+                _ka(0, 1) * _ia + (1 - _transparency) * lightsContribution(0, 1) + reflectionContribution(0, 1)
+                + lightsContribution(1, 1)
+                + ((_transparency >= 0.5) ? (0.5 - _transparency + 0.5) * _kd(0, 1) : _transparency * _kd(0, 1))
+                + _transparency * (transparencyContribution(0, 1))) * 255.F,
             255.F
             )
         );
     BRes = static_cast<unsigned int>(
         std::min(
-            static_cast<float>(_ka(0, 2) * _ia + lightsContribution(0, 2) + reflectionContribution(0, 2)) * 255.F,
+            static_cast<float>(
+                _ka(0, 2) * _ia + (1 - _transparency) * lightsContribution(0, 2) + reflectionContribution(0, 2)
+                + lightsContribution(1, 2)
+                + ((_transparency >= 0.5) ? (0.5 - _transparency + 0.5) * _kd(0, 2) : _transparency * _kd(0, 2))
+                + _transparency * transparencyContribution(0, 2)) * 255.F,
             255.F
             )
         );

@@ -80,6 +80,12 @@ Math::Vector2D ray::Plane::getUVMapping(Math::Point3D coords) const
     return res;
 }
 
+ray::Ray ray::Plane::getRefraction(
+   __attribute__((unused))const std::shared_ptr<ray::IScene>& scene,
+   Math::Point3D pos, Math::Vector3D dir) const
+{
+   return {pos + dir * 0.0001, dir};
+}
 extern "C" ray::INode *create(__attribute__((unused))std::map<std::string, std::string>& properties)
 {
     return new ray::Plane();

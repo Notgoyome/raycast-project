@@ -9,8 +9,13 @@
 
 namespace ray {
 
-    ray::AMaterial::AMaterial() : ANode(ray::type::MATERIAL)
+    ray::AMaterial::AMaterial(double refractionIndex) : ANode(ray::type::MATERIAL), _refractionIndex(refractionIndex)
     {
+    }
+
+    double AMaterial::getRefractionIndex() const
+    {
+        return _refractionIndex;
     }
 
 }
