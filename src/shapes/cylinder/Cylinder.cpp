@@ -12,9 +12,9 @@
 void ray::Cylinder::initValues()
 {
     AShape::initValues();
+    setDirection();
     setPosition();
     setDimensions();
-    setDirection();
 }
 
 void ray::Cylinder::setDimensions()
