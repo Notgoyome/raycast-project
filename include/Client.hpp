@@ -17,6 +17,7 @@
 #include <thread>
 #include <mutex>
 #include <cstring>
+#include <future>
 #include "utils/mainMethods.hpp"
 
 #ifdef _WIN32
@@ -139,21 +140,40 @@ namespace ray {
                     std::string coordinates = data.second;
                     std::string response = "";
                     std::vector<std::string> coords = RayTracerUtils::renderTokenSpliter(coordinates, ';');
-                    for (const std::string& coord : coords) {
-                        std::vector<std::string> xy = RayTracerUtils::renderTokenSpliter(coord, ',');
-                        if (xy.size() < 2) {
-                            std::cerr << "Invalid coordinate: " << coord << std::endl;
-                            std::cerr << coord << std::endl;
-                            continue;
-                        }
-                        int x = std::stoi(xy[0]);
-                        int y = std::stoi(xy[1]);
-                        double u = static_cast<double>(x) / imageWidth;
-                        double v = static_cast<double>(y) / imageHeight;
-                        // std::cout << "Rendering pixel: " << x << " " << y << std::endl;
-                        // std::cout << "Background: " << scene->getBackgroundColor().R << " " << scene->getBackgroundColor().G << " " << scene->getBackgroundColor().B << std::endl;
-                        RGB color = RayTracerUtils::renderPixel(scene, camera, u, v, backgroundColor);
-                        response += std::to_string(x) + "," + std::to_string(y) + ":" + std::to_string(color.R) + "," + std::to_string(color.G) + "," + std::to_string(color.B) + ";";
+                    unsigned int numThreads = std::thread::hardware_concurrency();
+
+                    std::vector<std::future<std::string>> futures;
+
+                    size_t coordsPerThread = coords.size() / numThreads;
+
+                    for (unsigned int i = 0; i < numThreads; ++i) {
+                        size_t start = i * coordsPerThread;
+                        size_t end = (i == numThreads - 1) ? coords.size() : (start + coordsPerThread);
+
+                        futures.push_back(std::async(std::launch::async, [&, start, end] {
+                            std::string localResponse;
+
+                            for (size_t j = start; j < end; ++j) {
+                                const std::string& coord = coords[j];
+                                std::vector<std::string> xy = RayTracerUtils::renderTokenSpliter(coord, ',');
+                                if (xy.size() < 2) {
+                                    std::cerr << "Invalid coordinate: " << coord << std::endl;
+                                    continue;
+                                }
+                                int x = std::stoi(xy[0]);
+                                int y = std::stoi(xy[1]);
+                                double u = static_cast<double>(x) / imageWidth;
+                                double v = static_cast<double>(y) / imageHeight;
+                                RGB color = RayTracerUtils::renderPixel(scene, camera, u, v, backgroundColor);
+                                localResponse += std::to_string(x) + "," + std::to_string(y) + ":" + std::to_string(color.R) + "," + std::to_string(color.G) + "," + std::to_string(color.B) + ";";
+                            }
+
+                            return localResponse;
+                        }));
+                    }
+
+                    for (auto& future : futures) {
+                        response += future.get();
                     }
                     send_data({"RENDERED", response});
                     // std::cout << "Sent RENDERED:" << response << std::endl;
