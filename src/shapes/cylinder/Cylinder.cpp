@@ -22,7 +22,8 @@ void ray::Cylinder::setDimensions()
     Math::Vector3D scale = getScale();
 
     _radius = scale.X;
-    _height = scale.Y;
+    if (_finite == true)
+        _height = scale.Y;
 }
 
 void ray::Cylinder::setPosition()
@@ -38,6 +39,12 @@ void ray::Cylinder::setDirection()
     Math::Matrix<3, 1> iniDirection(values);
     Math::Matrix result = rotation * iniDirection;
     _direction = Math::Vector3D(result(0, 0), result(1, 0), result(2, 0));
+    _direction = {0, 0, -1};
+}
+
+void ray::Cylinder::setFinite(bool finite)
+{
+    _finite = finite;
 }
 
 Math::Vector3D pointTimesVector(Math::Point3D P, Math::Vector3D V)
@@ -118,7 +125,28 @@ Maybe<PosShapePair> ray::Cylinder::hit(const ray::Ray &ray) const
     double det = b * b - 4 * (a * c);
     if (det < 0 || std::fabs(det) < 0.001)
         return {};
-    return Maybe<PosShapePair>{std::make_pair(getClosestRoot(a, b, det, ray), nullptr)};
+    Math::Point3D hit = getClosestRoot(a, b, det, ray);
+    if (_finite == true) {
+        if (_direction.X != 0) {
+            if (_direction.X > 0 && (hit.X < _position.X || hit.X > _position.X + _height))
+                return {};
+            else if (_direction.X < 0 && (hit.X > _position.X || hit.X < _position.X - _height))
+                return {};
+        }
+        if (_direction.Y != 0) {
+            if (_direction.Y > 0 && (hit.Y > _position.Y || hit.Y < _position.Y - _height))
+                return {};
+            else if (_direction.Y < 0 && (hit.Y < _position.Y || hit.Y > _position.Y + _height))
+                return {};
+        }
+        if (_direction.Z != 0) {
+            if (_direction.Z > 0 && (hit.Z < _position.Z || hit.Z > _position.Z + _height))
+                return {};
+            else if (_direction.Z < 0 && (hit.Z > _position.Z || hit.Z < _position.Z - _height))
+                return {};
+        }
+    }
+    return Maybe<PosShapePair>{std::make_pair(hit, nullptr)};
 }
 
 Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
@@ -140,7 +168,18 @@ ray::Ray ray::Cylinder::getRefraction(
     return {pos + dir * 0.0001, dir};
 }
 
-extern "C" ray::INode *create(__attribute__((unused))const std::map<std::string, std::string> &attributes)
+extern "C" ray::INode *create(std::map<std::string, std::string> &attributes)
 {
-    return new ray::Cylinder();
+    ray::Cylinder* cylinder = new ray::Cylinder();
+    if (attributes.find("finite") != attributes.end()) {
+        if (attributes["finite"] == "true") {
+            cylinder->setFinite(true);
+        } else if (attributes["finite"] == "false") {
+            cylinder->setFinite(false);
+        } else {
+            throw std::invalid_argument("Cylinder finite must be true or false");
+        }
+    } else {
+        cylinder->setFinite(false);
+    }
 }
