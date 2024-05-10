@@ -17,6 +17,7 @@ namespace ray {
 
     class PerlinMaterial : public AMaterial {
         Math::Matrix<1, 3> _kd;
+        Math::Matrix<1, 3> _ka = Math::Matrix<1, 3>({{1, 1, 1}});
         int _octaves;
         double _persistence;
         double _minPerlin;

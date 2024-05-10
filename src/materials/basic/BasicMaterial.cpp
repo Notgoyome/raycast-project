@@ -23,7 +23,6 @@ ray::BasicMaterial::BasicMaterial(RGB color,
             shadowQuality,
             ambiantOccQuality,
             0,
-            Math::Matrix<1, 3>({{1, 1, 1}}),
             Math::Matrix<1, 3>{{{roughness, roughness, roughness}}})
 {
 }
@@ -42,5 +41,5 @@ RGB ray::BasicMaterial::getColor(int recursive, Math::Point3D collisionPoint,
             static_cast<unsigned int>(_kd(0, 1) * 255),
             static_cast<unsigned int>(_kd(0, 2) * 255)
         };
-    return _phong.calculateColor(scene, shape, view, collisionPoint, normale, _kd, recursive);
+    return _phong.calculateColor(_kd, _ka, scene, shape, view, collisionPoint, normale, recursive);
 }

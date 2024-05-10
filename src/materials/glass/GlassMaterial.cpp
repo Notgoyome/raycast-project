@@ -21,7 +21,6 @@ namespace ray {
         1,
         0,
         transparency,
-        Math::Matrix<1, 3>({{1, 1, 1}}),
         Math::Matrix<1, 3>{{{1, 1, 1}}})
     {
     }
@@ -40,7 +39,7 @@ namespace ray {
                 static_cast<unsigned int>(_kd(0, 1) * 255),
                 static_cast<unsigned int>(_kd(0, 2) * 255)
             };
-        return _phong.calculateColor(scene, shape, view, collisionPoint, normale, _kd, recursion);
+        return _phong.calculateColor(_kd, _ka, scene, shape, view, collisionPoint, normale, recursion);
     }
 
 } // ray

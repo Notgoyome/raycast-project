@@ -48,7 +48,6 @@ namespace ray {
                 shadowQuality,
                 ambiantOccQuality,
                 0,
-                Math::Matrix<1, 3>({{1, 1, 1}}),
                 Math::Matrix<1, 3>{{{roughness, roughness, roughness}}})
 
     {
@@ -72,7 +71,7 @@ namespace ray {
                     static_cast<unsigned int>(_kd(0, 2) * 255)
                 );
         else
-            color = _phong.calculateColor(scene, shape, view, collisionPoint, normale, _kd, recursion);
+            color = _phong.calculateColor(_kd, _ka, scene, shape, view, collisionPoint, normale, recursion);
         if (pos == Math::Vector2D{-1, -1})
             pos = getRandomCoordinates();
         else

@@ -20,6 +20,7 @@ namespace ray {
 
     class SuperMaterial : public ray::AMaterial {
         Math::Matrix<1, 3> _kd;
+        Math::Matrix<1, 3> _ka;
         Phong::Model _phong;
 
     public:

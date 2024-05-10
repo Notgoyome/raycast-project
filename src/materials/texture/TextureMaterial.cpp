@@ -26,7 +26,6 @@ namespace ray {
             50,
             0,
             0,
-            Math::Matrix<1, 3>({{1, 1, 1}}),
             Math::Matrix<1, 3>{{{0, 0, 0}}})
     {
     }
@@ -53,11 +52,10 @@ namespace ray {
         kd(0, 0) = static_cast<double>(color.r) / 255;
         kd(0, 1) = static_cast<double>(color.g) / 255;
         kd(0, 2) = static_cast<double>(color.b) / 255;
-        return _phong.calculateColor(scene, shape, view, collisionPoint, normale, kd, recursion);
+        return _phong.calculateColor(kd, kd, scene, shape, view, collisionPoint, normale, recursion);
     }
 
 } // ray
-
 
 extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)
 {

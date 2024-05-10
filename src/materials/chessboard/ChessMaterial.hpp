@@ -17,6 +17,7 @@ namespace ray {
 
     class ChessMaterial : public AMaterial {
         Math::Matrix<1, 3> _kd;
+        Math::Matrix<1, 3> _ka = Math::Matrix<1, 3>({{1, 1, 1}});
         double _chessSize;
         double _minChess;
         double _maxChess;
