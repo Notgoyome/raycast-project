@@ -89,6 +89,7 @@ add_library(materials_perlin SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_
 add_library(materials_chessboard SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/chessboard/ChessMaterial.cpp)
 add_library(materials_glass SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/glass/GlassMaterial.cpp)
 add_library(materials_super SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/super/SuperMaterial.cpp)
+add_library(materials_texture SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/texture/TextureMaterial.cpp)
 add_library(transformations_rotation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/rotation/Rotation.cpp)
 add_library(transformations_scale SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/scale/Scale.cpp)
 add_library(transformations_translation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/translation/Translation.cpp)
@@ -132,6 +133,10 @@ set_target_properties(materials_glass PROPERTIES
 set_target_properties(materials_super PROPERTIES
         PREFIX ""
         OUTPUT_NAME "materials_super"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
+set_target_properties(materials_texture PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "materials_texture"
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/plugins")
 set_target_properties(transformations_rotation PROPERTIES
         PREFIX ""
@@ -190,6 +195,7 @@ add_dependencies(raytracer
         materials_chessboard
         materials_glass
         materials_super
+        materials_texture
         transformations_rotation
         transformations_scale
         transformations_translation
@@ -203,3 +209,5 @@ add_dependencies(raytracer
         shapes_triangle
         shapes_object
 )
+
+target_link_libraries(materials_texture sfml-graphics sfml-window sfml-system)
