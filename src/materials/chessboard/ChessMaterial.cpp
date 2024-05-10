@@ -93,6 +93,11 @@ namespace ray {
             static_cast<unsigned int>(_maxChess * color.B)
         };
     }
+
+    void ChessMaterial::setSkybox()
+    {
+        _phong.setIa(1);
+    }
 } // ray
 
 extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)
@@ -135,5 +140,9 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
     if (maxChess < 0 || maxChess > 1)
         throw ray::NodeError("IMaterial: max_chess must be a number between 0 and 1", "ChessMaterial.cpp");
 
-    return new ray::ChessMaterial(color.value(), 1, shadowQuality, ambiantOcclusion, roughness, chessSize, minChess, maxChess);
+    ray::INode* node = new ray::ChessMaterial(color.value(), 1, shadowQuality, ambiantOcclusion, roughness, chessSize, minChess, maxChess);
+
+    if (attributes.find("skybox") != attributes.end() && attributes.at("skybox") == "true")
+        dynamic_cast<ray::ChessMaterial*>(node)->setSkybox();
+    return node;
 }

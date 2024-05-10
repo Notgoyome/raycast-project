@@ -43,3 +43,8 @@ RGB ray::BasicMaterial::getColor(int recursive, Math::Point3D collisionPoint,
         };
     return _phong.calculateColor(_kd, _ka, scene, shape, view, collisionPoint, normale, recursive);
 }
+
+void ray::BasicMaterial::setSkybox()
+{
+    _phong.setIa(1);
+}

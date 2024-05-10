@@ -150,6 +150,11 @@ namespace ray {
             static_cast<unsigned int>(color.B * perlinValue)
         };
     }
+
+    void PerlinMaterial::setSkybox()
+    {
+        _phong.setIa(1);
+    }
 } // ray
 
 
@@ -198,5 +203,9 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
     if (maxPerlin < 0 || maxPerlin > 1)
         throw ray::NodeError("IMaterial: max_perlin must be a number between 0 and 1", "PerlinMaterial.cpp");
 
-    return new ray::PerlinMaterial(color.value(), 1, shadowQuality, ambiantOcclusion, roughness, octaves, persistence, minPerlin, maxPerlin);
+    ray::INode* node = new ray::PerlinMaterial(color.value(), 1, shadowQuality, ambiantOcclusion, roughness, octaves, persistence, minPerlin, maxPerlin);
+
+    if (attributes.find("skybox") != attributes.end() && attributes.at("skybox") == "true")
+        dynamic_cast<ray::PerlinMaterial*>(node)->setSkybox();
+    return node;
 }

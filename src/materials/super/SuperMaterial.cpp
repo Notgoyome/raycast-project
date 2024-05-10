@@ -48,4 +48,9 @@ namespace ray {
             };
         return _phong.calculateColor(_kd, _ka, scene, shape, view, collisionPoint, normale, recursive);
     }
+
+    void SuperMaterial::setSkybox()
+    {
+        _phong.setIa(1);
+    }
 }

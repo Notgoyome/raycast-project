@@ -55,6 +55,10 @@ namespace ray {
         return _phong.calculateColor(kd, kd, scene, shape, view, collisionPoint, normale, recursion);
     }
 
+    void TextureMaterial::setSkybox()
+    {
+        _phong.setIa(1);
+    }
 } // ray
 
 extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)
@@ -64,5 +68,9 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
 
     std::string texture = attributes.at("texture");
 
-    return new ray::TextureMaterial(texture);
+    ray::INode* node = new ray::TextureMaterial(texture);
+
+    if (attributes.find("skybox") != attributes.end() && attributes.at("skybox") == "true")
+        dynamic_cast<ray::TextureMaterial*>(node)->setSkybox();
+    return node;
 }

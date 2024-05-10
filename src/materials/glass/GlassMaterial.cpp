@@ -42,6 +42,10 @@ namespace ray {
         return _phong.calculateColor(_kd, _ka, scene, shape, view, collisionPoint, normale, recursion);
     }
 
+    void GlassMaterial::setSkybox()
+    {
+        _phong.setIa(1);
+    }
 } // ray
 
 extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)
@@ -59,5 +63,9 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
     if (transparency < 0 || transparency > 1)
         throw ray::NodeError("IMaterial: transparency must be a number between 1 and 100", "GlassMaterial.cpp");
 
-    return new ray::GlassMaterial(color.value(), transparency);
+    ray::INode* node = new ray::GlassMaterial(color.value(), transparency);
+
+    if (attributes.find("skybox") != attributes.end() && attributes.at("skybox") == "true")
+        dynamic_cast<ray::GlassMaterial*>(node)->setSkybox();
+    return node;
 }
