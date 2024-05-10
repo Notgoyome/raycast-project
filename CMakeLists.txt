@@ -33,6 +33,7 @@ add_executable(raytracer
         src/main/parser/NodeBuilder.cpp
         src/utils/isBehind.cpp
         src/main/pixelization/Pixelize.cpp
+        src/main/anti_aliasing/Aliasing.cpp
 )
 
 target_link_libraries(raytracer sfml-graphics sfml-window sfml-system config++)

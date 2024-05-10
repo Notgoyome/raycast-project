@@ -231,8 +231,10 @@ config : (
 image : (
     {
         file : "reflection.ppm";
-        width : 256;
-        height : 256;
-        pallet : "pallet/midnight-ablaze.pal";
+        width : 2048;
+        height : 2048;
+        pallet : "pallet/pear36.pal";
+        filter : "dark_blue";
+        antiAliasing : 2;
     }
 );
