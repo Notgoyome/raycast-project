@@ -9,7 +9,7 @@
 
 namespace ray {
     GlassMaterial::GlassMaterial(RGB color, double transparency) : AMaterial(1.5),
-    _kd({{
+    _kd(Math::Matrix<1, 3>{{
         {
             static_cast<double>(color.R) / 255,
             static_cast<double>(color.G) / 255,

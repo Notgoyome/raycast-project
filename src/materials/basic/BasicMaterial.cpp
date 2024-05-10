@@ -12,7 +12,7 @@ ray::BasicMaterial::BasicMaterial(RGB color,
     double shadowQuality,
     double ambiantOccQuality,
     double roughness) : AMaterial(refractionIndex),
-        _kd({{{
+        _kd(Math::Matrix<1, 3>{{{
             static_cast<double>(color.R) / 255,
             static_cast<double>(color.G) / 255,
             static_cast<double>(color.B) / 255

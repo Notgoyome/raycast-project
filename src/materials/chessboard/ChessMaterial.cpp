@@ -33,7 +33,7 @@ namespace ray {
         double refractionIndex, double shadowQuality,
         double ambiantOccQuality, double roughness, double chessSize,
         double minChess, double maxChess) : AMaterial(refractionIndex),
-            _kd({{
+            _kd(Math::Matrix<1, 3>{{
                 {
                     static_cast<double>(color.R) / 255,
                     static_cast<double>(color.G) / 255,
