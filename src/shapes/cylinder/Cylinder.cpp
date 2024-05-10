@@ -182,4 +182,5 @@ extern "C" ray::INode *create(std::map<std::string, std::string> &attributes)
     } else {
         cylinder->setFinite(false);
     }
+    return cylinder;
 }
