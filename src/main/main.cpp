@@ -15,6 +15,7 @@
 #include "Client.hpp"
 #include "utils/mainMethods.hpp"
 #include "pixelization/Pixelize.hpp"
+#include "anti_aliasing/Aliasing.hpp"
 
 Image mergeImages(const std::vector<Image>& images)
 {
@@ -84,7 +85,12 @@ void handleSingleFile(const char *filename)
         t.join();
     Image img = mergeImages(images);
     ray::Renderer renderer;
+    std::cout << imageData.antiAliasing << std::endl;
+    img = applyAntiAliasing(img, &imageData, imageData.antiAliasing);
+    std::cout << imageData.height << std::endl;
+    std::cout << imageData.width << std::endl;
     img = applyPalletFilter(img, imageData);
+    img = applyFilter(img, imageData);
     renderer.renderPpmImage(img, imageData.filename);
     renderer.renderSfmlImage(img);
 }
