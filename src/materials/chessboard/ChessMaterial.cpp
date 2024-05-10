@@ -32,19 +32,26 @@ namespace ray {
     ChessMaterial::ChessMaterial(RGB color,
         double refractionIndex, double shadowQuality,
         double ambiantOccQuality, double roughness, double chessSize,
-        double minChess, double maxChess) : AMaterial(refractionIndex), _color(color), _chessSize(chessSize), _minChess(minChess), _maxChess(maxChess),
-        _phong({},
-            0.05,
-            50,
-            shadowQuality,
-            ambiantOccQuality,
-            0,
-            Math::Matrix<1, 3>({{1, 1, 1}}),
-            Math::Matrix<1, 3>{{{0, 0, 0}}},
-            Math::Matrix<1, 3>{{{roughness, roughness, roughness}}})
+        double minChess, double maxChess) : AMaterial(refractionIndex),
+            _kd({{
+                {
+                    static_cast<double>(color.R) / 255,
+                    static_cast<double>(color.G) / 255,
+                    static_cast<double>(color.B) / 255
+                }}}),
+            _chessSize(chessSize),
+            _minChess(minChess),
+            _maxChess(maxChess),
+            _phong({},
+                0.05,
+                50,
+                shadowQuality,
+                ambiantOccQuality,
+                0,
+                Math::Matrix<1, 3>({{1, 1, 1}}),
+                Math::Matrix<1, 3>{{{roughness, roughness, roughness}}})
 
     {
-        _phong.setKd(Math::Matrix<1, 3>({{color.R / 255.f, color.G / 255.f, color.B / 255.f}}));
     }
 
     RGB ray::ChessMaterial::getColor(int recursion, Math::Point3D collisionPoint,
@@ -59,9 +66,13 @@ namespace ray {
         int chess;
 
         if (recursion > REFLECTION_RECURSION_LIMIT)
-            color = _color;
+            color = RGB(
+                    static_cast<unsigned int>(_kd(0, 0) * 255),
+                    static_cast<unsigned int>(_kd(0, 1) * 255),
+                    static_cast<unsigned int>(_kd(0, 2) * 255)
+                );
         else
-            color = _phong.calculateColor(scene, shape, view, collisionPoint, normale, recursion);
+            color = _phong.calculateColor(scene, shape, view, collisionPoint, normale, _kd, recursion);
         if (pos == Math::Vector2D{-1, -1})
             pos = getRandomCoordinates();
         else

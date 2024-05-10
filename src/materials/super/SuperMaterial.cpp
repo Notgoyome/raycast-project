@@ -18,10 +18,7 @@ namespace ray {
         double transparency,
         double shadowQuality,
         double ambiantOccQuality) : AMaterial(refractionIndex),
-            _color(RGB{
-                static_cast<unsigned int>(kd(0,0) * 255),
-                static_cast<unsigned int>(kd(0,1) * 255),
-                static_cast<unsigned int>(kd(0,2) * 255)}),
+            _kd(kd),
             _phong(
                 {},
                 0.05,
@@ -30,7 +27,6 @@ namespace ray {
                 ambiantOccQuality,
                 transparency,
                 ka,
-                kd,
                 ks
             )
     {
@@ -45,7 +41,11 @@ namespace ray {
         view /= view.length();
 
         if (recursive > REFLECTION_RECURSION_LIMIT)
-            return _color;
-        return _phong.calculateColor(scene, shape, view, collisionPoint, normale, recursive);
+            return RGB{
+                static_cast<unsigned int>(_kd(0, 0) * 255),
+                static_cast<unsigned int>(_kd(0, 1) * 255),
+                static_cast<unsigned int>(_kd(0, 2) * 255)
+            };
+        return _phong.calculateColor(scene, shape, view, collisionPoint, normale, _kd, recursive);
     }
 }

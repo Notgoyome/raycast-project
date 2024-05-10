@@ -16,7 +16,7 @@
 namespace ray {
 
     class ChessMaterial : public AMaterial {
-        RGB _color;
+        Math::Matrix<1, 3> _kd;
         double _chessSize;
         double _minChess;
         double _maxChess;

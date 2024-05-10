@@ -11,18 +11,21 @@ ray::BasicMaterial::BasicMaterial(RGB color,
     double refractionIndex,
     double shadowQuality,
     double ambiantOccQuality,
-    double roughness) : AMaterial(refractionIndex), _color(color),
-    _phong({},
-        0.05,
-        50,
-        shadowQuality,
-        ambiantOccQuality,
-        0,
-        Math::Matrix<1, 3>({{1, 1, 1}}),
-        Math::Matrix<1, 3>{{{0, 0, 0}}},
-        Math::Matrix<1, 3>{{{roughness, roughness, roughness}}})
+    double roughness) : AMaterial(refractionIndex),
+        _kd({{{
+            static_cast<double>(color.R) / 255,
+            static_cast<double>(color.G) / 255,
+            static_cast<double>(color.B) / 255
+        }}}),
+        _phong({},
+            0.05,
+            50,
+            shadowQuality,
+            ambiantOccQuality,
+            0,
+            Math::Matrix<1, 3>({{1, 1, 1}}),
+            Math::Matrix<1, 3>{{{roughness, roughness, roughness}}})
 {
-    _phong.setKd(Math::Matrix<1, 3>({{color.R / 255.f, color.G / 255.f, color.B / 255.f}}));
 }
 
 RGB ray::BasicMaterial::getColor(int recursive, Math::Point3D collisionPoint,
@@ -34,6 +37,10 @@ RGB ray::BasicMaterial::getColor(int recursive, Math::Point3D collisionPoint,
     view /= view.length();
 
     if (recursive > REFLECTION_RECURSION_LIMIT)
-        return _color;
-    return _phong.calculateColor(scene, shape, view, collisionPoint, normale, recursive);
+        return {
+            static_cast<unsigned int>(_kd(0, 0) * 255),
+            static_cast<unsigned int>(_kd(0, 1) * 255),
+            static_cast<unsigned int>(_kd(0, 2) * 255)
+        };
+    return _phong.calculateColor(scene, shape, view, collisionPoint, normale, _kd, recursive);
 }

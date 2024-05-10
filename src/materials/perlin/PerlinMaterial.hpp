@@ -16,7 +16,7 @@
 namespace ray {
 
     class PerlinMaterial : public AMaterial {
-        RGB _color;
+        Math::Matrix<1, 3> _kd;
         int _octaves;
         double _persistence;
         double _minPerlin;

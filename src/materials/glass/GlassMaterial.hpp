@@ -16,7 +16,7 @@
 namespace ray {
 
     class GlassMaterial : public AMaterial {
-        RGB _color;
+        Math::Matrix<1, 3> _kd;
         Phong::Model _phong;
 
     public:

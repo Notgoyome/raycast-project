@@ -19,7 +19,7 @@
 namespace ray {
 
     class BasicMaterial : public ray::AMaterial {
-        RGB _color;
+        Math::Matrix<1, 3> _kd;
         Phong::Model _phong;
     public:
         BasicMaterial(RGB color,
