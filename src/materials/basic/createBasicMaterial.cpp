@@ -32,5 +32,9 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
     if (roughness < 0 || roughness > 1)
         throw ray::NodeError("IMaterial: roughness must be a number between 0 and 1", "BasicMaterial.cpp");
 
-    return new ray::BasicMaterial(color.value(), 1, shadowQuality, ambiantOcclusion, roughness);
+    ray::INode* node = new ray::BasicMaterial(color.value(), 1, shadowQuality, ambiantOcclusion, roughness);
+
+    if (attributes.find("skybox") != attributes.end() && attributes.at("skybox") == "true")
+        dynamic_cast<ray::BasicMaterial*>(node)->setSkybox();
+    return node;
 }

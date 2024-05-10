@@ -124,8 +124,10 @@ config : (
 
 image : (
     {
-        file : "piano.ppm";
-        width : 1000;
-        height : 1000;
+        file : "piano256.ppm";
+        width : 1024;
+        height : 1024;
+        pallet : "pallet/pear36.pal";
+        antiAliasing : 2;
     }
 );

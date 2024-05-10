@@ -16,7 +16,8 @@
 namespace ray {
 
     class PerlinMaterial : public AMaterial {
-        RGB _color;
+        Math::Matrix<1, 3> _kd;
+        Math::Matrix<1, 3> _ka = Math::Matrix<1, 3>({{1, 1, 1}});
         int _octaves;
         double _persistence;
         double _minPerlin;
@@ -43,6 +44,8 @@ namespace ray {
             Math::Point3D camPos,
             const std::shared_ptr<ray::IShape>& shape,
             const std::shared_ptr<ray::IScene> &scene) const override;
+
+        void setSkybox();
     };
 
 } // ray

@@ -19,7 +19,8 @@
 namespace ray {
 
     class BasicMaterial : public ray::AMaterial {
-        RGB _color;
+        Math::Matrix<1, 3> _kd;
+        Math::Matrix<1, 3> _ka = Math::Matrix<1, 3>({{1, 1, 1}});
         Phong::Model _phong;
     public:
         BasicMaterial(RGB color,
@@ -31,6 +32,8 @@ namespace ray {
             Math::Vector3D normale, Math::Point3D camPos,
             const std::shared_ptr<ray::IShape>& shape,
             const std::shared_ptr<ray::IScene>& scene) const override;
+
+        void setSkybox();
     };
 
 }

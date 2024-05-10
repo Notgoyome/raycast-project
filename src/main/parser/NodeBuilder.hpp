@@ -24,6 +24,8 @@ typedef struct image_data_s {
     unsigned int width = 0;
     unsigned int height = 0;
     std::string pallet = "none";
+    std::string filter = "none";
+    unsigned int antiAliasing = 1;
 } image_data_t;
 
 namespace ray {

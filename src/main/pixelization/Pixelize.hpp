@@ -17,5 +17,5 @@ class Pixelize {
 };
 
 Image applyPalletFilter(Image image, image_data_t imageData);
-
+Image applyFilter(Image image, image_data_t imageData);
 #endif //RAYTRACER_PIXELIZE_HPP

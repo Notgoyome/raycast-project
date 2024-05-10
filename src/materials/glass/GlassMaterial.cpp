@@ -8,18 +8,21 @@
 #include "GlassMaterial.hpp"
 
 namespace ray {
-    GlassMaterial::GlassMaterial(RGB color, double transparency) : AMaterial(1.5), _color(color),
+    GlassMaterial::GlassMaterial(RGB color, double transparency) : AMaterial(1.5),
+    _kd(Math::Matrix<1, 3>{{
+        {
+            static_cast<double>(color.R) / 255,
+            static_cast<double>(color.G) / 255,
+            static_cast<double>(color.B) / 255
+        }}}),
     _phong({},
         0.05,
         50,
         1,
         0,
         transparency,
-        Math::Matrix<1, 3>({{1, 1, 1}}),
-        Math::Matrix<1, 3>{{{0, 0, 0}}},
         Math::Matrix<1, 3>{{{1, 1, 1}}})
     {
-        _phong.setKd(Math::Matrix<1, 3>({{color.R / 255.f, color.G / 255.f, color.B / 255.f}}));
     }
 
     RGB GlassMaterial::getColor(int recursion, Math::Point3D collisionPoint,
@@ -31,10 +34,18 @@ namespace ray {
         view /= view.length();
 
         if (recursion > REFLECTION_RECURSION_LIMIT)
-            return _color;
-        return _phong.calculateColor(scene, shape, view, collisionPoint, normale, recursion);
+            return {
+                static_cast<unsigned int>(_kd(0, 0) * 255),
+                static_cast<unsigned int>(_kd(0, 1) * 255),
+                static_cast<unsigned int>(_kd(0, 2) * 255)
+            };
+        return _phong.calculateColor(_kd, _ka, scene, shape, view, collisionPoint, normale, recursion);
     }
 
+    void GlassMaterial::setSkybox()
+    {
+        _phong.setIa(1);
+    }
 } // ray
 
 extern "C" ray::INode *create(const std::map<std::string, std::string> &attributes)
@@ -52,5 +63,9 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
     if (transparency < 0 || transparency > 1)
         throw ray::NodeError("IMaterial: transparency must be a number between 1 and 100", "GlassMaterial.cpp");
 
-    return new ray::GlassMaterial(color.value(), transparency);
+    ray::INode* node = new ray::GlassMaterial(color.value(), transparency);
+
+    if (attributes.find("skybox") != attributes.end() && attributes.at("skybox") == "true")
+        dynamic_cast<ray::GlassMaterial*>(node)->setSkybox();
+    return node;
 }

@@ -205,6 +205,7 @@ Math::Matrix<2, 3> Phong::Model::getLightsContribution(
     Math::Vector3D normale,
     Math::Point3D pos,
     Math::Vector3D view,
+    Math::Matrix<1, 3> kd,
     const std::shared_ptr<ray::IScene>& scene) const
 {
     double sumRDiff = 0;
@@ -229,13 +230,13 @@ Math::Matrix<2, 3> Phong::Model::getLightsContribution(
         double diff = std::max(lightDir.dot(normale), 0.0);
         double ref = std::max(pow(reflection.dot(view), _alpha), 0.0);
 
-        sumRDiff += _kd(0, 0) * diff * getLightDiffuseIntensity(lightColor)(0, 0);
+        sumRDiff += kd(0, 0) * diff * getLightDiffuseIntensity(lightColor)(0, 0);
         if (diff > 0.2)
             sumRSpec += _ks(0, 0) * ref * getLightSpecularIntensity(lightColor)(0, 0);
-        sumGDiff += _kd(0, 1) * diff * getLightDiffuseIntensity(lightColor)(0, 1);
+        sumGDiff += kd(0, 1) * diff * getLightDiffuseIntensity(lightColor)(0, 1);
         if (diff > 0.2)
             sumGSpec += _ks(0, 1) * ref * getLightSpecularIntensity(lightColor)(0, 1);
-        sumBDiff += _kd(0, 2) * diff * getLightDiffuseIntensity(lightColor)(0, 2);
+        sumBDiff += kd(0, 2) * diff * getLightDiffuseIntensity(lightColor)(0, 2);
         if (diff > 0.2)
             sumBSpec += _ks(0, 2) * ref * getLightSpecularIntensity(lightColor)(0, 2);
     }
@@ -279,6 +280,8 @@ Math::Matrix<1, 3> Phong::Model::getTransparencyContribution(
 }
 
 RGB Phong::Model::calculateColor(
+    Math::Matrix<1, 3> kd,
+    Math::Matrix<1, 3> ka,
     const std::shared_ptr<ray::IScene>& scene,
     const std::shared_ptr<ray::IShape>& shape,
     Math::Vector3D view,
@@ -290,16 +293,16 @@ RGB Phong::Model::calculateColor(
     unsigned int GRes;
     unsigned int BRes;
 
-    Math::Matrix<2, 3> lightsContribution = getLightsContribution(normale, pos, view, scene);
+    Math::Matrix<2, 3> lightsContribution = getLightsContribution(normale, pos, view, kd, scene);
     Math::Matrix<1, 3> reflectionContribution = getReflectionContribution(scene, pos, normale, view, recursion);
     Math::Matrix<1, 3> transparencyContribution = getTransparencyContribution(shape, pos, view, scene, recursion);
 
     RRes = static_cast<unsigned int>(
         std::min(
             static_cast<float>(
-                _ka(0, 0) * _ia + (1 - _transparency) * lightsContribution(0, 0) + reflectionContribution(0, 0)
+                ka(0, 0) * _ia + (1 - _transparency) * lightsContribution(0, 0) + reflectionContribution(0, 0)
                 + lightsContribution(1, 0)
-                + ((_transparency >= 0.5) ? (0.5 - _transparency + 0.5) * _kd(0, 0) : _transparency * _kd(0, 0))
+                + ((_transparency >= 0.5) ? (0.5 - _transparency + 0.5) * kd(0, 0) : _transparency * kd(0, 0))
                 + _transparency * transparencyContribution(0, 0)) * 255.F,
             255.F
             )
@@ -307,9 +310,9 @@ RGB Phong::Model::calculateColor(
     GRes = static_cast<unsigned int>(
         std::min(
             static_cast<float>(
-                _ka(0, 1) * _ia + (1 - _transparency) * lightsContribution(0, 1) + reflectionContribution(0, 1)
+                ka(0, 1) * _ia + (1 - _transparency) * lightsContribution(0, 1) + reflectionContribution(0, 1)
                 + lightsContribution(1, 1)
-                + ((_transparency >= 0.5) ? (0.5 - _transparency + 0.5) * _kd(0, 1) : _transparency * _kd(0, 1))
+                + ((_transparency >= 0.5) ? (0.5 - _transparency + 0.5) * kd(0, 1) : _transparency * kd(0, 1))
                 + _transparency * (transparencyContribution(0, 1))) * 255.F,
             255.F
             )
@@ -317,9 +320,9 @@ RGB Phong::Model::calculateColor(
     BRes = static_cast<unsigned int>(
         std::min(
             static_cast<float>(
-                _ka(0, 2) * _ia + (1 - _transparency) * lightsContribution(0, 2) + reflectionContribution(0, 2)
+                ka(0, 2) * _ia + (1 - _transparency) * lightsContribution(0, 2) + reflectionContribution(0, 2)
                 + lightsContribution(1, 2)
-                + ((_transparency >= 0.5) ? (0.5 - _transparency + 0.5) * _kd(0, 2) : _transparency * _kd(0, 2))
+                + ((_transparency >= 0.5) ? (0.5 - _transparency + 0.5) * kd(0, 2) : _transparency * kd(0, 2))
                 + _transparency * transparencyContribution(0, 2)) * 255.F,
             255.F
             )

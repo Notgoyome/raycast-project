@@ -19,8 +19,10 @@
 namespace ray {
 
     class SuperMaterial : public ray::AMaterial {
-        RGB _color;
+        Math::Matrix<1, 3> _kd;
+        Math::Matrix<1, 3> _ka;
         Phong::Model _phong;
+
     public:
         SuperMaterial(
             double specularExponent,
@@ -38,6 +40,8 @@ namespace ray {
             Math::Vector3D normale, Math::Point3D camPos,
             const std::shared_ptr<ray::IShape>& shape,
             const std::shared_ptr<ray::IScene>& scene) const override;
+
+        void setSkybox();
     };
 
 }

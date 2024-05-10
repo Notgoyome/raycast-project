@@ -6,18 +6,18 @@
 
 int dither(int x, int y, int scale)
 {
-//    int ditherMatrix[4][4] = {
-//        {0, 8, 2, 10},
-//        {12, 4, 14, 6},
-//        {3, 11, 1, 9},
-//        {15, 7, 13, 5}
-//    };
     int ditherMatrix[4][4] = {
-            {4, 15, 4, 15},
-            {15, 4, 15, 4},
-            {4, 15, 4, 15},
-            {15, 4, 15, 4}
+        {0, 8, 2, 10},
+        {12, 4, 14, 6},
+        {3, 11, 1, 9},
+        {15, 7, 13, 5}
     };
+//    int ditherMatrix[4][4] = {
+//            {4, 15, 4, 15},
+//            {15, 4, 15, 4},
+//            {4, 15, 4, 15},
+//            {15, 4, 15, 4}
+//    };
 //    int ditherMatrix[4][4] = {
 //            {16, 0, 16, 0},
 //            {16, 16, 16, 16},
@@ -80,6 +80,24 @@ Image applyPalletFilter(Image image, image_data_t imageData)
             }
         }
         newImage.addPixel(pixel.first, closestColor);
+    }
+    return newImage;
+}
+
+Image applyFilter(Image image, image_data_t imageData)
+{
+    if (imageData.filter == "none"){
+        std::cout << "No filter to apply" << std::endl;
+        return image;
+    }
+    Image newImage;
+    for (const auto& pixel : image.getMap()) {
+        RGB color = pixel.second;
+        unsigned int darken = (255) / ((color.R + color.G + color.B) / 4);
+        if (darken + color.B > 255)
+            darken = 255 - color.B;
+        color = RGB{color.R, color.G, color.B + darken};
+        newImage.addPixel(pixel.first, color);
     }
     return newImage;
 }

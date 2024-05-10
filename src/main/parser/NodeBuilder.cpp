@@ -130,6 +130,12 @@ namespace ray {
         image[0].lookupValue("width", imageData.width);
         image[0].lookupValue("height", imageData.height);
         image[0].lookupValue("pallet", imageData.pallet);
+        image[0].lookupValue("filter", imageData.filter);
+        image[0].lookupValue("antiAliasing", imageData.antiAliasing);
+        if (imageData.antiAliasing > 1) {
+            imageData.width *= imageData.antiAliasing;
+            imageData.height *= imageData.antiAliasing;
+        }
     }
 
     NodeBuilder::NodeBuilder(const std::string &filename)

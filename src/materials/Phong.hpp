@@ -29,8 +29,6 @@ namespace Phong {
         double _shadowQuality;
         double _ambOccQuality;
         double _transparency;
-        Math::Matrix<1, 3> _ka;
-        Math::Matrix<1, 3> _kd;
         Math::Matrix<1, 3> _ks;
 
         [[nodiscard]] Math::Matrix<1, 3> getReflectionContribution(
@@ -42,6 +40,7 @@ namespace Phong {
             Math::Vector3D normale,
             Math::Point3D pos,
             Math::Vector3D view,
+            Math::Matrix<1, 3> kd,
             const std::shared_ptr<ray::IScene>& scene) const;
 
         [[nodiscard]] Math::Matrix<1, 3> getTransparencyContribution(
@@ -60,15 +59,15 @@ namespace Phong {
             double shadowQuality,
             double ambOccQuality,
             double transparency,
-            Math::Matrix<1, 3> ka,
-            Math::Matrix<1, 3> kd,
             Math::Matrix<1, 3> ks)
             : _lights(std::move(lights)), _ia(ia), _alpha(alpha), _shadowQuality(shadowQuality), _ambOccQuality(ambOccQuality),
-            _transparency(transparency), _ka(ka), _kd(kd), _ks(ks) {}
+            _transparency(transparency),  _ks(ks) {}
         ~Model() = default;
 
         // RUNTIME
         [[nodiscard]] RGB calculateColor(
+            Math::Matrix<1, 3> kd,
+            Math::Matrix<1, 3> ka,
             const std::shared_ptr<ray::IScene>& scene,
             const std::shared_ptr<ray::IShape>& shape,
             Math::Vector3D view,
@@ -80,16 +79,12 @@ namespace Phong {
         void setLights(ListLight lights) { _lights = lights; }
         void setIa(double ia) { _ia = ia; }
         void setAlpha(double alpha) { _alpha = alpha; }
-        void setKa(Math::Matrix<1, 3> ka) { _ka = ka; }
-        void setKd(Math::Matrix<1, 3> kd) { _kd = kd; }
         void setKs(Math::Matrix<1, 3> ks) { _ks = ks; }
 
         // GETTERS
         [[nodiscard]] ListLight getLights() const { return _lights; }
         [[nodiscard]] double getIa() const { return _ia; }
         [[nodiscard]] double getAlpha() const { return _alpha; }
-        [[nodiscard]] Math::Matrix<1, 3> getKa() const { return _ka; }
-        [[nodiscard]] Math::Matrix<1, 3> getKd() const { return _kd; }
         [[nodiscard]] Math::Matrix<1, 3> getKs() const { return _ks; }
     };
 

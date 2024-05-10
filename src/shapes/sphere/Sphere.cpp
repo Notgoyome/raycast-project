@@ -66,6 +66,7 @@ void ray::Sphere::initValues()
     applyMatrix();
     setPosition();
     setRadius();
+    rotationMatrix = getRotation();
 }
 
 Maybe<PosShapePair> ray::Sphere::hit(const ray::Ray &ray) const
@@ -91,8 +92,14 @@ Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point, __attribute__
 
 Math::Vector2D ray::Sphere::getUVMapping(Math::Point3D coords) const
 {
-    double theta = std::atan2(coords.X - center.X, coords.Y - center.Y);
-    double phi = std::asin((coords.Z - center.Z) / radius);
+    Math::Matrix<3, 1> centered = Math::Matrix<3, 1>{{{coords.X - center.X}, {coords.Y - center.Y}, {coords.Z - center.Z}}};
+    centered = rotationMatrix * centered;
+    Math::Vector3D centeredCoords = {centered(0, 0), centered(1, 0), centered(2, 0)};
+
+    centeredCoords = centeredCoords / centeredCoords.length();
+    centeredCoords *= radius;
+    double theta = std::atan2(centeredCoords.X, centeredCoords.Y);
+    double phi = std::asin(centeredCoords.Z / radius);
 
     double u = 0.5 + theta / (2 * M_PI);
     double v = 0.5 + phi / M_PI;
@@ -104,14 +111,13 @@ ray::Ray ray::Sphere::getRefraction(
     __attribute__((unused))const std::shared_ptr<ray::IScene>& scene,
     Math::Point3D pos, Math::Vector3D dir) const
 {
-    // WARNING: this only works when the Object is not a plane
     Math::Vector3D refracted = dir.refract(getNormale(pos, {}), 1, _material->getRefractionIndex());
     Ray refractedRay = {pos + refracted * 0.0001, refracted};
     Maybe<PosShapePair> hitSelf = hit(refractedRay);
 
-    // return {hitSelf.value().first + refracted * 0.0001, refracted};
     if (hitSelf.has_value() == false) // What?
         return {pos + dir * 0.0001, dir};
+
     Math::Vector3D hitNormale = getNormale(hitSelf.value().first, refractedRay);
     Math::Vector3D refracted2 = refracted.refract(hitNormale * -1, _material->getRefractionIndex(), 1);
     return {hitSelf.value().first + hitNormale * 0.0001, refracted2};
