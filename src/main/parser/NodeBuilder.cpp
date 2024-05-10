@@ -129,6 +129,7 @@ namespace ray {
         image[0].lookupValue("file", imageData.filename);
         image[0].lookupValue("width", imageData.width);
         image[0].lookupValue("height", imageData.height);
+        image[0].lookupValue("pallet", imageData.pallet);
     }
 
     NodeBuilder::NodeBuilder(const std::string &filename)

@@ -231,7 +231,8 @@ config : (
 image : (
     {
         file : "reflection.ppm";
-        width : 1000;
-        height : 1000;
+        width : 256;
+        height : 256;
+        pallet : "pallet/midnight-ablaze.pal";
     }
 );

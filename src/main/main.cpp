@@ -14,6 +14,7 @@
 #include "Server.hpp"
 #include "Client.hpp"
 #include "utils/mainMethods.hpp"
+#include "pixelization/Pixelize.hpp"
 
 Image mergeImages(const std::vector<Image>& images)
 {
@@ -83,6 +84,7 @@ void handleSingleFile(const char *filename)
         t.join();
     Image img = mergeImages(images);
     ray::Renderer renderer;
+    img = applyPalletFilter(img, imageData);
     renderer.renderPpmImage(img, imageData.filename);
     renderer.renderSfmlImage(img);
 }
