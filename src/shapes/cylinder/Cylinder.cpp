@@ -39,7 +39,7 @@ void ray::Cylinder::setDirection()
     Math::Matrix<3, 1> iniDirection(values);
     Math::Matrix result = rotation * iniDirection;
     _direction = Math::Vector3D(result(0, 0), result(1, 0), result(2, 0));
-    _direction = {0, 0, -1};
+    _direction = _direction / _direction.length();
 }
 
 void ray::Cylinder::setFinite(bool finite)
