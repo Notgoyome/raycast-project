@@ -19,6 +19,7 @@ namespace ray {
     private:
         double radius = -1;
         Math::Point3D center;
+        Math::Matrix<3, 3> rotationMatrix;
 
         void setRadius();
         void setPosition();
