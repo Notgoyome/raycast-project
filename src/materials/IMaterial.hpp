@@ -11,6 +11,7 @@
 
 #define REFLECTION_RECURSION_LIMIT 4
 
+#include "math/Vector2D.hpp"
 #include "INode.hpp"
 #include "RGB.hpp"
 #include "math/Point3D.hpp"
@@ -30,6 +31,10 @@ namespace ray {
             const std::shared_ptr<ray::IScene>& scene) const = 0;
 
         [[nodiscard]] virtual double getRefractionIndex() const = 0;
+        [[nodiscard]] virtual bool hasNormalMap() const = 0;
+        [[nodiscard]] virtual Math::Vector3D normalFromMap(Math::Vector2D uv) const = 0;
+
+        virtual void setNormalMap(std::string normalMap) = 0;
     };
 
 }

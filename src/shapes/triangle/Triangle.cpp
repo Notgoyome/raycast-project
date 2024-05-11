@@ -19,7 +19,6 @@ void ray::Triangle::initValues()
 Maybe<PosShapePair> ray::Triangle::hit(const ray::Ray &ray) const
 {
     Math::Vector3D v0v1 = {_p2.X - _p1.X, _p2.Y - _p1.Y, _p2.Z - _p1.Z};
-    Math::Vector3D v0v2 = {_p3.X - _p1.X, _p3.Y - _p1.Y, _p3.Z - _p1.Z};
 
     double nDotRayDirection = _normal.dot(ray.direction);
     if (std::abs(nDotRayDirection) < 0.0000001)
@@ -55,7 +54,8 @@ Maybe<PosShapePair> ray::Triangle::hit(const ray::Ray &ray) const
 
 Math::Vector3D ray::Triangle::getNormale(const Math::Point3D& point, const ray::Ray& camRay) const
 {
-    (void)point;
+    if (_material->hasNormalMap())
+        return _material->normalFromMap(getUVMapping(point));
     Math::Vector3D camDir = camRay.direction;
     if (_normal.dot(camDir) > 0)
         return _normal * -1;

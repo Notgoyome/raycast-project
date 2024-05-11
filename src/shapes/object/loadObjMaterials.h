@@ -10,15 +10,10 @@
 
 #include "../../materials/IMaterial.hpp"
 
-enum type {
-    NORMAL,
-    TEXTURE
-};
-
 struct Material {
-    type type = NORMAL;
     std::string name;
     std::string map_Kd;
+    std::string bump;
     Math::Matrix<1, 3> Ka; // Ambient color
     Math::Matrix<1, 3> Kd; // Diffuse color
     Math::Matrix<1, 3> Ks; // Specular color

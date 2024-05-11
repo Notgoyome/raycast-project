@@ -16,10 +16,16 @@
 #include "../../../src/shapes/AShape.hpp"
 #include "math/Vector3D.hpp"
 #include "math/Vector2D.hpp"
+#include <SFML/Graphics.hpp>
 
 namespace ray {
-    class ObjTriangle : public ray::AShape {
+    enum class NormalType {
+        BASIC,
+        VERTICES,
+        MAP
+    };
 
+    class ObjTriangle : public ray::AShape {
     public:
         ObjTriangle() = default;
         ~ObjTriangle() override = default;
@@ -36,9 +42,8 @@ namespace ray {
         void initNormale();
         void setPoint(Math::Point3D p1, Math::Point3D p2, Math::Point3D p3);
         void setUvCoords(Math::Vector2D uv1, Math::Vector2D uv2, Math::Vector2D uv3);
-        void setp1(Math::Point3D p1);
-        void setp2(Math::Point3D p2);
-        void setp3(Math::Point3D p3);
+        void setNormalMapCoords(Math::Vector3D n1, Math::Vector3D n2, Math::Vector3D n3);
+        void setNormalMapImage(const std::string& imgPath);
         void setMaterial(std::shared_ptr<ray::IMaterial> material);
 
         Math::Point3D getp1() const { return _p1;}
@@ -51,9 +56,16 @@ namespace ray {
         Math::Vector2D _uv1 = {0, 0};
         Math::Vector2D _uv2 = {1, 0};
         Math::Vector2D _uv3 = {0, 1};
+        Math::Vector3D _n1;
+        Math::Vector3D _n2;
+        Math::Vector3D _n3;
+        sf::Image _normalMap;
+        NormalType _normalType = NormalType::BASIC;
 
         Math::Vector3D _normal;
         Math::Vector3D _direction;
+
+        Math::Vector3D calcNormale(Math::Point3D coords) const;
     };
 
 }

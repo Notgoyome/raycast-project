@@ -36,17 +36,6 @@ namespace ray {
         SuperMaterial(
             double specularExponent,
             Math::Matrix<1, 3> ka,
-            Math::Matrix<1, 3> kd,
-            Math::Matrix<1, 3> ks,
-            Math::Matrix<1, 3> ke,
-            double refractionIndex,
-            double transparency,
-            double shadowQuality,
-            double ambiantOccQuality);
-        SuperMaterial(
-            const std::string& texturePath,
-            double specularExponent,
-            Math::Matrix<1, 3> ka,
             Math::Matrix<1, 3> ks,
             Math::Matrix<1, 3> ke,
             double refractionIndex,
@@ -61,6 +50,8 @@ namespace ray {
             const std::shared_ptr<ray::IScene>& scene) const override;
 
         void setSkybox();
+        void setKd(const std::string& texture);
+        void setKd(Math::Matrix<1, 3> kd);
     };
 
 }

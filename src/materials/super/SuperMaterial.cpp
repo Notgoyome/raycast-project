@@ -21,7 +21,6 @@ namespace ray {
     SuperMaterial::SuperMaterial(
         double specularExponent,
         Math::Matrix<1, 3> ka,
-        Math::Matrix<1, 3> kd,
         Math::Matrix<1, 3> ks,
         __attribute__((unused))Math::Matrix<1, 3> ke,
         double refractionIndex,
@@ -29,32 +28,6 @@ namespace ray {
         double shadowQuality,
         double ambiantOccQuality) : AMaterial(refractionIndex),
             _mode(SuperMaterialMode::NORMAL_KD),
-            _kd(kd),
-            _ka(ka),
-            _phong(
-                {},
-                0.05,
-                specularExponent,
-                shadowQuality,
-                ambiantOccQuality,
-                transparency,
-                ks
-            )
-    {
-    }
-
-    SuperMaterial::SuperMaterial(
-        const std::string& texturePath,
-        double specularExponent,
-        Math::Matrix<1, 3> ka,
-        Math::Matrix<1, 3> ks,
-        __attribute__((unused))Math::Matrix<1, 3> ke,
-        double refractionIndex,
-        double transparency,
-        double shadowQuality,
-        double ambiantOccQuality) : AMaterial(refractionIndex),
-            _mode(SuperMaterialMode::TEXTURE_KD),
-            _img(openImage(texturePath)),
             _ka(ka),
             _phong(
                 {},
@@ -113,4 +86,17 @@ namespace ray {
     {
         _phong.setIa(1);
     }
+
+    void SuperMaterial::setKd(const std::string &texture)
+    {
+        _img = openImage(texture);
+        _mode = SuperMaterialMode::TEXTURE_KD;
+    }
+
+    void SuperMaterial::setKd(Math::Matrix<1, 3> kd)
+    {
+        _kd = kd;
+        _mode = SuperMaterialMode::NORMAL_KD;
+    }
+
 }

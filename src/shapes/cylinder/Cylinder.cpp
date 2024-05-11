@@ -151,6 +151,8 @@ Maybe<PosShapePair> ray::Cylinder::hit(const ray::Ray &ray) const
 
 Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
 {
+    if (_material->hasNormalMap())
+        return _material->normalFromMap(getUVMapping(point));
     Math::Vector3D normal {0, 0, 0};
     if (_direction.X == 0)
         normal.X = point.X - _position.X;

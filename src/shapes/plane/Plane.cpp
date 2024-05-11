@@ -61,6 +61,8 @@ void ray::Plane::initValues()
 
 Math::Vector3D ray::Plane::getNormale(__attribute__((unused))const Math::Point3D& point, const ray::Ray& camRay) const
 {
+    if (_material->hasNormalMap())
+        return _material->normalFromMap(getUVMapping(point));
     if (_normale.dot(camRay.direction) > 0)
         return _normale * -1;
     return _normale;

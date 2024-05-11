@@ -13,45 +13,29 @@
 #include <vector>
 #include "math/MatrixN.hpp"
 #include "loadObjMaterials.h"
-
 #include "../../materials/super/SuperMaterial.hpp"
-
-// struct Material {
-//     std::string name;
-//     Math::Matrix<1, 3> Ka; // Ambient color
-//     Math::Matrix<1, 3> Kd; // Diffuse color
-//     Math::Matrix<1, 3> Ks; // Specular color
-//     float Ns = 0.0f; // Specular exponent
-//     float d = 1.0f;  // Dissolve or transparency
-//     int illum = 0;   // Illumination model
-//     float Ni = 1.0f; // Optical density
-// };
+#include <filesystem>
 
 std::shared_ptr<ray::IMaterial> materialToRayMaterial(Material mtl)
 {
-    if (mtl.type == TEXTURE)
-        return std::make_shared<ray::SuperMaterial>(
-            mtl.map_Kd,
-            mtl.Ns,
-            mtl.Ka,
-            mtl.Ks,
-            mtl.Ke,
-            mtl.Ni,
-            1 - mtl.d,
-            1,
-            0
-        );
-    return std::make_shared<ray::SuperMaterial>(
-            mtl.Ns,
-            mtl.Ka,
-            mtl.Kd,
-            mtl.Ks,
-            mtl.Ke,
-            mtl.Ni,
-            1 - mtl.d,
-            1,
-            0
-        );
+    std::shared_ptr<ray::SuperMaterial> mat = std::make_shared<ray::SuperMaterial>(
+        mtl.Ns,
+        mtl.Ka,
+        mtl.Ks,
+        mtl.Ke,
+        mtl.Ni,
+        1 - mtl.d,
+        1,
+        0
+    );
+
+    if (mtl.map_Kd.empty())
+        mat->setKd(mtl.Kd);
+    else
+        mat->setKd(mtl.map_Kd);
+    if (mtl.bump.empty() == false)
+        mat->setNormalMap(mtl.bump);
+    return mat;
 }
 
 std::map<std::string, std::shared_ptr<ray::IMaterial>> loadObjMaterials(const std::string& filename)
@@ -77,13 +61,17 @@ std::map<std::string, std::shared_ptr<ray::IMaterial>> loadObjMaterials(const st
                 currentMaterial = Material();
             }
             iss >> currentMaterial.name;
-        } else if (key == "map_Kd") {
+        } else if (key == "map_Kd" || key == "bump" || key == "map_bump") {
             std::string name;
             std::filesystem::path fullPath(filename);
-
-            currentMaterial.type = TEXTURE;
             iss >> name;
-            currentMaterial.map_Kd = fullPath.parent_path().generic_string() + "/" + name;
+            std::string path = fullPath.parent_path().generic_string() + "/" + name;
+
+            if (key == "map_Kd") {
+                currentMaterial.map_Kd = path;
+            } else {
+                currentMaterial.bump = path;
+            }
         } else if (key == "Ka" || key == "Kd" || key == "Ks" || key == "ke") {
             Math::Matrix<1, 3> color;
             iss >> color(0,0) >> color(0,1) >> color(0,2);

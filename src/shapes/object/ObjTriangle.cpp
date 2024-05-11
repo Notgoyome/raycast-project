@@ -54,11 +54,12 @@ namespace ray {
 
     Math::Vector3D ray::ObjTriangle::getNormale(const Math::Point3D& point, const ray::Ray& camRay) const
     {
-        (void)point;
+        Math::Vector3D thisNormale = calcNormale(point);
         Math::Vector3D camDir = camRay.direction;
-        if (_normal.dot(camDir) > 0)
-            return _normal * -1;
-        return _normal;
+
+        if (thisNormale.dot(camDir) > 0)
+            return thisNormale * -1;
+        return thisNormale;
     }
 
     ray::Ray ray::ObjTriangle::getRefraction(
@@ -67,7 +68,8 @@ namespace ray {
         Math::Vector3D dir) const
     {
         // WARNING: this only works when the Object is not a plane
-        Math::Vector3D refracted = dir.refract(_normal, 1, _material->getRefractionIndex());
+        Math::Vector3D thisNormale = calcNormale(pos);
+        Math::Vector3D refracted = dir.refract(thisNormale, 1, _material->getRefractionIndex());
         Ray refractedRay = {pos + refracted * 0.0001, refracted};
         Maybe<PosShapePair> hit = scene->hit(refractedRay);
 
@@ -80,29 +82,6 @@ namespace ray {
 
     Math::Vector2D ObjTriangle::getUVMapping(Math::Point3D coords) const
     {
-        // A -> p1
-        // B -> p2
-        // C -> p3
-        // Math::Vector3D AB = Math::Vector3D{_p2 - _p1};
-        // Math::Vector3D AC = Math::Vector3D{_p3 - _p1};
-        //
-        // Math::Vector3D PA = Math::Vector3D{_p1 - coords};
-        // Math::Vector3D PB = Math::Vector3D{_p2 - coords};
-        // Math::Vector3D PC = Math::Vector3D{_p3 - coords};
-        //
-        // double area = AB.product(AC).length() * (1.f / 2.f);
-        // double delta1 = PB.product(PC).length() / (2 * area);
-        // double delta2 = PC.product(PA).length() / (2 * area);
-        // double delta3 = PA.product(PB).length() / (2 * area);
-        //
-        // double sum = delta1 + delta2 + delta3;
-        // double finalD1 = delta1 / sum;
-        // double finalD2 = delta2 / sum;
-        // double finalD3 = delta3 / sum;
-        //
-        // double u = finalD1 * _uv1.first + finalD2 * _uv2.first + finalD3 * _uv3.first;
-        // double v = finalD1 * _uv1.second + finalD2 * _uv2.second + finalD3 * _uv3.second;
-        // return {u, v};
         Math::Vector3D v0 = _p2 - _p1, v1 = _p3 - _p1, v2 = coords - _p1;
         double d00 = v0.dot(v0);
         double d01 = v0.dot(v1);
@@ -143,19 +122,24 @@ namespace ray {
         _uv3 = uv3;
     }
 
-    void ray::ObjTriangle::setp1(Math::Point3D p1)
+    void ObjTriangle::setNormalMapCoords(Math::Vector3D n1, Math::Vector3D n2,
+        Math::Vector3D n3)
     {
-        _p1 = p1;
+        if (_normalType == NormalType::MAP)
+            return;
+        _n1 = n1;
+        _n2 = n2;
+        _n3 = n3;
+
+        _normalType = NormalType::VERTICES;
     }
 
-    void ray::ObjTriangle::setp2(Math::Point3D p2)
+    void ObjTriangle::setNormalMapImage(const std::string &imgPath)
     {
-        _p2 = p2;
-    }
-
-    void ray::ObjTriangle::setp3(Math::Point3D p3)
-    {
-        _p3 = p3;
+        if (!_normalMap.loadFromFile(imgPath)) {
+            throw ray::NodeError("IMaterial: Error happened while opening image at path [" + imgPath + "].", "TextureMaterial.cpp");
+        }
+        _normalType = NormalType::MAP;
     }
 
     void ray::ObjTriangle::setMaterial(std::shared_ptr<ray::IMaterial> material)
@@ -163,10 +147,34 @@ namespace ray {
         _material = material;
     }
 
+    Math::Vector3D ObjTriangle::calcNormale(Math::Point3D coords) const
+    {
+        if (_material->hasNormalMap()) {
+            return _material->normalFromMap(getUVMapping(coords));
+        }
+        if (_normalType == NormalType::BASIC) {
+            return _normal;
+        }
+
+        Math::Vector3D v0 = _p2 - _p1, v1 = _p3 - _p1, v2 = coords - _p1;
+
+        double d00 = v0.dot(v0);
+        double d01 = v0.dot(v1);
+        double d11 = v1.dot(v1);
+        double d20 = v2.dot(v0);
+        double d21 = v2.dot(v1);
+        double denom = d00 * d11 - d01 * d01;
+        double v = (d11 * d20 - d01 * d21) / denom;
+        double w = (d00 * d21 - d01 * d20) / denom;
+        double u = 1.0f - v - w;
+
+        return _n1 * u + _n2 * v + _n3 * w;
+    }
+
     Math::Point3D StringToPoint3D(std::string str)
     {
         Math::Point3D point;
-    // get the 3 values from the string
+        // get the 3 values from the string
         std::vector<std::string> values;
         std::string delimiter = ",";
         size_t pos = 0;

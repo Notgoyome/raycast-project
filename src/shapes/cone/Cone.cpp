@@ -59,7 +59,8 @@ Maybe<PosShapePair> ray::Cone::hit(const ray::Ray& ray) const
 
 Math::Vector3D ray::Cone::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
 {
-    (ray::Ray)camRay;
+    if (_material->hasNormalMap())
+        return _material->normalFromMap(getUVMapping(point));
     float r = sqrt(pow(point.X - center.X, 2) + pow(point.Z - center.Z, 2));
     Math::Vector3D normal = {point.X - center.X, r * tan(toRadians(_radius/_height)), point.Z - center.Z};
     return normal / normal.length();
