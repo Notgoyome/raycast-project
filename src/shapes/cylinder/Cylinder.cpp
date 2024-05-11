@@ -151,6 +151,15 @@ Maybe<PosShapePair> ray::Cylinder::hit(const ray::Ray &ray) const
     return Maybe<PosShapePair>{std::make_pair(hit, nullptr)};
 }
 
+Math::Point3D ray::Cylinder::getOrtho(const Math::Point3D& point) const
+{
+    Math::Vector3D dirNormalised = _direction / _direction.length();
+    double t = (dirNormalised.X * (point.X - _position.X) + dirNormalised.Y * (point.Y - _position.Y) + dirNormalised.Z * (point.Z - _position.Z))
+    / (dirNormalised.X * dirNormalised.X + dirNormalised.Y * dirNormalised.Y + dirNormalised.Z * dirNormalised.Z);
+    Math::Point3D ortho = {_position.X - t * dirNormalised.X, _position.Y - t * dirNormalised.Y, _position.Z - t * dirNormalised.Z};
+    return ortho;
+}
+
 Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
 {
     Math::Vector3D normal {0, 0, 0};
