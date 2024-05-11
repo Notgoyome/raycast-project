@@ -152,10 +152,20 @@ Maybe<PosShapePair> ray::Cylinder::hit(const ray::Ray &ray) const
 
 Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
 {
-    Math::Vector3D dirNormalised = _direction / _direction.length();
-    double t = (dirNormalised.X * (point.X - _position.X) + dirNormalised.Y * (point.Y - _position.Y) + dirNormalised.Z * (point.Z - _position.Z))/(dirNormalised.X * dirNormalised.X + dirNormalised.Y * dirNormalised.Y + dirNormalised.Z * dirNormalised.Z);
-    Math::Point3D ortho = {_position.X - t * dirNormalised.X, _position.Y - t * dirNormalised.Y, _position.Z - t * dirNormalised.Z};
-    Math::Vector3D normal = {point.X - ortho.X, point.Y - ortho.Y, point.Z - ortho.Z};
+    Math::Vector3D normal {0, 0, 0};
+    if (!_finite) {
+        if (_direction.X == 0)
+            normal.X = point.X - _position.X;
+        if (_direction.Y == 0)
+            normal.Y = point.Y - _position.Y;
+        if (_direction.Z == 0)
+            normal.Z = point.Z - _position.Z;
+    } else {
+        Math::Vector3D dirNormalised = _direction / _direction.length();
+        double t = (dirNormalised.X * (point.X - _position.X) + dirNormalised.Y * (point.Y - _position.Y) + dirNormalised.Z * (point.Z - _position.Z))/(dirNormalised.X * dirNormalised.X + dirNormalised.Y * dirNormalised.Y + dirNormalised.Z * dirNormalised.Z);
+        Math::Point3D ortho = {_position.X - t * dirNormalised.X, _position.Y - t * dirNormalised.Y, _position.Z - t * dirNormalised.Z};
+        Math::Vector3D normal = {point.X - ortho.X, point.Y - ortho.Y, point.Z - ortho.Z};
+    }
     return normal / normal.length();
 }
 
