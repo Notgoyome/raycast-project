@@ -8,6 +8,8 @@
 #ifndef SUPERMATERIAL_HPP
 #define SUPERMATERIAL_HPP
 
+#include <SFML/Graphics/Image.hpp>
+
 #include "../IMaterial.hpp"
 #include "INode.hpp"
 #include "RGB.hpp"
@@ -18,7 +20,14 @@
 
 namespace ray {
 
+    enum class SuperMaterialMode {
+        NORMAL_KD,
+        TEXTURE_KD
+    };
+
     class SuperMaterial : public ray::AMaterial {
+        SuperMaterialMode _mode;
+        sf::Image _img;
         Math::Matrix<1, 3> _kd;
         Math::Matrix<1, 3> _ka;
         Phong::Model _phong;
@@ -28,6 +37,16 @@ namespace ray {
             double specularExponent,
             Math::Matrix<1, 3> ka,
             Math::Matrix<1, 3> kd,
+            Math::Matrix<1, 3> ks,
+            Math::Matrix<1, 3> ke,
+            double refractionIndex,
+            double transparency,
+            double shadowQuality,
+            double ambiantOccQuality);
+        SuperMaterial(
+            const std::string& texturePath,
+            double specularExponent,
+            Math::Matrix<1, 3> ka,
             Math::Matrix<1, 3> ks,
             Math::Matrix<1, 3> ke,
             double refractionIndex,

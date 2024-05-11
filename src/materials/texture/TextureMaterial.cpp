@@ -46,7 +46,7 @@ namespace ray {
             uv = Math::Vector2D{0, 0};
         color = _img.getPixel(
             static_cast<unsigned int>(uv.first * _img.getSize().x) % _img.getSize().x,
-            static_cast<unsigned int>(uv.second * _img.getSize().y) % _img.getSize().y);
+            _img.getSize().y - static_cast<unsigned int>(uv.second * _img.getSize().y) % _img.getSize().y);
         if (recursion > REFLECTION_RECURSION_LIMIT)
             return {color.r, color.g, color.b};
         kd(0, 0) = static_cast<double>(color.r) / 255;

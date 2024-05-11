@@ -19,7 +19,6 @@ namespace ray {
     Maybe<PosShapePair> ray::ObjTriangle::hit(const ray::Ray &ray) const
     {
         Math::Vector3D v0v1 = {_p2.X - _p1.X, _p2.Y - _p1.Y, _p2.Z - _p1.Z};
-        Math::Vector3D v0v2 = {_p3.X - _p1.X, _p3.Y - _p1.Y, _p3.Z - _p1.Z};
 
         double nDotRayDirection = _normal.dot(ray.direction);
         if (std::abs(nDotRayDirection) < 0.0000001)
@@ -79,6 +78,48 @@ namespace ray {
         return {hit.value().first + refracted2 * 0.0001, refracted2};
     }
 
+    Math::Vector2D ObjTriangle::getUVMapping(Math::Point3D coords) const
+    {
+        // A -> p1
+        // B -> p2
+        // C -> p3
+        // Math::Vector3D AB = Math::Vector3D{_p2 - _p1};
+        // Math::Vector3D AC = Math::Vector3D{_p3 - _p1};
+        //
+        // Math::Vector3D PA = Math::Vector3D{_p1 - coords};
+        // Math::Vector3D PB = Math::Vector3D{_p2 - coords};
+        // Math::Vector3D PC = Math::Vector3D{_p3 - coords};
+        //
+        // double area = AB.product(AC).length() * (1.f / 2.f);
+        // double delta1 = PB.product(PC).length() / (2 * area);
+        // double delta2 = PC.product(PA).length() / (2 * area);
+        // double delta3 = PA.product(PB).length() / (2 * area);
+        //
+        // double sum = delta1 + delta2 + delta3;
+        // double finalD1 = delta1 / sum;
+        // double finalD2 = delta2 / sum;
+        // double finalD3 = delta3 / sum;
+        //
+        // double u = finalD1 * _uv1.first + finalD2 * _uv2.first + finalD3 * _uv3.first;
+        // double v = finalD1 * _uv1.second + finalD2 * _uv2.second + finalD3 * _uv3.second;
+        // return {u, v};
+        Math::Vector3D v0 = _p2 - _p1, v1 = _p3 - _p1, v2 = coords - _p1;
+        double d00 = v0.dot(v0);
+        double d01 = v0.dot(v1);
+        double d11 = v1.dot(v1);
+        double d20 = v2.dot(v0);
+        double d21 = v2.dot(v1);
+        double denom = d00 * d11 - d01 * d01;
+        double v = (d11 * d20 - d01 * d21) / denom;
+        double w = (d00 * d21 - d01 * d20) / denom;
+        double u = 1.0f - v - w;
+
+        return {
+            u * _uv1.first + v * _uv2.first + w * _uv3.first,
+            u * _uv1.second + v * _uv2.second + w * _uv3.second
+        };
+    }
+
     void ray::ObjTriangle::initNormale()
     {
         Math::Vector3D edge1 = {_p2.X - _p1.X, _p2.Y - _p1.Y, _p2.Z - _p1.Z};
@@ -92,6 +133,14 @@ namespace ray {
         _p1 = p1;
         _p2 = p2;
         _p3 = p3;
+    }
+
+    void ObjTriangle::setUvCoords(Math::Vector2D uv1, Math::Vector2D uv2,
+        Math::Vector2D uv3)
+    {
+        _uv1 = uv1;
+        _uv2 = uv2;
+        _uv3 = uv3;
     }
 
     void ray::ObjTriangle::setp1(Math::Point3D p1)

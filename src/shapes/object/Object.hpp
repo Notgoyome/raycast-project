@@ -40,10 +40,11 @@ namespace ray {
         std::vector<Math::Point3D> _points;
         std::vector<std::shared_ptr<ObjTriangle>> _triangles;
         std::vector<Math::Vector3D> _normals;
+        std::vector<Math::Vector2D> _uvValues;
         std::map<std::string, std::shared_ptr<ray::IMaterial>> _materials;
         std::string _objPath;
 
-        void parseFace(std::istringstream &ss);
+        void parseFace(std::istringstream &ss, std::string line, std::string file, std::shared_ptr<ray::IMaterial> currentMaterial);
     };
 
 }

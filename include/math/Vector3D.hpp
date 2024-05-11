@@ -13,6 +13,8 @@
 
 namespace Math {
 
+    class Point3D;
+
     class Vector3D {
     public:
         double X;
@@ -25,12 +27,14 @@ namespace Math {
 
         Vector3D(const Vector3D& other) = default;
         Vector3D(Vector3D&& other) = default;
+        Vector3D(Point3D point);
 
         ~Vector3D() = default;
 
         // OPERATORS
         Vector3D& operator=(const Vector3D& other) = default;
         Vector3D& operator=(Vector3D&& other) = default;
+        Vector3D& operator=(Point3D point);
 
         bool operator==(const Vector3D& other) const;
         bool operator!=(const Vector3D& other) const;

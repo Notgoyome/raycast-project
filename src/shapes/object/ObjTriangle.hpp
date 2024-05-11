@@ -11,10 +11,11 @@
 #include <map>
 #include <cmath>
 #include "Ray.hpp"
-#include "../../../include/Maybe.hpp"
+#include "Maybe.hpp"
 #include "../../scenes/base/Scene.hpp"
 #include "../../../src/shapes/AShape.hpp"
-#include "../../../include/math/Vector3D.hpp"
+#include "math/Vector3D.hpp"
+#include "math/Vector2D.hpp"
 
 namespace ray {
     class ObjTriangle : public ray::AShape {
@@ -30,9 +31,11 @@ namespace ray {
         ray::Ray getRefraction(
             const std::shared_ptr<ray::IScene>& scene,
             Math::Point3D pos, Math::Vector3D dir) const override;
+        Math::Vector2D getUVMapping(Math::Point3D coords) const override;
 
         void initNormale();
         void setPoint(Math::Point3D p1, Math::Point3D p2, Math::Point3D p3);
+        void setUvCoords(Math::Vector2D uv1, Math::Vector2D uv2, Math::Vector2D uv3);
         void setp1(Math::Point3D p1);
         void setp2(Math::Point3D p2);
         void setp3(Math::Point3D p3);
@@ -45,6 +48,9 @@ namespace ray {
         Math::Point3D _p1;
         Math::Point3D _p2;
         Math::Point3D _p3;
+        Math::Vector2D _uv1 = {0, 0};
+        Math::Vector2D _uv2 = {1, 0};
+        Math::Vector2D _uv3 = {0, 1};
 
         Math::Vector3D _normal;
         Math::Vector3D _direction;

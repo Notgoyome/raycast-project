@@ -29,6 +29,18 @@
 
 std::shared_ptr<ray::IMaterial> materialToRayMaterial(Material mtl)
 {
+    if (mtl.type == TEXTURE)
+        return std::make_shared<ray::SuperMaterial>(
+            mtl.map_Kd,
+            mtl.Ns,
+            mtl.Ka,
+            mtl.Ks,
+            mtl.Ke,
+            mtl.Ni,
+            1 - mtl.d,
+            1,
+            0
+        );
     return std::make_shared<ray::SuperMaterial>(
             mtl.Ns,
             mtl.Ka,
@@ -65,6 +77,13 @@ std::map<std::string, std::shared_ptr<ray::IMaterial>> loadObjMaterials(const st
                 currentMaterial = Material();
             }
             iss >> currentMaterial.name;
+        } else if (key == "map_Kd") {
+            std::string name;
+            std::filesystem::path fullPath(filename);
+
+            currentMaterial.type = TEXTURE;
+            iss >> name;
+            currentMaterial.map_Kd = fullPath.parent_path().generic_string() + "/" + name;
         } else if (key == "Ka" || key == "Kd" || key == "Ks" || key == "ke") {
             Math::Matrix<1, 3> color;
             iss >> color(0,0) >> color(0,1) >> color(0,2);

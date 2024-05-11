@@ -33,13 +33,13 @@ void ray::Cylinder::setPosition()
 
 void ray::Cylinder::setDirection()
 {
-    _direction = {0, 1, 0};
+    _direction = Math::Vector3D{0, 1, 0};
     Math::Matrix rotation = getRotation();
     std::vector<std::vector<double>> values = {{0}, {1}, {0}};
     Math::Matrix<3, 1> iniDirection(values);
     Math::Matrix result = rotation * iniDirection;
     _direction = Math::Vector3D(result(0, 0), result(1, 0), result(2, 0));
-    _direction = {0, 0, -1};
+    _direction = Math::Vector3D{0, 0, -1};
 }
 
 void ray::Cylinder::setFinite(bool finite)
