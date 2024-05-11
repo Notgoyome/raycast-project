@@ -29,6 +29,7 @@ void ray::Cylinder::setDimensions()
 void ray::Cylinder::setPosition()
 {
     _position = Scene::getPosition(*this);
+    _position.Y = -_position.Y;
 }
 
 void ray::Cylinder::setDirection()
@@ -39,7 +40,7 @@ void ray::Cylinder::setDirection()
     Math::Matrix<3, 1> iniDirection(values);
     Math::Matrix result = rotation * iniDirection;
     _direction = Math::Vector3D(result(0, 0), result(1, 0), result(2, 0));
-    _direction = Math::Vector3D{0, 0, -1};
+    _direction = _direction / _direction.length();
 }
 
 void ray::Cylinder::setFinite(bool finite)
@@ -101,8 +102,16 @@ Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
     double root1 = (-b + sqrt(det)) / (2 * a);
     double root2 = (-b - sqrt(det)) / (2 * a);
 
-    Math::Point3D pos1 = {(ray.origin.X + ray.direction.X * root1), (ray.origin.Y + ray.direction.Y * root1), (ray.origin.Z + ray.direction.Z * root1)};
-    Math::Point3D pos2 = {(ray.origin.X + ray.direction.X * root2), (ray.origin.Y + ray.direction.Y * root2), (ray.origin.Z + ray.direction.Z * root2)};
+    Math::Point3D pos1 = {
+        (ray.origin.X + ray.direction.X * root1),
+        (ray.origin.Y + ray.direction.Y * root1),
+        (ray.origin.Z + ray.direction.Z * root1)
+        };
+    Math::Point3D pos2 = {
+        (ray.origin.X + ray.direction.X * root2),
+        (ray.origin.Y + ray.direction.Y * root2),
+        (ray.origin.Z + ray.direction.Z * root2)
+        };
 
     if (isBehind(pos1, ray.origin, ray.direction))
         return pos2;
@@ -117,6 +126,23 @@ Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
     return pos2;
 }
 
+bool ray::Cylinder::cutCylinder(const Math::Point3D &hit) const
+{
+    Math::Point3D ortho = getOrtho(hit);
+    Math::Vector3D dirOrtho = {ortho.X - _position.X, ortho.Y - _position.Y, ortho.Z - _position.Z};
+    dirOrtho = dirOrtho / dirOrtho.length();
+    if (dirOrtho != _direction)
+        return false;
+    Math::Point3D end = {
+        _position.X + _direction.X * _height,
+        _position.Y + _direction.Y * _height,
+        _position.Z + _direction.Z * _height
+        };
+    if (ortho.X < end.X || ortho.Y > end.Y || ortho.Z < end.Z)
+        return false;
+    return true;
+}
+
 Maybe<PosShapePair> ray::Cylinder::hit(const ray::Ray &ray) const
 {
     double a = calcA(ray.direction, _direction);
@@ -127,26 +153,19 @@ Maybe<PosShapePair> ray::Cylinder::hit(const ray::Ray &ray) const
         return {};
     Math::Point3D hit = getClosestRoot(a, b, det, ray);
     if (_finite == true) {
-        if (_direction.X != 0) {
-            if (_direction.X > 0 && (hit.X < _position.X || hit.X > _position.X + _height))
-                return {};
-            else if (_direction.X < 0 && (hit.X > _position.X || hit.X < _position.X - _height))
-                return {};
-        }
-        if (_direction.Y != 0) {
-            if (_direction.Y > 0 && (hit.Y > _position.Y || hit.Y < _position.Y - _height))
-                return {};
-            else if (_direction.Y < 0 && (hit.Y < _position.Y || hit.Y > _position.Y + _height))
-                return {};
-        }
-        if (_direction.Z != 0) {
-            if (_direction.Z > 0 && (hit.Z < _position.Z || hit.Z > _position.Z + _height))
-                return {};
-            else if (_direction.Z < 0 && (hit.Z > _position.Z || hit.Z < _position.Z - _height))
-                return {};
-        }
+        if (!cutCylinder(hit))
+            return {};
     }
     return Maybe<PosShapePair>{std::make_pair(hit, nullptr)};
+}
+
+Math::Point3D ray::Cylinder::getOrtho(const Math::Point3D& point) const
+{
+    Math::Vector3D dirNormalised = _direction / _direction.length();
+    double t = (dirNormalised.X * (point.X - _position.X) + dirNormalised.Y * (point.Y - _position.Y) + dirNormalised.Z * (point.Z - _position.Z))
+    / (dirNormalised.X * dirNormalised.X + dirNormalised.Y * dirNormalised.Y + dirNormalised.Z * dirNormalised.Z);
+    Math::Point3D ortho = {_position.X - t * dirNormalised.X, _position.Y - t * dirNormalised.Y, _position.Z - t * dirNormalised.Z};
+    return ortho;
 }
 
 Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
@@ -154,12 +173,22 @@ Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute
     if (_material->hasNormalMap())
         return _material->normalFromMap(getUVMapping(point));
     Math::Vector3D normal {0, 0, 0};
-    if (_direction.X == 0)
-        normal.X = point.X - _position.X;
-    if (_direction.Y == 0)
-        normal.Y = point.Y - _position.Y;
-    if (_direction.Z == 0)
-        normal.Z = point.Z - _position.Z;
+    if (!_finite) {
+        if (_direction.X == 0)
+            normal.X = point.X - _position.X;
+        if (_direction.Y == 0)
+            normal.Y = point.Y - _position.Y;
+        if (_direction.Z == 0)
+            normal.Z = point.Z - _position.Z;
+    } else {
+        Math::Vector3D dirNormalised = _direction / _direction.length();
+        double t = (dirNormalised.X * (point.X - _position.X) + dirNormalised.Y * (point.Y - _position.Y) + dirNormalised.Z * (point.Z - _position.Z))
+        / (dirNormalised.X * dirNormalised.X + dirNormalised.Y * dirNormalised.Y + dirNormalised.Z * dirNormalised.Z);
+        Math::Point3D ortho = {_position.X - t * dirNormalised.X, _position.Y - t * dirNormalised.Y, _position.Z - t * dirNormalised.Z};
+        normal.X = point.X - ortho.X;
+        normal.Y = point.Y - ortho.Y;
+        normal.Z = point.Z - ortho.Z;
+    }
     return normal / normal.length();
 }
 
