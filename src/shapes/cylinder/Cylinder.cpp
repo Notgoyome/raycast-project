@@ -29,6 +29,7 @@ void ray::Cylinder::setDimensions()
 void ray::Cylinder::setPosition()
 {
     _position = Scene::getPosition(*this);
+    _position.Y = -_position.Y;
 }
 
 void ray::Cylinder::setDirection()
