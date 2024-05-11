@@ -9,8 +9,24 @@
 #include <cmath>
 #include <algorithm>
 #include <stdexcept>
+#include "math/Point3D.hpp"
 
 namespace Math {
+    Vector3D::Vector3D(Point3D point)
+    {
+        X = point.X;
+        Y = point.Y;
+        Z = point.Z;
+    }
+
+    Vector3D & Vector3D::operator=(Math::Point3D point)
+    {
+        this->X = point.X;
+        this->Y = point.Y;
+        this->Z = point.Z;
+        return *this;
+    }
+
     bool Vector3D::operator==(const Vector3D &other) const
     {
         return X == other.X && Y == other.Y && Z == other.Z;

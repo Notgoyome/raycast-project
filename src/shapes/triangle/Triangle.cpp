@@ -76,6 +76,34 @@ void ray::Triangle::setPoint(Math::Point3D p1, Math::Point3D p2, Math::Point3D p
     _p3 = p3;
 }
 
+Math::Vector2D ray::Triangle::getUVMapping(Math::Point3D coords) const
+{
+    // A -> p1
+    // B -> p2
+    // C -> p3
+    Math::Vector3D AB = Math::Vector3D{_p2 - _p1};
+    Math::Vector3D AC = Math::Vector3D{_p3 - _p1};
+
+    Math::Vector3D PA = Math::Vector3D{_p1 - coords};
+    Math::Vector3D PB = Math::Vector3D{_p2 - coords};
+    Math::Vector3D PC = Math::Vector3D{_p3 - coords};
+
+    double area = AB.product(AC).length() * (1.f / 2.f);
+    double delta1 = PB.product(PC).length() / (2 * area);
+    double delta2 = PC.product(PA).length() / (2 * area);
+    double delta3 = PA.product(PB).length() / (2 * area);
+
+    double sum = delta1 + delta2 + delta3;
+    // double finalD1 = delta1 / sum; -> useless
+    double finalD2 = delta2 / sum;
+    double finalD3 = delta3 / sum;
+
+    // We consider A -> (0,0), B -> (1,0), C -> (0,1)
+    double u = finalD2;
+    double v = finalD3;
+    return {u, v};
+}
+
 Math::Point3D StringToPoint3D(std::string str)
 {
     Math::Point3D point;

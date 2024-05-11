@@ -217,3 +217,5 @@ add_dependencies(raytracer
 )
 
 target_link_libraries(materials_texture sfml-graphics sfml-window sfml-system)
+target_link_libraries(shapes_object sfml-graphics sfml-window sfml-system)
+target_link_libraries(materials_super sfml-graphics sfml-window sfml-system)

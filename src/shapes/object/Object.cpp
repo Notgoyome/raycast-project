@@ -4,6 +4,7 @@
 
 #include "Object.hpp"
 #include <utils/getClosest.h>
+#include <regex>
 
 void ray::Object::initValues()
 {
@@ -44,7 +45,8 @@ void ray::Object::parse(std::string objPath)
         ss >> type;
         if (type == "mtllib") {
             ss >> type;
-            _materials = loadObjMaterials("config_files/" + type);
+            std::filesystem::path fullPath(objPath);
+            _materials = loadObjMaterials(fullPath.parent_path().generic_string() + "/" + type);
         }
         if (type == "usemtl") {
             ss >> type;
@@ -54,25 +56,18 @@ void ray::Object::parse(std::string objPath)
         if (type == "v") {
             _points.push_back(PointMatrix(createPoint(ss), _transformMatrix));
         }
-        if (type == "f") {
-            std::string temp;
-            std::vector<int> indices;
-            while (ss >> temp) {
-                indices.push_back(std::stoi(temp) - 1);
-                ss.ignore(1);
-            }
-            for (int i = 0; i < static_cast<int>(indices.size()) - 2; i++) {
-                std::shared_ptr<ObjTriangle> triangle = std::make_shared<ObjTriangle>();
-                triangle->setPoint(_points[indices[0]], _points[indices[i + 1]], _points[indices[i + 2]]);
-                triangle->initNormale();
-                triangle->setMaterial(currentMaterial);
-                _triangles.push_back(triangle);
-            }
-        }
         if (type == "vn") {
             Math::Vector3D normal;
             ss >> normal.X >> normal.Y >> normal.Z;
             _normals.push_back(normal);
+        }
+        if (type == "vt") {
+            Math::Vector2D uvT = {0, 0};
+            ss >> uvT.first >> uvT.second;
+            _uvValues.push_back(uvT);
+        }
+        if (type == "f") {
+            parseFace(ss, line, objPath, currentMaterial);
         }
     }
     std::cout << "Loaded file: " + objPath << ". Number of polygons: " << _triangles.size() << std::endl;
@@ -121,11 +116,46 @@ ray::Ray ray::Object::getRefraction(
     return {pos + dir * 0.0001, dir};
 }
 
+void ray::Object::parseFace(std::istringstream &ss, std::string line, std::string file, std::shared_ptr<ray::IMaterial> currentMaterial)
+{
+    std::vector<Math::Vector3D> indices;
+    std::regex pattern(R"((\d+)([/](\d+)?)?([/](\d+))?)");
+    std::string temp;
+
+    while (ss >> temp) {
+        std::smatch matches;
+
+        if (std::regex_match(temp, matches, pattern)) {
+            Math::Vector3D tempVec = {-1, -1, -1};
+            if (matches[1].matched)
+                tempVec.X = std::stoi(matches[1]) - 1;
+            if (matches[3].matched)
+                tempVec.Y = std::stoi(matches[3]) - 1;
+            if (matches[5].matched)
+                tempVec.Z = std::stoi(matches[5]) - 1;
+            indices.push_back(tempVec);
+        } else {
+            throw NodeError("IMaterial: Parse error in OBJ file [" + file + "]. Line [" + line + "] does not match Regex.", "Object.cpp");
+        }
+    }
+
+    for (int i = 0; i < static_cast<int>(indices.size()) - 2; i++) {
+        std::shared_ptr<ObjTriangle> triangle = std::make_shared<ObjTriangle>();
+        triangle->setPoint(_points[(int)indices[0].X], _points[(int)indices[i + 1].X], _points[(int)indices[i + 2].X]);
+
+        if (indices[0].Y != -1 && indices[i + 1].Y != -1 && indices[i + 2].Y != -1)
+            triangle->setUvCoords(_uvValues[(int)indices[0].Y], _uvValues[(int)indices[i + 1].Y], _uvValues[(int)indices[i + 2].Y]);
+        triangle->initNormale();
+        triangle->setMaterial(currentMaterial);
+        _triangles.push_back(triangle);
+    }
+}
+
 extern "C" ray::INode *create(std::map<std::string, std::string> &attributes)
 {
     if (attributes.find("path") == attributes.end())
         throw std::runtime_error("Object node must have a path attribute\n");
-    ray::Object *object = new ray::Object();
+    auto *object = new ray::Object();
     object->setPath(attributes.at("path"));
     return object;
 }

@@ -34,7 +34,7 @@ void ray::Cylinder::setPosition()
 
 void ray::Cylinder::setDirection()
 {
-    _direction = {0, 1, 0};
+    _direction = Math::Vector3D{0, 1, 0};
     Math::Matrix rotation = getRotation();
     std::vector<std::vector<double>> values = {{0}, {1}, {0}};
     Math::Matrix<3, 1> iniDirection(values);
@@ -102,8 +102,16 @@ Math::Point3D getClosestRoot(double a, double b, double det, ray::Ray ray)
     double root1 = (-b + sqrt(det)) / (2 * a);
     double root2 = (-b - sqrt(det)) / (2 * a);
 
-    Math::Point3D pos1 = {(ray.origin.X + ray.direction.X * root1), (ray.origin.Y + ray.direction.Y * root1), (ray.origin.Z + ray.direction.Z * root1)};
-    Math::Point3D pos2 = {(ray.origin.X + ray.direction.X * root2), (ray.origin.Y + ray.direction.Y * root2), (ray.origin.Z + ray.direction.Z * root2)};
+    Math::Point3D pos1 = {
+        (ray.origin.X + ray.direction.X * root1),
+        (ray.origin.Y + ray.direction.Y * root1),
+        (ray.origin.Z + ray.direction.Z * root1)
+        };
+    Math::Point3D pos2 = {
+        (ray.origin.X + ray.direction.X * root2),
+        (ray.origin.Y + ray.direction.Y * root2),
+        (ray.origin.Z + ray.direction.Z * root2)
+        };
 
     if (isBehind(pos1, ray.origin, ray.direction))
         return pos2;
@@ -172,9 +180,12 @@ Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute
             normal.Z = point.Z - _position.Z;
     } else {
         Math::Vector3D dirNormalised = _direction / _direction.length();
-        double t = (dirNormalised.X * (point.X - _position.X) + dirNormalised.Y * (point.Y - _position.Y) + dirNormalised.Z * (point.Z - _position.Z))/(dirNormalised.X * dirNormalised.X + dirNormalised.Y * dirNormalised.Y + dirNormalised.Z * dirNormalised.Z);
+        double t = (dirNormalised.X * (point.X - _position.X) + dirNormalised.Y * (point.Y - _position.Y) + dirNormalised.Z * (point.Z - _position.Z))
+        / (dirNormalised.X * dirNormalised.X + dirNormalised.Y * dirNormalised.Y + dirNormalised.Z * dirNormalised.Z);
         Math::Point3D ortho = {_position.X - t * dirNormalised.X, _position.Y - t * dirNormalised.Y, _position.Z - t * dirNormalised.Z};
-        normal = {point.X - ortho.X, point.Y - ortho.Y, point.Z - ortho.Z};
+        normal.X = point.X - ortho.X;
+        normal.Y = point.Y - ortho.Y;
+        normal.Z = point.Z - ortho.Z;
     }
     return normal / normal.length();
 }

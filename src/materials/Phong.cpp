@@ -106,7 +106,7 @@ RGB getLightColor(const std::shared_ptr<ray::ILight>& light,
         actualRotation = rotateVectorAlong(perpendicular, lightRay.direction, 2 * M_PI * angle / nbAngles);
         for (int scale = 1; scale <= nbScales; scale++) {
             ray.origin = lightRay.origin + actualRotation * (scale * 1.5);
-            ray.direction = {ray.origin.X - pos.X, ray.origin.Y - pos.Y, ray.origin.Z - pos.Z};
+            ray.direction = ray.origin - pos;
             if (hitsBefore(scene, pos, ray) == false)
                 nbHits++;
         }
@@ -165,7 +165,7 @@ RGB getReflection(const std::shared_ptr<ray::IScene>& scene,
         collision = maybeHit.value().first;
         shape = maybeHit.value().second;
         reflectNormale = shape->getNormale(collision, ray);
-        reflectView = {pos.X - collision.X, pos.Y - collision.Y, pos.Z - collision.Z};
+        reflectView = pos - collision;
         reflectView /= reflectView.length();
         contribution = reflectNormale.dot(reflectView);
         contribution = contribution < 0 ? 0 : contribution;

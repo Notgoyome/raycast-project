@@ -54,7 +54,7 @@ void ray::Plane::initValues()
     tempNormale(2,0) = 0;
     tempNormale(3,0) = 0;
     tempNormale = _transformMatrix * tempNormale;
-    _normale = { tempNormale(0,0), tempNormale(1,0), tempNormale(2,0) };
+    _normale = Math::Vector3D{ tempNormale(0,0), tempNormale(1,0), tempNormale(2,0) };
     _u = getPerpendicularVector(_normale);
     _v = rotateVectorAlong(_u, _normale, M_PI / 2);
 }
