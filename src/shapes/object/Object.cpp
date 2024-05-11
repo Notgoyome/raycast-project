@@ -68,19 +68,6 @@ void ray::Object::parse(std::string objPath)
         }
         if (type == "f") {
             parseFace(ss, line, objPath, currentMaterial);
-            // std::string temp;
-            // std::vector<int> indices;
-            // while (ss >> temp) {
-            //     indices.push_back(std::stoi(temp) - 1);
-            //     ss.ignore(1);
-            // }
-            // for (int i = 0; i < static_cast<int>(indices.size()) - 2; i++) {
-            //     std::shared_ptr<ObjTriangle> triangle = std::make_shared<ObjTriangle>();
-            //     triangle->setPoint(_points[indices[0]], _points[indices[i + 1]], _points[indices[i + 2]]);
-            //     triangle->initNormale();
-            //     triangle->setMaterial(currentMaterial);
-            //     _triangles.push_back(triangle);
-            // }
         }
     }
     std::cout << "Loaded file: " + objPath << ". Number of polygons: " << _triangles.size() << std::endl;
