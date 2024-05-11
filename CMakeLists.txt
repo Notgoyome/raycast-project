@@ -88,7 +88,8 @@ add_library(materials_basic SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_S
 add_library(materials_perlin SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/perlin/PerlinMaterial.cpp)
 add_library(materials_chessboard SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/chessboard/ChessMaterial.cpp)
 add_library(materials_glass SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/glass/GlassMaterial.cpp)
-add_library(materials_super SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/super/SuperMaterial.cpp)
+add_library(materials_super SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/super/SuperMaterial.cpp
+        src/materials/super/createSuperMaterial.cpp)
 add_library(materials_texture SHARED ${MATERIAL_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/materials/texture/TextureMaterial.cpp)
 add_library(transformations_rotation SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/rotation/Rotation.cpp)
 add_library(transformations_scale SHARED ${TRANSFORMATION_SOURCES} ${NODE_SOURCES} ${SCENE_SOURCES} ${MATH_SOURCES} src/transformations/scale/Scale.cpp)
@@ -217,5 +218,9 @@ add_dependencies(raytracer
 )
 
 target_link_libraries(materials_texture sfml-graphics sfml-window sfml-system)
-target_link_libraries(shapes_object sfml-graphics sfml-window sfml-system)
 target_link_libraries(materials_super sfml-graphics sfml-window sfml-system)
+target_link_libraries(materials_basic sfml-graphics sfml-window sfml-system)
+target_link_libraries(materials_chessboard sfml-graphics sfml-window sfml-system)
+target_link_libraries(materials_glass sfml-graphics sfml-window sfml-system)
+target_link_libraries(materials_perlin sfml-graphics sfml-window sfml-system)
+target_link_libraries(shapes_object sfml-graphics sfml-window sfml-system)
