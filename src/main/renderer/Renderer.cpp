@@ -54,15 +54,16 @@ void ray::Renderer::renderPpmImage(Image image, std::string filename)
 void ray::Renderer::renderSfmlImage(Image &image)
 {
     this->getSize(image.getMap());
-    _window.create(sf::VideoMode(_width, _height), "Raytracer", sf::Style::Close);
     if (!_window.isOpen())
-        throw std::runtime_error("Failed to create window");
+        _window.create(sf::VideoMode(_width, _height), "Raytracer", sf::Style::Close);
     _window.clear();
     this->drawPixels(image);
     _window.display();
     while (_window.isOpen()) {
         while (_window.pollEvent(_event)) {
             if (_event.type == sf::Event::Closed)
+                _window.close();
+            if (_event.type == sf::Event::KeyPressed && _event.key.code == sf::Keyboard::Escape)
                 _window.close();
         }
     }
