@@ -46,7 +46,7 @@ bool hitsBefore(const std::vector<std::shared_ptr<ray::IShape>>& objects, Math::
     for (const std::shared_ptr<ray::IShape>& object : objects) {
         Maybe<PosShapePair> maybePos = object->hit(ray);
 
-        if (maybePos.has_value() && isBehind(maybePos.value().first, ray.origin, ray.direction * -1) == false)
+        if (maybePos.has_value() && isBehind(maybePos.value().first, ray.origin, ray.direction) == false)
             hits.push_back(maybePos.value().first);
     }
     Math::Point3D closest = roundPoint(getClosest(hits, ray.origin));
@@ -106,7 +106,8 @@ RGB getLightColor(const std::shared_ptr<ray::ILight>& light,
         actualRotation = rotateVectorAlong(perpendicular, lightRay.direction, 2 * M_PI * angle / nbAngles);
         for (int scale = 1; scale <= nbScales; scale++) {
             ray.origin = lightRay.origin + actualRotation * (scale * 1.5);
-            ray.direction = ray.origin - pos;
+            ray.direction = pos - ray.origin;
+            ray.direction /= ray.direction.length();
             if (hitsBefore(scene, pos, ray) == false)
                 nbHits++;
         }
