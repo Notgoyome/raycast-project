@@ -16,6 +16,16 @@
 #include "utils/mainMethods.hpp"
 #include "pixelization/Pixelize.hpp"
 #include "anti_aliasing/Aliasing.hpp"
+#include "TSQueue.hpp"
+
+std::pair<std::pair<int, int>, std::pair<int, int>> getImageIterators(image_data_t imgData)
+{
+    auto biggest = static_cast<unsigned int>(std::max(imgData.width, imgData.height));
+    unsigned int startJ = biggest == imgData.height ? 0 : static_cast<unsigned int>(static_cast<float>(biggest - imgData.height) / 2.f);
+    unsigned int startI = biggest == imgData.width ? 0 : static_cast<unsigned int>(static_cast<float>(biggest - imgData.width) / 2.f);
+
+    return {{startI, biggest - startI}, {startJ, biggest - startJ}};
+}
 
 Image mergeImages(const std::vector<Image>& images)
 {
@@ -29,29 +39,21 @@ Image mergeImages(const std::vector<Image>& images)
     return mergedImage;
 }
 
-Image render(unsigned int width, unsigned int height,
+Image render(Image img,
+    unsigned int biggest,
+    unsigned int line,
+    unsigned int startJ,
+    unsigned int endJ,
     const std::shared_ptr<ray::IScene>& scene,
-    const std::shared_ptr<ray::ICamera>& cam,
-    unsigned int startRow, unsigned int endRow)
+    const std::shared_ptr<ray::ICamera>& cam)
 {
     RGB backgroundColor = scene->getBackgroundColor();
-    Image img;
-    auto biggest = static_cast<unsigned int>(std::max(width, height));
-    unsigned int startI = biggest == width ? 0 : static_cast<unsigned int>(static_cast<float>(biggest - width) / 2.f);
-    unsigned int startJ = biggest == height ? 0 : static_cast<unsigned int>(static_cast<float>(biggest - height) / 2.f);
 
-    startRow += startJ;
-    endRow += startJ;
-    for (unsigned int i = startI; i < biggest - startI; i++) {
-        if (i < startRow || i >= endRow) continue;
-
-        for (unsigned int j = startJ; j < biggest - startJ; j++) {
-            double u = double(i) / biggest;
-            double v = double(j) / biggest;
-            RGB color = ray::RayTracerUtils::renderPixel(scene, cam, u, v, backgroundColor);
-            img.addPixel(Math::Vector2D{static_cast<double>(i - startI), static_cast<double>(j - startJ)}, color);
-        }
-        std::cout << "Rendering: " << i - startI << "/" << width << std::endl;
+    for (unsigned int j = startJ; j < endJ; j++) {
+        double u = double(line) / biggest;
+        double v = double(j) / biggest;
+        RGB color = ray::RayTracerUtils::renderPixel(scene, cam, u, v, backgroundColor);
+        img.addPixel(Math::Vector2D{static_cast<double>(line), static_cast<double>(j - startJ)}, color);
     }
     return img;
 }
@@ -61,23 +63,31 @@ void handleSingleFile(const char *filename)
     unsigned int numThreads = std::thread::hardware_concurrency();
     std::vector<std::thread> threads(numThreads);
     std::vector<Image> images(numThreads);
-
     ray::NodeBuilder builder(filename);
     const auto& nodes = builder.getRootNodes();
+    std::shared_ptr<ray::IScene> scene;
+    std::shared_ptr<ray::ICamera> camera;
+    TSQueue<unsigned int> queue;
+    image_data_t imageData = builder.getImageData();
+    auto biggest = static_cast<unsigned int>(std::max(imageData.width, imageData.height));
+    auto [iterI, iterJ] = getImageIterators(imageData);
+
     if (nodes.empty())
         throw ray::CoreException("No root nodes found in the scene file.");
-    image_data_t imageData = builder.getImageData();
-    std::shared_ptr<ray::IScene> scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
+    scene = std::dynamic_pointer_cast<ray::IScene>(ray::RayTracerUtils::getScene(nodes));
     scene->initValues();
-    std::shared_ptr<ray::ICamera> camera = ray::RayTracerUtils::getCamera(scene);
+    camera = ray::RayTracerUtils::getCamera(scene);
 
+    for (unsigned int i = iterI.first; i < imageData.width - iterI.first; i++)
+        queue.push(i);
     for (unsigned int i = 0; i < numThreads; ++i) {
         threads[i] = std::thread([&, i]() {
-            unsigned int partHeight = imageData.height / numThreads;
-            unsigned int startRow = i * partHeight;
-            unsigned int endRow = (i == numThreads - 1) ? imageData.height : startRow + partHeight;
-
-            images[i] = render(imageData.width, imageData.height, scene, camera, startRow, endRow);
+            while (queue.size()) {
+                unsigned int line = queue.pop();
+                std::cout << "Rendering line " << line - iterI.first + 1 << "/" << iterI.second;
+                std::cout << " with thread #" << i + 1 << std::endl;
+                images[i] = render(images[i], biggest, line, iterJ.first, iterJ.second, scene, camera);
+            }
         });
     }
 

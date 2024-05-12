@@ -34,6 +34,7 @@ add_executable(raytracer
         src/utils/isBehind.cpp
         src/main/pixelization/Pixelize.cpp
         src/main/anti_aliasing/Aliasing.cpp
+        include/TSQueue.hpp
 )
 
 target_link_libraries(raytracer sfml-graphics sfml-window sfml-system config++)
