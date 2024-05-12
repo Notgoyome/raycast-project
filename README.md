@@ -89,7 +89,7 @@ Des fichiers de configurations sont disponibles dans le dossier "config_files". 
 
 ![Face](./documentation/images/face.png)
 
-![Reflection](./documentation/images/reflection.ppm)
+![Reflection](./documentation/images/reflection.png)
 
 ![Effect](./documentation/images/effect.png)
 
