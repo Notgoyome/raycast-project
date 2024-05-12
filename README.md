@@ -85,8 +85,6 @@ Pour avoir un fichier de configuration complet, il faut implémenter les parts :
 
 Des fichiers de configurations sont disponibles dans le dossier "config_files". Les possibilités du Raytracer sont infinies mais voici quelques exemples rendus avec le programme :
 
-![Occlusion ambiante](./documentation/images/ambiant_occ.ppm)
-
 ![Hat](./documentation/images/hat.png)
 
 ![Face](./documentation/images/face.png)
