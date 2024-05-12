@@ -63,7 +63,7 @@ void ray::Renderer::renderSfmlImage(Image &image)
         while (_window.pollEvent(_event)) {
             if (_event.type == sf::Event::Closed)
                 _window.close();
-            if (_event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+            if (_event.type == sf::Event::KeyPressed && _event.key.code == sf::Keyboard::Escape)
                 _window.close();
         }
     }
