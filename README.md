@@ -95,9 +95,6 @@ Les possibilités du Raytracer sont infinies mais voici quelques exemples rendus
 </p>
 <p float="left">
   <img src="./documentation/images/dragon.png" width="400" />
-  <img src="./documentation/images/revert.png" width="400" /> 
-</p>
-<p float="left">
   <img src="./documentation/images/piano.png" width="400" />
 </p>
 
@@ -110,7 +107,5 @@ Les possibilités du Raytracer sont infinies mais voici quelques exemples rendus
 ![Effect](./documentation/images/effect.png)
 
 ![Dragon](./documentation/images/dragon.png)
-
-![Revert](./documentation/images/revert.png)
 
 ![Piano](./documentation/images/piano.png)
