@@ -83,7 +83,9 @@ Pour avoir un fichier de configuration complet, il faut implémenter les parts :
 
 ## Exemples :
 
-Des fichiers de configurations sont disponibles dans le dossier "config_files". Les possibilités du Raytracer sont infinies mais voici quelques exemples rendus avec le programme :
+*Des fichiers de configurations sont disponibles dans le dossier "config_files" à des fins de test.*
+
+Les possibilités du Raytracer sont infinies mais voici quelques exemples rendus avec le programme :
 
 ![Hat](./documentation/images/hat.png)
 
