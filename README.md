@@ -91,6 +91,8 @@ Des fichiers de configurations sont disponibles dans le dossier "config_files". 
 
 ![Face](./documentation/images/face.png)
 
+![Reflection](./documentation/images/reflection.ppm)
+
 ![Effect](./documentation/images/effect.png)
 
 ![Dragon](./documentation/images/dragon.png)
