@@ -30,6 +30,7 @@ namespace ray {
 
         void setPoint(Math::Point3D p1, Math::Point3D p2, Math::Point3D p3);
         Math::Vector2D getUVMapping(Math::Point3D coords) const override;
+        void initPoints();
 
     private:
         Math::Point3D _p1;
@@ -37,7 +38,6 @@ namespace ray {
         Math::Point3D _p3;
 
         Math::Vector3D _normal;
-        Math::Vector3D _direction;
     };
 
 }

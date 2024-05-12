@@ -7,7 +7,8 @@
 void ray::Triangle::initValues()
 {
     AShape::initValues();
-    _direction = Math::Vector3D(0, 1, 0);
+    applyMatrix();
+    initPoints();
 
     // Calculate Normale
     Math::Vector3D edge1 = {_p2.X - _p1.X, _p2.Y - _p1.Y, _p2.Z - _p1.Z};
@@ -102,6 +103,21 @@ Math::Vector2D ray::Triangle::getUVMapping(Math::Point3D coords) const
     double u = finalD2;
     double v = finalD3;
     return {u, v};
+}
+
+void ray::Triangle::initPoints()
+{
+    Math::Matrix<4, 1> p1 = Math::Matrix<4, 1>{{{_p1.X}, {_p1.Y}, {_p1.Z}, {1}}};
+    Math::Matrix<4, 1> p2 = Math::Matrix<4, 1>{{{_p2.X}, {_p2.Y}, {_p2.Z}, {1}}};
+    Math::Matrix<4, 1> p3 = Math::Matrix<4, 1>{{{_p3.X}, {_p3.Y}, {_p3.Z}, {1}}};
+
+    p1 = _transformMatrix * p1;
+    p2 = _transformMatrix * p2;
+    p3 = _transformMatrix * p3;
+
+    _p1 = Math::Point3D{p1(0, 0), p1(1, 0), p1(2, 0)};
+    _p2 = Math::Point3D{p2(0, 0), p2(1, 0), p2(2, 0)};
+    _p3 = Math::Point3D{p3(0, 0), p3(1, 0), p3(2, 0)};
 }
 
 Math::Point3D StringToPoint3D(std::string str)
