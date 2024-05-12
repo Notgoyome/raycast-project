@@ -34,9 +34,7 @@ Le projet Raytracer d'Epitech pour B-OOP-400 vise à développer et améliorer l
 
 5. **Architecture Logicielle** : Apprendre à concevoir des systèmes flexibles et extensibles en utilisant des interfaces et des bibliothèques dynamiques.
 
-6. **Bibliothèques Externes** : Intégrer et utiliser des bibliothèques externes telles que libconfig++ et SFML.
-
-7. **Techniques d'Optimisation** : Explorer des optimisations de performance telles que le multithreading et la partition d'espace (optionnel).
+6. **Techniques d'Optimisation** : Explorer des optimisations de performance telles que le multithreading et la partition d'espace (optionnel).
 
 ### Fonctionnement Général
 
