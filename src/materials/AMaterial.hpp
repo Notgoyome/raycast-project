@@ -8,6 +8,8 @@
 #ifndef AMATERIAL_HPP
 #define AMATERIAL_HPP
 
+#include <math/MatrixN.hpp>
+
 #include "IMaterial.hpp"
 #include "../utils/ANode.hpp"
 #include <SFML/Graphics.hpp>
@@ -27,7 +29,7 @@ namespace ray {
 
         [[nodiscard]] double getRefractionIndex() const override;
         [[nodiscard]] bool hasNormalMap() const override { return _hasNormalMap; }
-        [[nodiscard]]Math::Vector3D normalFromMap(Math::Vector2D uv) const override;
+        [[nodiscard]]Math::Vector3D normalFromMap(Math::Vector2D uv, Math::Matrix<3, 3> rotationMatrix) const override;
 
         void setNormalMap(std::string normalMap) override;
     };

@@ -7,6 +7,7 @@
 
 #include "AMaterial.hpp"
 
+#include <math/MatrixN.hpp>
 #include <math/Vector2D.hpp>
 
 namespace ray {
@@ -23,7 +24,7 @@ namespace ray {
         }
     }
 
-    Math::Vector3D AMaterial::normalFromMap(Math::Vector2D uv) const
+    Math::Vector3D AMaterial::normalFromMap(Math::Vector2D uv, Math::Matrix<3, 3> rotationMatrix) const
     {
         if (_hasNormalMap == false)
             return {0, 0, 0};
@@ -31,11 +32,15 @@ namespace ray {
             static_cast<unsigned int>(uv.first * _normalMap.getSize().x) % _normalMap.getSize().x,
             _normalMap.getSize().y - static_cast<unsigned int>(uv.second * _normalMap.getSize().y) % _normalMap.getSize().y
         );
-        return {
-            (static_cast<double>(color.r) / 255.f) * 2 - 1,
-            (static_cast<double>(color.g) / 255.f) * 2 - 1,
-            (static_cast<double>(color.b) / 255.f) * 2 - 1
-        };
+        Math::Matrix<3, 1> normal{
+            {
+                {(static_cast<double>(color.r) / 255.f) * 2 - 1},
+                {(static_cast<double>(color.g) / 255.f) * 2 - 1},
+                {(static_cast<double>(color.b) / 255.f) * 2 - 1}
+            }};
+        normal = rotationMatrix * normal;
+        Math::Vector3D result = {normal(0, 0), normal(1, 0), normal(2, 0)};
+        return result / result.length();
     }
 
     void AMaterial::setNormalMap(std::string normalMap)

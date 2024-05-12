@@ -171,7 +171,7 @@ Math::Point3D ray::Cylinder::getOrtho(const Math::Point3D& point) const
 Math::Vector3D ray::Cylinder::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
 {
     if (_material->hasNormalMap())
-        return _material->normalFromMap(getUVMapping(point));
+        return _material->normalFromMap(getUVMapping(point), getRotation());
     Math::Vector3D normal {0, 0, 0};
     if (!_finite) {
         if (_direction.X == 0)

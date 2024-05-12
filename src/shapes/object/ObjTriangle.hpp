@@ -45,6 +45,7 @@ namespace ray {
         void setNormalMapCoords(Math::Vector3D n1, Math::Vector3D n2, Math::Vector3D n3);
         void setNormalMapImage(const std::string& imgPath);
         void setMaterial(std::shared_ptr<ray::IMaterial> material);
+        void setTransformationMatrix(Math::Matrix<4, 4> matrix) { _transformMatrix = matrix; }
 
         Math::Point3D getp1() const { return _p1;}
         Math::Point3D getp2() const { return _p2;}

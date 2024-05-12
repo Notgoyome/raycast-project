@@ -144,13 +144,19 @@ void ray::Object::parseFace(std::istringstream &ss, std::string line, std::strin
         std::shared_ptr<ObjTriangle> triangle = std::make_shared<ObjTriangle>();
         triangle->setPoint(_points[(int)indices[0].X], _points[(int)indices[i + 1].X], _points[(int)indices[i + 2].X]);
 
-        if (indices[0].Y != -1 && indices[i + 1].Y != -1 && indices[i + 2].Y != -1) // Texture mapping
+        if (indices[0].Y != -1 &&
+            indices[i + 1].Y != -1 &&
+            indices[i + 2].Y != -1 && static_cast<int>(_uvValues.size()) >= i + 2) // Texture mapping
             triangle->setUvCoords(_uvValues[(int)indices[0].Y], _uvValues[(int)indices[i + 1].Y], _uvValues[(int)indices[i + 2].Y]);
 
-        if (indices[0].Z != -1 && indices[i + 1].Z != -1 && indices[i + 2].Z != -1) // Normal mapping
+        if (indices[0].Z != -1 &&
+            indices[i + 1].Z != -1 &&
+            indices[i + 2].Z != -1 && static_cast<int>(_normals.size()) >= i + 2) // Normal mapping
             triangle->setNormalMapCoords(_normals[(int)indices[0].Z], _normals[(int)indices[i + 1].Z], _normals[(int)indices[i + 2].Z]);
         triangle->initNormale(); // Mandatory, even if we have a normal mapping
         triangle->setMaterial(currentMaterial);
+        triangle->initValues();
+        triangle->setTransformationMatrix(_transformMatrix);
         _triangles.push_back(triangle);
     }
 }

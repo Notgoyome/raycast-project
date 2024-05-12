@@ -85,7 +85,7 @@ Maybe<PosShapePair> ray::Sphere::hit(const ray::Ray &ray) const
 Math::Vector3D ray::Sphere::getNormale(const Math::Point3D& point, __attribute__((unused))const ray::Ray& camRay) const
 {
     if (_material->hasNormalMap())
-        return _material->normalFromMap(getUVMapping(point));
+        return _material->normalFromMap(getUVMapping(point), getRotation());
     Math::Vector3D normale = {point.X - center.X,
                               point.Y - center.Y,
                               point.Z - center.Z};

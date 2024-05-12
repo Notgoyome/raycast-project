@@ -55,7 +55,7 @@ Maybe<PosShapePair> ray::Triangle::hit(const ray::Ray &ray) const
 Math::Vector3D ray::Triangle::getNormale(const Math::Point3D& point, const ray::Ray& camRay) const
 {
     if (_material->hasNormalMap())
-        return _material->normalFromMap(getUVMapping(point));
+        return _material->normalFromMap(getUVMapping(point), getRotation());
     Math::Vector3D camDir = camRay.direction;
     if (_normal.dot(camDir) > 0)
         return _normal * -1;

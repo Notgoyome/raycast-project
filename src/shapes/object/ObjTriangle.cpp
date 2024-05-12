@@ -11,9 +11,7 @@ namespace ray {
 
     void ray::ObjTriangle::initValues()
     {
-        AShape::initValues();
         _direction = Math::Vector3D(0, 1, 0);
-        initNormale();
     }
 
     Maybe<PosShapePair> ray::ObjTriangle::hit(const ray::Ray &ray) const
@@ -150,7 +148,7 @@ namespace ray {
     Math::Vector3D ObjTriangle::calcNormale(Math::Point3D coords) const
     {
         if (_material->hasNormalMap()) {
-            return _material->normalFromMap(getUVMapping(coords));
+            return _material->normalFromMap(getUVMapping(coords), getRotation());
         }
         if (_normalType == NormalType::BASIC) {
             return _normal;
@@ -168,7 +166,12 @@ namespace ray {
         double w = (d00 * d21 - d01 * d20) / denom;
         double u = 1.0f - v - w;
 
-        return _n1 * u + _n2 * v + _n3 * w;
+        Math::Matrix<3, 1> normal = Math::Matrix<3, 1>{{{_n1.X * u + _n2.X * v + _n3.X * w},
+                                                         {_n1.Y * u + _n2.Y * v + _n3.Y * w},
+                                                         {_n1.Z * u + _n2.Z * v + _n3.Z * w}}};
+        normal = getRotation() * normal;
+        Math::Vector3D vecNormal = {normal(0, 0), normal(1, 0), normal(2, 0)};
+        return vecNormal / vecNormal.length();
     }
 
     Math::Point3D StringToPoint3D(std::string str)
