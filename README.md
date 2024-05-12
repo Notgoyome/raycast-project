@@ -87,6 +87,22 @@ Pour avoir un fichier de configuration complet, il faut implémenter les parts :
 
 Les possibilités du Raytracer sont infinies mais voici quelques exemples rendus avec le programme :
 
+<p float="left">
+  <img src="./documentation/images/hat.png" width="400" />
+  <img src="./documentation/images/face.png" width="400" /> 
+</p>
+<p float="left">
+  <img src="./documentation/images/reflection.png" width="400" />
+  <img src="./documentation/images/effect.png" width="400" /> 
+</p>
+<p float="left">
+  <img src="./documentation/images/dragon.png" width="400" />
+  <img src="./documentation/images/revert.png" width="400" /> 
+</p>
+<p float="left">
+  <img src="./documentation/images/piano.png" width="400" />
+</p>
+
 ![Hat](./documentation/images/hat.png)
 
 ![Face](./documentation/images/face.png)
