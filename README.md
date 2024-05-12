@@ -26,7 +26,7 @@ Le projet Raytracer d'Epitech pour B-OOP-400 vise à développer et améliorer l
 
 1. **OOP Avancée en C++** : Appliquer les principes de la programmation orientée objet pour structurer et gérer des systèmes logiciels complexes.
 
-2. **Patrons de Conception** : Mettre en œuvre au moins deux patrons de conception pour résoudre des problèmes de design logiciel courants, améliorant la modularité et la maintenabilité du code.
+2. **Design Patterns** : Mettre en œuvre au moins deux design patterns pour résoudre des problèmes de design logiciel courants, améliorant la modularité et la maintenabilité du code.
 
 3. **Maîtrise du C++** : Approfondir la compréhension du C++ et de sa bibliothèque standard à travers une application pratique.
 
