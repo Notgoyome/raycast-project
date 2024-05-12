@@ -10,9 +10,10 @@
 
 void ray::Sphere::setRadius()
 {
-    Math::Vector3D scale = getScale();
-
-    radius = scale.X;
+    Math::Matrix<3, 1> pos = Math::Matrix<3, 1>{{{0}, {0}, {1}}};
+    pos = getRotation() * pos;
+    Math::Vector3D posVec = {pos(0, 0), pos(1, 0), pos(2, 0)};
+    radius = posVec.length();
 }
 
 void ray::Sphere::setPosition()
