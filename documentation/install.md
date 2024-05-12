@@ -28,9 +28,6 @@ brew install sfml
 
 ### Windows
 
-Sure, here's how you can add the installation instructions for libconfig to your existing markdown content:
-
-```markdown
 # Installation
 
 This guide will walk you through the installation of the SFML and libconfig libraries that are required for this project to run properly.
