@@ -27,7 +27,6 @@ namespace ray {
         Camera(double width, double height, double fieldOfView);
 
         [[nodiscard]] ray::Ray ray(double u, double v) const override;
-        [[nodiscard]] std::pair<unsigned int, unsigned int> getResolution() const override { return resolution; }
     };
 
 } // Raytracer

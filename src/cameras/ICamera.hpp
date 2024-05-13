@@ -18,7 +18,6 @@ namespace ray {
         virtual ~ICamera() = default;
 
         [[nodiscard]] virtual ray::Ray ray(double u, double v) const = 0;
-        [[nodiscard]] virtual std::pair<unsigned int, unsigned int> getResolution() const = 0;
     };
 
 }
