@@ -43,22 +43,25 @@ Math::Vector3D rotateVector(Math::Matrix<3,3> rotationMatrix, Math::Vector3D vec
     return res;
 }
 
-Math::Point3D MatrixMultiplyPoint(Math::Matrix<4, 4> matrix, Math::Point3D point)
+Math::Point3D rotatePoint(Math::Matrix<3,3> rotationMatrix, Math::Point3D point)
 {
-    (void)matrix;
-    return point;
+   Math::Matrix<3,1> res;
+   res(0,0) = point.X;
+    res(1,0) = point.Y;
+    res(2,0) = point.Z;
+    res = rotationMatrix * res;
+    return Math::Point3D{res(0,0), res(1,0), res(2,0)};
 }
-
 Maybe<PosShapePair> ray::Cone::hit(const ray::Ray& ray) const
 {
     Math::Vector3D rayDir = rotateVector(_inverseRotationMatrix, ray.direction);
-    Math::Point3D rayOrigin = ray.origin;
+    Math::Point3D rayOrigin = rotatePoint(_inverseRotationMatrix, ray.origin - center);
     float A = rayOrigin.X - center.X;
     float B = rayOrigin.Z - center.Z;
     float D = _height - rayOrigin.Y + center.Y;
     float tanTheta = pow(tan(toRadians(_radius/_height)), 2);
     float a = pow(rayDir.X, 2) + pow(rayDir.Z, 2) - tanTheta * pow(rayDir.Y, 2);
-    float b = 2 * (rayDir.X * A + rayDir.Z * B - tanTheta * rayDir.Y * D);
+    float b = 2 * (rayDir.X * A + rayDir.Z * B + tanTheta * rayDir.Y * D);
     float c = pow(A, 2) + pow(B, 2) - tanTheta * pow(D, 2);
     float delta = b * b - 4 * a * c;
 
@@ -85,8 +88,10 @@ Math::Vector3D ray::Cone::getNormale(const Math::Point3D& point, __attribute__((
 {
     if (_material->hasNormalMap())
         return _material->normalFromMap(getUVMapping(point), getRotation());
-    float r = sqrt(pow(point.X - center.X, 2) + pow(point.Z - center.Z, 2));
-    Math::Vector3D normal = {point.X - center.X, r * tan(toRadians(_radius/_height)), point.Z - center.Z};
+    Math::Point3D p = point;
+    float r = sqrt(pow(p.X - center.X, 2) + pow(p.Z - center.Z, 2));
+    Math::Vector3D normal = {p.X - center.X, r * tan(toRadians(_radius/_height)), p.Z - center.Z};
+    normal = rotateVector(getRotation(), normal);
     return normal / normal.length();
 }
 
