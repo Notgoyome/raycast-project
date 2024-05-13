@@ -108,4 +108,4 @@ Les possibilités du Raytracer sont infinies mais voici quelques exemples rendus
 
 ![Dragon](./documentation/images/dragon.png)
 
-![Piano](./documentation/images/piano.png)
+![Piano](./documentation/images/piano.jpeg)
