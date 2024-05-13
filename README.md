@@ -51,6 +51,14 @@ Le projet Raytracer d'Epitech pour B-OOP-400 vise à développer et améliorer l
 Il est possible à l'utilisateur de coder et d'ajouter ses propres plugins pour personnaliser ses matériaux, sa lumière, des caméras, des primitives etc.
 Le programme fait usage d'un builder et d'une factory pour utiliser les plugins compilés en shared objects (.so), les fichiers sont ouverts et interprétés par le programme pour créer des INodes de types associés qui héritent des classes souhaitées afin de les intégrer à une scène qui est en réalité une sorte d'arbre de noeuds qui peuvent prendre toutes sortes de types et qui héritent de certaines propriétés des noeuds parents.
 
+<p float="left">
+  <img src="./documentation/images/graph1.png" width="400" />
+  <img src="./documentation/images/graph2.png" width="400" /> 
+</p>
+<p align="center">
+  <img src="./documentation/images/graph3.png" width="400" />
+</p>
+
 ### Fonctions Nécessaires
 
 Il est requis pour le bon fonctionnement d'un nouveau plugin que celui-ci possède au moins une fonction "create" qui a pour prototype le suivant :
@@ -61,7 +69,20 @@ extern "C" ray::INode *create(const std::map<std::string, std::string> &attribut
 
 Où le contenu d'*attributes* représente les différentes propriétés du fichier de configuration et les valeurs associées à utiliser lors de la création du node (Par exemple la couleur de base d'un objet, sa transformation ou rotation, etc).
 
-Pour les Nodes des différents types et leurs fonctions personnelles à implémenter, veuillez vous référer aux interfaces associées (IMaterial, IShape, ILight, etc)
+Pour les Nodes des différents types et leurs fonctions personnelles à implémenter, veuillez vous référer aux interfaces associées dans les fichiers (IMaterial, IShape, ILight, etc) ou bien aux schémas explicatifs des différentes interfaces ci-dessous.
+
+<p float="left">
+  <img src="./documentation/images/graph4.png" width="400" />
+  <img src="./documentation/images/graph5.png" width="400" /> 
+</p>
+<p float="left">
+  <img src="./documentation/images/graph6.png" width="400" />
+  <img src="./documentation/images/graph7.png" width="400" /> 
+</p>
+<p float="left">
+  <img src="./documentation/images/graph8.png" width="400" />
+  <img src="./documentation/images/graph9.png" width="400" /> 
+</p>
 
 ## Compatibilité
 
