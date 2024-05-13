@@ -75,7 +75,7 @@ Maybe<PosShapePair> ray::Cone::hit(const ray::Ray& ray) const
     }
 
     float r = (rayOrigin.Y + t * rayDir.Y);
-    if (_finite && (r < center.Y - _height || r > center.Y + _height)) { //|| r < center.Y + _height/2) {
+    if (_finite && (r < center.Y || r > center.Y + _height)) {
         return {};
     }
     return Maybe<PosShapePair>{std::make_pair(rayOrigin + rayDir * t, nullptr)};
