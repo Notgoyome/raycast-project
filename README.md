@@ -76,11 +76,13 @@ __IScene et IMaterial :__
   <img src="./documentation/images/graph4.png" width="400" />
   <img src="./documentation/images/graph5.png" width="400" /> 
 </p>
+
 __ILight et IShape :__
 <p float="left">
   <img src="./documentation/images/graph6.png" width="400" />
   <img src="./documentation/images/graph7.png" width="400" /> 
 </p>
+
 __ICamera et ITransform :__
 <p float="left">
   <img src="./documentation/images/graph8.png" width="400" />
