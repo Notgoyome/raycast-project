@@ -71,14 +71,17 @@ Où le contenu d'*attributes* représente les différentes propriétés du fichi
 
 Pour les Nodes des différents types et leurs fonctions personnelles à implémenter, veuillez vous référer aux interfaces associées dans les fichiers (IMaterial, IShape, ILight, etc) ou bien aux schémas explicatifs des différentes interfaces ci-dessous.
 
+__IScene et IMaterial :__
 <p float="left">
   <img src="./documentation/images/graph4.png" width="400" />
   <img src="./documentation/images/graph5.png" width="400" /> 
 </p>
+__ILight et IShape :__
 <p float="left">
   <img src="./documentation/images/graph6.png" width="400" />
   <img src="./documentation/images/graph7.png" width="400" /> 
 </p>
+__ICamera et ITransform :__
 <p float="left">
   <img src="./documentation/images/graph8.png" width="400" />
   <img src="./documentation/images/graph9.png" width="400" /> 
