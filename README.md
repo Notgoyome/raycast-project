@@ -95,7 +95,7 @@ Les possibilités du Raytracer sont infinies mais voici quelques exemples rendus
 </p>
 <p float="left">
   <img src="./documentation/images/dragon.png" width="400" />
-  <img src="./documentation/images/piano.png" width="400" />
+  <img src="./documentation/images/piano.jpeg" width="400" />
 </p>
 
 ![Hat](./documentation/images/hat.png)
@@ -108,4 +108,4 @@ Les possibilités du Raytracer sont infinies mais voici quelques exemples rendus
 
 ![Dragon](./documentation/images/dragon.png)
 
-![Piano](./documentation/images/piano.png)
+![Piano](./documentation/images/piano.jpeg)
