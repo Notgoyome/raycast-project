@@ -7,11 +7,6 @@
 
 #include "ALight.hpp"
 
-void ray::ALight::setColor(RGB color)
-{
-    _color = color;
-}
-
 RGB ray::ALight::getColor() const
 {
     return _color;

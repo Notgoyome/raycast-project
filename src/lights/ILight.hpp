@@ -20,8 +20,6 @@ namespace ray {
     public:
         virtual ~ILight() = default;
 
-        virtual void setColor(RGB color) = 0;
-
         [[nodiscard]] virtual RGB getColor() const = 0;
         [[nodiscard]] virtual ray::Ray getIncidentVector(Math::Point3D pos) const = 0;
         [[nodiscard]] virtual Math::Point3D getPos() const = 0;
