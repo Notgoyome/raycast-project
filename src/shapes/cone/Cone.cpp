@@ -24,11 +24,34 @@ void ray::Cone::initValues()
     AShape::initValues();
     applyMatrix();
     setPosition();
+    _inverseRotationMatrix = getRotation().inverse();
+
+}
+
+Math::Vector3D rotateVector(Math::Matrix<3,3> rotationMatrix, Math::Vector3D vector)
+{
+    Math::Vector3D res;
+    res.X = rotationMatrix(0,0) * vector.X +
+            rotationMatrix(0,1) * vector.Y +
+            rotationMatrix(0,2) * vector.Z;
+    res.Y = rotationMatrix(1,0) * vector.X +
+            rotationMatrix(1,1) * vector.Y +
+            rotationMatrix(1,2) * vector.Z;
+    res.Z = rotationMatrix(2,0) * vector.X +
+            rotationMatrix(2,1) * vector.Y +
+            rotationMatrix(2,2) * vector.Z;
+    return res;
+}
+
+Math::Point3D MatrixMultiplyPoint(Math::Matrix<4, 4> matrix, Math::Point3D point)
+{
+    (void)matrix;
+    return point;
 }
 
 Maybe<PosShapePair> ray::Cone::hit(const ray::Ray& ray) const
 {
-    Math::Vector3D rayDir = ray.direction;
+    Math::Vector3D rayDir = rotateVector(_inverseRotationMatrix, ray.direction);
     Math::Point3D rayOrigin = ray.origin;
     float A = rayOrigin.X - center.X;
     float B = rayOrigin.Z - center.Z;
@@ -52,7 +75,7 @@ Maybe<PosShapePair> ray::Cone::hit(const ray::Ray& ray) const
     }
 
     float r = (rayOrigin.Y + t * rayDir.Y);
-    if (_finite && (r < center.Y - _height/2 || r > center.Y + _height)) { //|| r < center.Y + _height/2) {
+    if (_finite && (r < center.Y - _height || r > center.Y + _height)) { //|| r < center.Y + _height/2) {
         return {};
     }
     return Maybe<PosShapePair>{std::make_pair(rayOrigin + rayDir * t, nullptr)};
